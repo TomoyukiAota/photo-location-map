@@ -5,6 +5,7 @@ import { t } from '../../src-shared/i18n/i18n.js';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { Logger } from '../../src-shared/log/logger.js';
 import { mainWindow } from '../electron-main.js';
+import { mapFullScreenMenuItemTemplate } from './map-full-screen.js';
 import { selectionMenuTemplate } from './selection-menu.js';
 
 const handleOpenSettingsClicked = () => {
@@ -39,7 +40,8 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
       { role: 'zoomIn', label: t('menu.view.zoomIn') },
       { role: 'zoomOut', label: t('menu.view.zoomOut') },
       { type: 'separator' },
-      { role: 'togglefullscreen', label: t('menu.view.toggleFullScreen') }
+      { role: 'togglefullscreen', label: t('menu.view.toggleFullScreen') },
+      mapFullScreenMenuItemTemplate,
     ]
   },
   selectionMenuTemplate,

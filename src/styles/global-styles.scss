@@ -30,6 +30,11 @@ body {
   &:hover {
     background-color: #aaaaaa;
   }
+
+  // Hidden with the sidebar and the chart while the map is in full screen (src/app/home/home.component.scss).
+  .map-full-screen & {
+    display: none;
+  }
 }
 
 $max-z-index: 2147483647;

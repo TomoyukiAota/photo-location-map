@@ -116,6 +116,8 @@
     "zoomIn": "Vergrößern",
     "zoomOut": "Verkleinern",
     "layers": "Ebenen",
+    "fullScreen": "Vollbild",
+    "exitFullScreen": "Vollbild beenden",
     "photosInRegions": "Fotos in den Bereichen: {{count}}",
     "selectPhotos": "Fotos auswählen",
     "setRegionByRectangle": "Bereich als Rechteck festlegen",
@@ -313,7 +315,8 @@
       "actualSize": "Originalgröße",
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
-      "toggleFullScreen": "Vollbild ein/aus"
+      "toggleFullScreen": "Vollbild ein/aus",
+      "mapFullScreen": "Karte im Vollbild"
     },
     "selection": {
       "title": "Auswahl",

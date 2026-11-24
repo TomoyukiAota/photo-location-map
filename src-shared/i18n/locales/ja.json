@@ -116,6 +116,8 @@
     "zoomIn": "拡大",
     "zoomOut": "縮小",
     "layers": "レイヤー",
+    "fullScreen": "フルスクリーン",
+    "exitFullScreen": "フルスクリーンを終了",
     "photosInRegions": "範囲内の写真: {{count}} 枚",
     "selectPhotos": "写真を選択",
     "setRegionByRectangle": "長方形で範囲を指定",
@@ -313,7 +315,8 @@
       "actualSize": "実際のサイズ",
       "zoomIn": "拡大",
       "zoomOut": "縮小",
-      "toggleFullScreen": "フルスクリーンの切り替え"
+      "toggleFullScreen": "フルスクリーンの切り替え",
+      "mapFullScreen": "マップをフルスクリーンで表示"
     },
     "selection": {
       "title": "選択",

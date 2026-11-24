@@ -20,6 +20,7 @@ import { addEachMarker } from './add-each-marker';
 import { DatedLayers } from './dated-layers/dated-layers';
 import { MapDateService } from './dated-layers/map-date.service';
 import { createDivIconHtml } from './div-icon';
+import { addMapFullScreenControl } from './full-screen/map-full-screen-control';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
@@ -250,6 +251,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.configureAttribution();
     this.configureScale();
     this.configureZoom();
+    addMapFullScreenControl(this.map, this.leafletContentService);
     this.configureBaseLayer();
     this.configureRegionSelector();
   }
