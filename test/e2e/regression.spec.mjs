@@ -923,12 +923,13 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await expect(page.locator('app-thumbnail-settings')).toBeVisible();
-  // The tab, with the cache under the quality, is higher than the dialog leaves it: it scrolls between the header and
-  // the footer, which stay, rather than the dialog as a whole.
+  // TL;DR: The tab scrolls between the header and the footer where it is higher than the dialog leaves it, rather than
+  // the dialog as a whole: Cancel stays in view, at the tab's top and once the cache's Delete button is scrolled to.
+  // Details: In English, the tab ends at about the dialog's height since its texts were shortened, so that whether it
+  // scrolls, and whether the Delete button shows at its top, depends on how the platform sets text: on CI's runner the
+  // button showed, and here it did not. Japanese, with higher lines, scrolls.
   const settingsContent = page.locator('app-settings-dialog .settings-content');
-  expect(await settingsContent.evaluate(content => content.scrollHeight > content.clientHeight)).toBe(true);
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
-  await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).not.toBeInViewport();
   await shot('settings-thumbnails', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).scrollIntoViewIfNeeded();
   await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).toBeInViewport();
@@ -4304,9 +4305,36 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
   const tab = page.locator('app-thumbnail-settings');
   const slider = tab.locator('.thumbnail-size-slider input');
   await expect(slider).toBeEnabled();
-  await expect(tab.locator('.thumbnail-size-value')).toHaveText('400 pixels on the longer side');
+  await expect(slider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
+  // The sizes under the slider, each centered under its mark, from the first to the last. Angular Material draws the
+  // marks once it has measured the slider, a moment after the tab is shown.
+  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(7);
+  const ticks = await tab.locator('.thumbnail-size-scale').evaluate(scale => {
+    const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
+    const range = document.createRange();
+    return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
+      range.selectNodeContents(tick);
+      return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
+    });
+  });
+  expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px']);
+  expect(ticks.every(tick => tick.offset < 1)).toBe(true);
+  // What a larger size costs, in a note that the button after the size opens, and a click elsewhere or Escape closes.
+  const aboutSize = tab.getByRole('button', { name: 'About the thumbnail size', exact: true });
+  const sizeNote = page.locator('.thumbnail-size-note');
+  await expect(sizeNote).toHaveCount(0);
+  await aboutSize.click();
+  await expect(sizeNote).toHaveText('A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
+  await expect(aboutSize).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(sizeNote).toHaveCount(0);
+  await expect(page.locator('app-settings-dialog')).toHaveCount(1);
+  await aboutSize.click();
+  await expect(sizeNote).toBeVisible();
+  await tab.locator('.setting-title').first().click();
+  await expect(sizeNote).toHaveCount(0);
   await slider.fill('800');
-  await expect(tab.locator('.thumbnail-size-value')).toHaveText('800 pixels on the longer side');
+  await expect(slider).toHaveAttribute('aria-valuetext', '800 pixels on the longer side');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
   await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('800x600');
@@ -4316,7 +4344,7 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
 
   // Fast: the photo's own thumbnail, in today's box, and the slider disabled.
   await settings('Thumbnails');
-  await tab.getByRole('radio', { name: /^Fast/ }).check();
+  await tab.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await expect(slider).toBeDisabled();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
@@ -4339,12 +4367,12 @@ test('the thumbnail status bar offers the fast thumbnails, which are the thumbna
   await dismissWelcome();
   await openFolderWithPicker(folder);
   const statusBar = page.locator('app-thumbnail-generation-status-bar');
-  await expect(statusBar).toContainText('Generating thumbnails for HEIF files... To show them sooner, choose fast thumbnails in Settings.');
-  await statusBar.getByText('choose fast thumbnails in Settings', { exact: true }).click();
+  await expect(statusBar).toContainText('Generating thumbnails for HEIF files... To show them sooner, choose “Prefer app performance” in Settings.');
+  await statusBar.getByText('choose “Prefer app performance” in Settings', { exact: true }).click();
   const dialog = page.locator('app-settings-dialog');
   await expect(dialog.locator('mat-list-item.selected-tab')).toHaveText('Thumbnails');
   await expect(dialog.locator('app-thumbnail-settings')).toBeVisible();
-  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect(statusBar).toBeHidden();
@@ -4384,7 +4412,7 @@ test('Fast shows the thumbnail that a HEIF photo holds, though the folder was op
   await expect.poll(async () => (await shown())?.src, { timeout: 30000 }).toMatch(/a\.heic\.plm\.jpg\?size=800$/);
 
   await settings('Thumbnails');
-  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('240x320');

@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Luodaan pikkukuvia HEIF-tiedostoille...",
-    "fasterInSettings": "Jos haluat ne näkyviin aiemmin, <settingsLink>valitse asetuksista nopeat pikkukuvat</settingsLink>.",
+    "fasterInSettings": "Jos haluat ne näkyviin aiemmin, <settingsLink>valitse asetuksista ”Sovelluksen suorituskyky ensin”</settingsLink>.",
     "completed": "HEIF-tiedostojen pikkukuvat on luotu.",
     "finishedWithErrors": "HEIF-tiedostojen pikkukuvien luonti päättyi virheisiin.",
     "showDetails": "Näytä lisätiedot",
@@ -241,15 +241,16 @@
       "example": "Esimerkki"
     },
     "thumbnails": {
-      "title": "Pikkukuvat",
-      "description": "Valitse, luodaanko pikkukuvat laadun vai nopeuden mukaan.",
-      "highQuality": "Korkea laatu",
-      "highQualityDescription": "Luodaan koko kuvasta alla valitun kokoisina. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Niiden luominen vie aikaa, kun kansio avataan ensimmäisen kerran, ja kauemmin HEIF-tiedostoille tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta.",
-      "size": "Koko",
+      "title": "Pikkukuvien laatu ja sovelluksen suorituskyky",
+      "highQuality": "Pikkukuvien laatu ensin",
+      "highQualityDescription": "Pikkukuvat luodaan aina kuvatiedostoista.",
+      "size": "Pikkukuvien koko",
       "sizeValue": "pidempi sivu {{size}} pikseliä",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Tietoa pikkukuvien koosta",
       "sizeDescription": "Mitä suurempi koko, sitä suurempina pikkukuvat näytetään, mutta sitä kauemmin niiden luominen kestää ja sitä enemmän tilaa ne vievät pikkukuvien välimuistissa.",
-      "fast": "Nopea",
-      "fastDescription": "Kuvaan tallennettu pieni pikkukuva, joka näytetään heti. Se on epätarkempi: useimmissa JPEG-kuvissa 160 × 120 pikseliä ja iPhonella otetussa 12 megapikselin kuvassa 320 × 240 pikseliä."
+      "fast": "Sovelluksen suorituskyky ensin",
+      "fastDescription": "Kun tiedostossa, kuten JPEG- tai PNG-tiedostossa, on jo pikkukuva, se näytetään sellaisenaan. Pikkukuva, jonka pidempi sivu on 400 pikseliä, luodaan vain tiedostolle, jossa sitä ei ole."
     },
     "os": {
       "title": "Resurssienhallinnan pikavalikko",

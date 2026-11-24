@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF ファイルのサムネイルを生成中です...",
-    "fasterInSettings": "早く表示するには、<settingsLink>設定で「速さ優先」を選んでください</settingsLink>。",
+    "fasterInSettings": "早く表示するには、<settingsLink>設定で「アプリのパフォーマンスを優先」を選んでください</settingsLink>。",
     "completed": "HEIF ファイルのサムネイルの生成が完了しました。",
     "finishedWithErrors": "HEIF ファイルのサムネイルの生成が終了しましたが、エラーがありました。",
     "showDetails": "詳細を表示",
@@ -241,15 +241,16 @@
       "example": "例"
     },
     "thumbnails": {
-      "title": "サムネイル",
-      "description": "サムネイルの画質と速さのどちらを優先するかを選んでください。",
-      "highQuality": "高画質",
-      "highQualityDescription": "写真全体から、下で選んだ大きさで生成します。生成されるまでは、写真に保存されている小さいサムネイルを表示します。フォルダーを初めて開いたときは生成に時間がかかり、グラフィックスのハードウェアで HEVC をデコードできないコンピューターでは、HEIF ファイルの生成にさらに時間がかかります。",
-      "size": "大きさ",
+      "title": "サムネイルの画質とアプリのパフォーマンス",
+      "highQuality": "サムネイルの画質を優先",
+      "highQualityDescription": "常に写真ファイルからサムネイルを生成します。",
+      "size": "サムネイルの大きさ",
       "sizeValue": "長辺 {{size}} ピクセル",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "サムネイルの大きさについて",
       "sizeDescription": "大きくするほどサムネイルが大きく表示されますが、生成に時間がかかり、サムネイルのキャッシュも大きくなります。",
-      "fast": "速さ優先",
-      "fastDescription": "写真に保存されている小さいサムネイルを、すぐに表示します。画質は下がります（多くの JPEG 写真では 160 × 120 ピクセル、iPhone で撮った 1,200 万画素の写真では 320 × 240 ピクセル）。"
+      "fast": "アプリのパフォーマンスを優先",
+      "fastDescription": "JPEG や PNG が元々サムネイルを持っている場合はそのまま表示します。それ以外の場合のみ長辺 400 ピクセルのサムネイルを生成します。"
     },
     "os": {
       "title": "エクスプローラーのコンテキストメニュー",

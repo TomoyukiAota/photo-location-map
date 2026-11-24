@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Notiek HEIF failu sīktēlu veidošana...",
-    "fasterInSettings": "Lai tos parādītu ātrāk, <settingsLink>iestatījumos izvēlieties ātros sīktēlus</settingsLink>.",
+    "fasterInSettings": "Lai tos parādītu ātrāk, <settingsLink>iestatījumos izvēlieties “Priekšroka lietotnes veiktspējai”</settingsLink>.",
     "completed": "HEIF failu sīktēli ir izveidoti.",
     "finishedWithErrors": "HEIF failu sīktēlu veidošana ir pabeigta ar kļūdām.",
     "showDetails": "Rādīt detalizētu informāciju",
@@ -241,15 +241,16 @@
       "example": "Piemērs"
     },
     "thumbnails": {
-      "title": "Sīktēli",
-      "description": "Izvēlieties, vai sīktēlus veidot, priekšroku dodot kvalitātei vai ātrumam.",
-      "highQuality": "Augsta kvalitāte",
-      "highQualityDescription": "Tiek veidoti no visa fotoattēla zemāk izvēlētajā izmērā. Līdz tam tiek rādīts fotoattēlā saglabātais mazais sīktēls. To veidošana aizņem laiku, kad mape tiek atvērta pirmo reizi, un vēl ilgāk HEIF failiem datorā, kura grafikas aparatūra nevar dekodēt HEVC.",
-      "size": "Izmērs",
+      "title": "Sīktēlu kvalitāte un lietotnes veiktspēja",
+      "highQuality": "Priekšroka sīktēlu kvalitātei",
+      "highQualityDescription": "Sīktēli vienmēr tiek veidoti no fotoattēlu failiem.",
+      "size": "Sīktēlu izmērs",
       "sizeValue": "garākajā malā {{size}} pikseļu",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Par sīktēlu izmēru",
       "sizeDescription": "Jo lielāks izmērs, jo lielāki tiek rādīti sīktēli, bet jo ilgāk aizņem to veidošana un jo vairāk vietas tie aizņem sīktēlu kešatmiņā.",
-      "fast": "Ātri",
-      "fastDescription": "Fotoattēlā saglabātais mazais sīktēls, kas tiek rādīts uzreiz. Tas ir mazāk ass: lielākajā daļā JPEG fotoattēlu 160 × 120 pikseļu un ar iPhone uzņemtā 12 megapikseļu fotoattēlā 320 × 240 pikseļu."
+      "fast": "Priekšroka lietotnes veiktspējai",
+      "fastDescription": "Ja failā, piemēram, JPEG vai PNG failā, jau ir sīktēls, tas tiek rādīts tāds, kāds tas ir. Sīktēls, kura garākā mala ir 400 pikseļu, tiek veidots tikai failam, kurā tā nav."
     },
     "os": {
       "title": "Failu pārlūka kontekstizvēlne",

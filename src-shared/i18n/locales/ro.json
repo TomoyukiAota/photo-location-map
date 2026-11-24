@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Se creează miniaturile fișierelor HEIF...",
-    "fasterInSettings": "Pentru a le afișa mai devreme, <settingsLink>alegeți miniaturile rapide în setări</settingsLink>.",
+    "fasterInSettings": "Pentru a le afișa mai devreme, <settingsLink>alegeți „Prioritate performanței aplicației” în setări</settingsLink>.",
     "completed": "Miniaturile fișierelor HEIF au fost create.",
     "finishedWithErrors": "Crearea miniaturilor fișierelor HEIF s-a încheiat cu erori.",
     "showDetails": "Afișează detaliile",
@@ -241,15 +241,16 @@
       "example": "Exemplu"
     },
     "thumbnails": {
-      "title": "Miniaturi",
-      "description": "Alegeți dacă miniaturile să fie create pentru calitate sau pentru viteză.",
-      "highQuality": "Calitate înaltă",
-      "highQualityDescription": "Create din întreaga fotografie, la dimensiunea aleasă mai jos. Până atunci se afișează miniatura mică salvată în fotografie. Crearea lor durează la prima deschidere a unui dosar, și mai mult pentru fișierele HEIF pe un computer al cărui hardware grafic nu poate decoda HEVC.",
-      "size": "Dimensiune",
+      "title": "Calitatea miniaturilor și performanța aplicației",
+      "highQuality": "Prioritate calității miniaturilor",
+      "highQualityDescription": "Miniaturile sunt create întotdeauna din fișierele fotografiilor.",
+      "size": "Dimensiunea miniaturilor",
       "sizeValue": "{{size}} de pixeli pe latura mai lungă",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Despre dimensiunea miniaturilor",
       "sizeDescription": "Cu cât dimensiunea este mai mare, cu atât miniaturile sunt afișate mai mari, dar crearea lor durează mai mult și ocupă mai mult spațiu în cache-ul pentru miniaturi.",
-      "fast": "Rapid",
-      "fastDescription": "Miniatura mică salvată în fotografie, afișată imediat. Este mai puțin clară: 160 × 120 de pixeli în majoritatea fotografiilor JPEG și 320 × 240 de pixeli pentru o fotografie de 12 megapixeli făcută cu un iPhone."
+      "fast": "Prioritate performanței aplicației",
+      "fastDescription": "Când un fișier, de exemplu un JPEG sau PNG, conține deja o miniatură, aceasta se afișează așa cum este. O miniatură de 400 de pixeli pe latura mai lungă se creează doar pentru un fișier care nu are una."
     },
     "os": {
       "title": "Meniul contextual din Explorer",

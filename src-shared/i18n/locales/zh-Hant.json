@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在為 HEIF 檔案產生縮圖...",
-    "fasterInSettings": "若要更快顯示，<settingsLink>請在設定中選擇「速度優先」</settingsLink>。",
+    "fasterInSettings": "若要更快顯示，<settingsLink>請在設定中選擇「應用程式效能優先」</settingsLink>。",
     "completed": "HEIF 檔案的縮圖已產生完畢。",
     "finishedWithErrors": "HEIF 檔案縮圖的產生已結束，但發生了錯誤。",
     "showDetails": "顯示詳細資訊",
@@ -241,15 +241,16 @@
       "example": "範例"
     },
     "thumbnails": {
-      "title": "縮圖",
-      "description": "請選擇縮圖要優先考慮畫質還是速度。",
-      "highQuality": "高畫質",
-      "highQualityDescription": "從整張照片按下方選擇的尺寸產生。產生之前，會顯示照片中儲存的小縮圖。首次開啟資料夾時產生需要一些時間；在圖形硬體無法解碼 HEVC 的電腦上，HEIF 檔案的產生需要更長時間。",
-      "size": "尺寸",
+      "title": "縮圖畫質與應用程式效能",
+      "highQuality": "縮圖畫質優先",
+      "highQualityDescription": "一律從照片檔案產生縮圖。",
+      "size": "縮圖尺寸",
       "sizeValue": "長邊 {{size}} 像素",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "關於縮圖尺寸",
       "sizeDescription": "尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
-      "fast": "速度優先",
-      "fastDescription": "立即顯示照片中儲存的小縮圖。畫質較低：大多數 JPEG 照片為 160 × 120 像素，用 iPhone 拍攝的 1200 萬像素照片為 320 × 240 像素。"
+      "fast": "應用程式效能優先",
+      "fastDescription": "如果 JPEG 或 PNG 等檔案本身帶有縮圖，則直接顯示。僅在其他情況下才產生長邊 400 像素的縮圖。"
     },
     "os": {
       "title": "檔案總管的右鍵選單",

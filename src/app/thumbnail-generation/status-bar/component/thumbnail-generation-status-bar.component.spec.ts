@@ -40,7 +40,7 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
   it('follows the generation from start to end, without being asked to', async () => {
     status.set(generating);
     await fixture.whenStable();
-    expect(text('.summary')).toBe('Generating thumbnails for HEIF files... To show them sooner, choose fast thumbnails in Settings.');
+    expect(text('.summary')).toBe('Generating thumbnails for HEIF files... To show them sooner, choose “Prefer app performance” in Settings.');
     expect(text('.details')).toContain('Processed 0 out of 2 files.');
     expect(text('.details')).toContain('2 thumbnails need generation, which is given by "HEIF files (3 files) − Cache-available files (1 files)".');
     expect(element().querySelector('.close-button').classList).toContain('hidden');
@@ -61,7 +61,7 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
     status.set(generating);
     await fixture.whenStable();
     const link = element().querySelector('.faster-in-settings .anchor-tag-like-text') as HTMLElement;
-    expect(link.textContent).toBe('choose fast thumbnails in Settings');
+    expect(link.textContent).toBe('choose “Prefer app performance” in Settings');
     link.click();
     expect(settingsDialogService.open).toHaveBeenCalledExactlyOnceWith('thumbnails');
   });
@@ -69,7 +69,7 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
   it('offers nothing more where the thumbnails are fast already, and follows a new setting', async () => {
     status.set(generating);
     await fixture.whenStable();
-    expect(text('.summary')).toContain('choose fast thumbnails in Settings');
+    expect(text('.summary')).toContain('choose “Prefer app performance” in Settings');
 
     thumbnailQuality.set('fast');
     await fixture.whenStable();

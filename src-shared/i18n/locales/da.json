@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Opretter miniaturer til HEIF-filer...",
-    "fasterInSettings": "For at vise dem hurtigere skal du <settingsLink>vælge hurtige miniaturer i indstillingerne</settingsLink>.",
+    "fasterInSettings": "For at vise dem hurtigere skal du <settingsLink>vælge “Prioritér appens ydeevne” i indstillingerne</settingsLink>.",
     "completed": "Miniaturerne til HEIF-filer er oprettet.",
     "finishedWithErrors": "Oprettelsen af miniaturer til HEIF-filer blev afsluttet med fejl.",
     "showDetails": "Vis detaljer",
@@ -241,15 +241,16 @@
       "example": "Eksempel"
     },
     "thumbnails": {
-      "title": "Miniaturer",
-      "description": "Vælg, om miniaturerne skal oprettes med vægt på kvalitet eller hastighed.",
-      "highQuality": "Høj kvalitet",
-      "highQualityDescription": "Oprettes ud fra hele fotoet i den størrelse, der er valgt nedenfor. Indtil da vises den lille miniature, der er gemt i fotoet. Det tager tid at oprette dem, første gang en mappe åbnes, og længere tid for HEIF-filer på en computer, der ikke kan afkode HEVC med sin grafikhardware.",
-      "size": "Størrelse",
+      "title": "Miniaturernes kvalitet og appens ydeevne",
+      "highQuality": "Prioritér miniaturernes kvalitet",
+      "highQualityDescription": "Miniaturerne oprettes altid ud fra fotofilerne.",
+      "size": "Størrelse på miniaturer",
       "sizeValue": "{{size}} pixel på den længste side",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Om miniaturernes størrelse",
       "sizeDescription": "Jo større størrelse, jo større vises miniaturerne, men det tager længere tid at oprette dem, og de fylder mere i cachen til miniaturer.",
-      "fast": "Hurtig",
-      "fastDescription": "Den lille miniature, der er gemt i fotoet, vises med det samme. Den er mindre skarp: 160 × 120 pixel i de fleste JPEG-fotos og 320 × 240 pixel i et 12-megapixel-foto taget med en iPhone."
+      "fast": "Prioritér appens ydeevne",
+      "fastDescription": "Når en fil, f.eks. en JPEG eller PNG, allerede indeholder en miniature, vises den, som den er. Der oprettes kun en miniature på 400 pixel på den længste side for en fil, der ikke har en."
     },
     "os": {
       "title": "Stifinders genvejsmenu",
