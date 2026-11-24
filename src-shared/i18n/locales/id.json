@@ -116,6 +116,8 @@
     "zoomIn": "Perbesar",
     "zoomOut": "Perkecil",
     "layers": "Lapisan",
+    "fullScreen": "Layar penuh",
+    "exitFullScreen": "Keluar dari layar penuh",
     "photosInRegions": "Foto di dalam area: {{count}}",
     "selectPhotos": "Pilih foto",
     "setRegionByRectangle": "Tetapkan area dengan persegi panjang",
@@ -313,7 +315,8 @@
       "actualSize": "Ukuran sebenarnya",
       "zoomIn": "Perbesar",
       "zoomOut": "Perkecil",
-      "toggleFullScreen": "Aktifkan/nonaktifkan layar penuh"
+      "toggleFullScreen": "Aktifkan/nonaktifkan layar penuh",
+      "mapFullScreen": "Peta dalam layar penuh"
     },
     "selection": {
       "title": "Pilihan",

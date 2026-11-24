@@ -116,6 +116,8 @@
     "zoomIn": "Acercar",
     "zoomOut": "Alejar",
     "layers": "Capas",
+    "fullScreen": "Pantalla completa",
+    "exitFullScreen": "Salir de pantalla completa",
     "photosInRegions": "Fotos en las áreas: {{count}}",
     "selectPhotos": "Seleccionar fotos",
     "setRegionByRectangle": "Definir un área con un rectángulo",
@@ -313,7 +315,8 @@
       "actualSize": "Tamaño real",
       "zoomIn": "Acercar",
       "zoomOut": "Alejar",
-      "toggleFullScreen": "Activar/desactivar pantalla completa"
+      "toggleFullScreen": "Activar/desactivar pantalla completa",
+      "mapFullScreen": "Mapa en pantalla completa"
     },
     "selection": {
       "title": "Selección",
