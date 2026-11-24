@@ -247,10 +247,12 @@
       "highQuality": "Pirmenybė miniatiūrų kokybei",
       "highQualityDescription": "Miniatiūros visada kuriamos iš nuotraukų failų.",
       "size": "Miniatiūrų dydis",
+      "sidebarSize": "Šoninė juosta",
+      "mapSize": "Žemėlapis",
       "sizeValue": "{{size}} taškų ilgesnėje kraštinėje",
       "sizeTick": "{{size}} px",
       "aboutSize": "Apie miniatiūrų dydį",
-      "sizeDescription": "Kuo didesnis dydis, tuo didesnės rodomos miniatiūros, bet tuo ilgiau užtrunka jų kūrimas ir tuo daugiau vietos jos užima miniatiūrų talpykloje.",
+      "sizeDescription": "Šoninė juosta ir žemėlapis rodo miniatiūras kiekvienas savo dydžiu, o programa kiekvienai nuotraukai sukuria vieną miniatiūrą didesniu iš dviejų dydžių. Kuo didesnis dydis, tuo didesnės rodomos miniatiūros, bet tuo ilgiau užtrunka jų kūrimas ir tuo daugiau vietos jos užima miniatiūrų talpykloje.",
       "fast": "Pirmenybė programos našumui",
       "fastDescription": "Jei failas, pavyzdžiui, JPEG ar PNG, jau turi miniatiūrą, ji rodoma tokia, kokia yra. Miniatiūra, kurios ilgesnė kraštinė yra 400 taškų, kuriama tik failui, kuris jos neturi."
     },

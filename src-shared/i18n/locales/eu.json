@@ -247,10 +247,12 @@
       "highQuality": "Lehenetsi miniaturen kalitatea",
       "highQualityDescription": "Miniaturak beti argazki-fitxategietatik sortzen dira.",
       "size": "Miniaturen tamaina",
+      "sidebarSize": "Alboko barra",
+      "mapSize": "Mapa",
       "sizeValue": "{{size}} pixel alde luzeenean",
       "sizeTick": "{{size}} px",
       "aboutSize": "Miniaturen tamainari buruz",
-      "sizeDescription": "Zenbat eta tamaina handiagoa, orduan eta handiago erakusten dira miniaturak, baina denbora gehiago behar da horiek sortzeko eta leku gehiago hartzen dute miniaturen cachean.",
+      "sizeDescription": "Alboko barrak eta mapak bakoitzak bere tamainan erakusten ditu miniaturak, eta aplikazioak miniatura bakarra sortzen du argazki bakoitzeko, bi tamainetatik handienean. Zenbat eta tamaina handiagoa, orduan eta handiago erakusten dira miniaturak, baina denbora gehiago behar da horiek sortzeko eta leku gehiago hartzen dute miniaturen cachean.",
       "fast": "Lehenetsi aplikazioaren errendimendua",
       "fastDescription": "Fitxategi batek, JPEG edo PNG batek adibidez, miniatura bat badu jada, dagoen bezala erakusten da. Miniaturarik ez duen fitxategi baterako soilik sortzen da miniatura bat, 400 pixel alde luzeenean dituena."
     },

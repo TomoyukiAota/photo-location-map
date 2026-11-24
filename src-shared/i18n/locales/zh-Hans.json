@@ -247,10 +247,12 @@
       "highQuality": "缩略图画质优先",
       "highQualityDescription": "始终从照片文件生成缩略图。",
       "size": "缩略图尺寸",
+      "sidebarSize": "边栏",
+      "mapSize": "地图",
       "sizeValue": "长边 {{size}} 像素",
       "sizeTick": "{{size}} px",
       "aboutSize": "关于缩略图尺寸",
-      "sizeDescription": "尺寸越大，缩略图显示得越大，但生成所需时间越长，在缩略图缓存中占用的空间也越多。",
+      "sizeDescription": "边栏和地图各自以自己的尺寸显示缩略图，应用为每张照片只生成一张缩略图，采用两个尺寸中较大的那个。尺寸越大，缩略图显示得越大，但生成所需时间越长，在缩略图缓存中占用的空间也越多。",
       "fast": "应用性能优先",
       "fastDescription": "如果 JPEG 或 PNG 等文件本身带有缩略图，则直接显示。仅在其他情况下才生成长边 400 像素的缩略图。"
     },

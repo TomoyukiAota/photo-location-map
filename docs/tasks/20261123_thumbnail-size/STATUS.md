@@ -1,7 +1,8 @@
 # The size of the thumbnails, chosen by the user: status
 
 Investigated and proposed on 2026-11-23; the owner chose the design on 2026-11-24, and it was implemented then ("What
-the owner chose" and "What was built", at the end).
+the owner chose" and "What was built", at the end). On 2026-11-25, the sidebar and the map got a size each ("A size
+for the sidebar and one for the map", the last section).
 
 ## What was asked
 
@@ -329,3 +330,31 @@ Once the slider was merged, the owner asked for these, from screenshots of the t
   slider has (بكسل).
 - **The choices' texts are as dark as the tab's others**: Angular Material's theme gives a radio button's label 87%
   black and letters 0.25 pixels apart (0.0178571429em), with which the choices looked paler, in Japanese the most.
+
+## A size for the sidebar and one for the map (2026-11-25)
+
+The owner asked for the sizes of the thumbnails in the sidebar and on the map to be chosen apart: at "Prefer app
+performance" neither can be chosen, and at "Prefer thumbnail quality" each has a slider. The owner asked what the
+session thought of it; the session agreed, with one thumbnail made of each photo, at the larger of the two sizes.
+
+- **The settings**: `sidebarThumbnailSize` and `mapThumbnailSize` (`UserSettings/SidebarThumbnailSize` and
+  `UserSettings/MapThumbnailSize`), 400 to 1,000 in steps of 100, 400 by default each. The one size before them,
+  `UserSettings/ThumbnailSize`, was never in a release (v1.13.0 is older than #812), so neither reads it.
+- **What is made**: one thumbnail of each photo, at the larger of the two sizes (`madeThumbnailLongerSide`), which the
+  place of the smaller size shows smaller. A thumbnail of each size would take twice the time and the cache, which
+  keeps one file a photo (above). A new size changes the box of its place at once; the thumbnails are made again only
+  when the larger of the two sizes changes, or the quality does (`ThumbnailSizeService.follow()`).
+- **The box**: two CSS custom properties on the application's root element, `--plm-thumbnail-box-sidebar` and
+  `--plm-thumbnail-box-map`, which the viewer's styles take as its `--plm-thumbnail-box` by its place
+  (`data-place`): still nothing of the sizes is bound in each viewer. A cluster's popup shows its chosen photo in the
+  map's box, as a marker's popup does, and its tiles keep theirs. The rows kept at the top of the folder tree measure
+  a photo's row again when the sidebar's box changes.
+- **The tab**: the heading "Thumbnail size", with the button of the note at its end, then a row for each place: its
+  name, "Sidebar" or "Map", beside its slider, with the sizes under the slider. A row that does not fit puts its
+  slider under the name, as the row of the one slider did. Each name is in a cell that the other place's name widens,
+  unseen, so that the sliders start together in every language: in a grid's column, the rows could not wrap by
+  themselves, and a breakpoint would be one width for the names of every language. A screen reader reads a slider by
+  the heading and its place's name. The note says first that each place shows the thumbnails at its own size, and
+  that one thumbnail of each photo is made, at the larger of the two.
+- **The sidebar**: where the box is wider than the sidebar, the row scrolls sideways, as it did before. The owner
+  chose to keep that rather than shrink the box to the sidebar's width.

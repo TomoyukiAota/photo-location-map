@@ -95,7 +95,8 @@ export class SettingsDialogComponent {
     const settings = this.userSettingsToBeSaved();
     const showStatusBarChanged = settings.showStatusBar !== currentUserSettings.showStatusBar;
     const thumbnailSettingsChanged = settings.thumbnailQuality !== currentUserSettings.thumbnailQuality
-      || settings.thumbnailSize !== currentUserSettings.thumbnailSize;
+      || settings.sidebarThumbnailSize !== currentUserSettings.sidebarThumbnailSize
+      || settings.mapThumbnailSize !== currentUserSettings.mapThumbnailSize;
     const stickyFolderRowsChanged = settings.stickyFolderRowsMaximum !== currentUserSettings.stickyFolderRowsMaximum
       || settings.stickyFolderRowsLeftOut !== currentUserSettings.stickyFolderRowsLeftOut;
     return showStatusBarChanged || thumbnailSettingsChanged || stickyFolderRowsChanged || this.isAppRestartRequired();
@@ -138,7 +139,8 @@ export class SettingsDialogComponent {
       this.userSettingsToBeSaved.update(settings => ({
         ...settings,
         thumbnailQuality: changed.thumbnailQuality,
-        thumbnailSize: changed.thumbnailSize,
+        sidebarThumbnailSize: changed.sidebarThumbnailSize,
+        mapThumbnailSize: changed.mapThumbnailSize,
       }));
     });
     settingsChangedService.dateTimeSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
@@ -170,7 +172,7 @@ export class SettingsDialogComponent {
     } else {
       saveUserSetting(this.userSettingsToBeSaved());
       // Applies at once, as saving has just set it in currentUserSettings: the thumbnails of the opened folder are
-      // shown in their new box, and made again at their new quality and size.
+      // shown in the new box of each place, and made again at their new quality, or the new larger of the two sizes.
       if (this.thumbnailSizeService.follow()) {
         void this.heifThumbnailService.applyThumbnailSettings();
         void this.jpegPngThumbnailService.applySettings();

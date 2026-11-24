@@ -247,10 +247,12 @@
       "highQuality": "Voorrang aan de kwaliteit van miniaturen",
       "highQualityDescription": "Miniaturen worden altijd aangemaakt uit de fotobestanden.",
       "size": "Formaat van miniaturen",
+      "sidebarSize": "Zijbalk",
+      "mapSize": "Kaart",
       "sizeValue": "{{size}} pixels aan de langste zijde",
       "sizeTick": "{{size}} px",
       "aboutSize": "Over het formaat van miniaturen",
-      "sizeDescription": "Hoe groter het formaat, hoe groter de miniaturen worden getoond, maar hoe langer het aanmaken duurt en hoe meer ruimte ze innemen in de cache voor miniaturen.",
+      "sizeDescription": "De zijbalk en de kaart tonen de miniaturen elk op hun eigen formaat, en de app maakt van elke foto één miniatuur, op het grootste van de twee formaten. Hoe groter het formaat, hoe groter de miniaturen worden getoond, maar hoe langer het aanmaken duurt en hoe meer ruimte ze innemen in de cache voor miniaturen.",
       "fast": "Voorrang aan de prestaties van de app",
       "fastDescription": "Als een bestand, zoals een JPEG of PNG, al een miniatuur bevat, wordt die ongewijzigd getoond. Alleen voor een bestand zonder miniatuur wordt er een aangemaakt, van 400 pixels aan de langste zijde."
     },
