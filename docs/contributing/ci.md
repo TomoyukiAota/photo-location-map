@@ -72,5 +72,6 @@ A push or pull request that changes only documents (the Markdown files and the
 document folders of `docs/`, `README.md`, `AGENTS.md`, `LICENSE` and
 `.github/ISSUE_TEMPLATE/`, as listed in
 [`.github/ci-filters.yml`](../../.github/ci-filters.yml)) skips the tests. The
-website, `docs/index.html` and `docs/github-pages/`, is not a document: CI
-checks its texts and its layout.
+website is not a document: `docs/index.html`, the landing page in each language
+(`docs/<code>/index.html`), `docs/github-pages/`, `docs/docs-resources/` and
+`docs/sitemap.xml`. CI checks its texts and its layout.
