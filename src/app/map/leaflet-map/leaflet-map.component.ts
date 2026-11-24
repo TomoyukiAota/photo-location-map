@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, Type, effect, untracked, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as turf from '@turf/turf';
-import { Control, LayersControlEvent, LeafletEvent, Map as LeafletMap, Marker, Popup, PopupEvent } from 'leaflet';
+import { Control, LayersControlEvent, LeafletEvent, LeafletMouseEvent, Map as LeafletMap, Marker, Popup, PopupEvent } from 'leaflet';
 import throttle from 'lodash-es/throttle.js';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
@@ -22,6 +22,7 @@ import { MapDateService } from './dated-layers/map-date.service';
 import { createDivIconHtml } from './div-icon';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
+import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 import { RegionInfoComponent } from './region-info/region-info.component';
 import { ClusteredMarker, viewToReveal } from './view-to-reveal';
@@ -88,6 +89,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private regionInfoContent: ComponentRef<RegionInfoComponent>;
   // The viewer of each cluster whose popup has been opened on this map, which the cluster's popup shows again.
   private clusterViewers = new WeakMap<object, ComponentRef<PhotoClusterViewerComponent>>();
+  // The popup that is open on the map, and the one that the clicks of a double-click closed, which the double-click
+  // opens again (configurePopups()).
+  private popupOpen: Popup | null = null;
+  private readonly popupClosedByDoubleClick = new PopupClosedByDoubleClick<Popup>();
   private photos: Photo[] = [];
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
   // What is needed to reveal a photo once the map shows it. The effect that asks the map to render the pinned photos
@@ -213,6 +218,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
    */
   private removeMarkers(): void {
     this.map?.closePopup();
+    this.popupClosedByDoubleClick.forget();
     if (this.markerClusterGroup)
       this.map.removeLayer(this.markerClusterGroup);
     this.markerClusterGroup = null;
@@ -247,11 +253,58 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private initializeMap(): void {
     this.map = L.map(this.mapContainer().nativeElement, {zoomControl: false}).setView([0, 0], 2);
+    this.configurePopups();
     this.configureAttribution();
     this.configureScale();
     this.configureZoom();
     this.configureBaseLayer();
     this.configureRegionSelector();
+  }
+
+  /**
+   * Keeps the popup that is open through a zoom of the map, however the map zooms: the popup stays as it is, where it
+   * is, with what it shows. It closes as before: by its close button, a click on the map, Escape, another popup, or
+   * other photos pinned.
+   * TL;DR: A zoom closed the popup of a photo, whose marker Leaflet.markercluster takes off the map and puts back.
+   * Details:
+   * - A marker's popup stays open where its photo is while a zoom puts the marker into a cluster, rather than closing
+   *   or going to the cluster's place, and the marker comes back under it at the zoom that takes it out again
+   *   (keepPopupThroughZoom()).
+   * - A cluster's popup stays where the cluster was, with the photo chosen in it, while a zoom splits the cluster into
+   *   markers or puts it into a larger cluster, rather than becoming the popup of the chosen photo's marker, which
+   *   would change what it shows. Leaflet does not close it, as it is opened on the map at the cluster's place, not
+   *   bound to the cluster (showPopupForMarkerCluster()).
+   * - The first click of a double-click closes the popup, as any click on the map does, and the double-click, which
+   *   zooms the map, opens it again (PopupClosedByDoubleClick). These listeners come before those of any popup, so that
+   *   a click is seen before the popup closes at it.
+   */
+  private configurePopups(): void {
+    this.map.on('popupopen', (event: PopupEvent) => {
+      this.popupOpen = event.popup;
+    });
+    this.map.on('popupclose', (event: PopupEvent) => {
+      if (event.popup === this.popupOpen)
+        this.popupOpen = null;
+    });
+    this.map.on('preclick', (event: LeafletMouseEvent) =>
+      this.popupClosedByDoubleClick.clicked(this.popupOpen, event.originalEvent.detail));
+    // A double-click that does not zoom the map, as when Leaflet-Geoman is set to finish a shape there, is two clicks.
+    this.map.on('dblclick', () => {
+      const popup = this.popupClosedByDoubleClick.doubleClicked();
+      if (popup && this.map.doubleClickZoom.enabled())
+        this.openPopupAgain(popup);
+    });
+  }
+
+  /**
+   * Opens the popup again as it was, without Leaflet's pan to bring it into view, which would move the map while it
+   * zooms.
+   */
+  private openPopupAgain(popup: Popup): void {
+    const { autoPan } = popup.options;
+    popup.options.autoPan = false;
+    popup.openOn(this.map);
+    popup.options.autoPan = autoPan;
   }
 
   private configureAttribution(): void {
@@ -546,6 +599,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       viewer ??= this.createMarkerContent(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
       return viewer.location.nativeElement as HTMLElement;
     });
+    keepPopupThroughZoom(marker);
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
     marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
     (marker.options as any).photo = photo;
