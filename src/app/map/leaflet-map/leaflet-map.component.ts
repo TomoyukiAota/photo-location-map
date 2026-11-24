@@ -542,7 +542,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     );
     // A function, which Leaflet calls when the popup opens, so that the content is made only for the photos shown.
     // The popup shows the same component when it opens again. As wide as its content, as a cluster's popup is:
-    // Leaflet's maxWidth, of 300 pixels by default, left the larger thumbnails (ThumbnailSizeService) outside it.
+    // Leaflet's maxWidth, of 300 pixels by default, left the larger thumbnails (ThumbnailSizeService) outside it. The
+    // content is no wider than the map leaves room for, and wraps the photo's name (photo-info-viewer.component.scss).
     let viewer: ComponentRef<PhotoInfoViewerComponent> | undefined;
     marker.bindPopup(() => {
       viewer ??= this.createMarkerContent(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
