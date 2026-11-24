@@ -20,6 +20,7 @@ import { addEachMarker } from './add-each-marker';
 import { DatedLayers } from './dated-layers/dated-layers';
 import { MapDateService } from './dated-layers/map-date.service';
 import { createDivIconHtml } from './div-icon';
+import { addMapFullScreenControl } from './full-screen/map-full-screen-control';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
@@ -257,8 +258,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.configureAttribution();
     this.configureScale();
     this.configureZoom();
+    addMapFullScreenControl(this.map, this.leafletContentService);
     this.configureBaseLayer();
     this.configureRegionSelector();
+    this.layOutPopupAtEachSize();
   }
 
   /**
@@ -593,12 +596,14 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       }
     );
     // A function, which Leaflet calls when the popup opens, so that the content is made only for the photos shown.
-    // The popup shows the same component when it opens again.
+    // The popup shows the same component when it opens again. As wide as its content, as a cluster's popup is:
+    // Leaflet's maxWidth, of 300 pixels by default, left the larger thumbnails (ThumbnailSizeService) outside it. The
+    // content is no wider than the map leaves room for, and wraps the photo's name (photo-info-viewer.component.scss).
     let viewer: ComponentRef<PhotoInfoViewerComponent> | undefined;
     marker.bindPopup(() => {
       viewer ??= this.createMarkerContent(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
       return viewer.location.nativeElement as HTMLElement;
-    });
+    }, { maxWidth: 100000 });
     keepPopupThroughZoom(marker);
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
     marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
@@ -619,11 +624,38 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
    * a photo that the map renders alone, or reveals, rather than for one that a click on a marker opens, where the map
    * would move under the pointer. Based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548,
    * without the animation of its pan, which does not look good.
+   * TL;DR: A popup too high for that ends 5 pixels below the map's top edge instead, as far as Leaflet keeps a popup
+   * that it pans to (autoPanPadding).
+   * Details: The point centered is half the popup's height above its marker, while the popup stands some 50 pixels above
+   * its marker. A popup of the larger thumbnails, which takes nearly all the map's height (photo-info-viewer.component.scss),
+   * began above the map's top edge.
    */
   private centerOnPopup(popup: Popup) {
     const px = this.map.project(popup.getLatLng());          // find the pixel location on the map where the popup anchor is
     px.y -= popup.getElement().clientHeight/2;               // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
     this.map.panTo(this.map.unproject(px),{animate: false}); // pan to new center
+    const pastTop = this.map.getContainer().getBoundingClientRect().top + 5 - popup.getElement().getBoundingClientRect().top;
+    if (pastTop > 0)
+      this.map.panBy([0, -pastTop], {animate: false});
+  }
+
+  /**
+   * Lays the open popup out again at each new size of the map, whose room its thumbnail takes
+   * (photo-info-viewer.component.scss): its width, and its place over its marker.
+   * TL;DR: Only Leaflet's own steps that lay a popup out and place it, not Popup.update().
+   * Details: Leaflet sets a popup's width when it lays the popup out, as wide as its content is then: a thumbnail that
+   * grew with the map would run past its edge. Popup.update() does that too, but also puts the content in again, which
+   * scrolls the tiles of a cluster's popup back to their top, and pans the map to the popup, which would move the map
+   * at each step of a gutter's drag and bring back a popup left out of view. The steps are not Leaflet's API.
+   */
+  private layOutPopupAtEachSize(): void {
+    this.map.on('resize', () => this.map.eachLayer(layer => {
+      if (!(layer instanceof L.Popup))
+        return;
+      const popup = layer as Popup & { _updateLayout(): void, _updatePosition(): void };
+      popup._updateLayout();
+      popup._updatePosition();
+    }));
   }
 
   //#region --- Reveal ---

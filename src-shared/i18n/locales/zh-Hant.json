@@ -116,6 +116,8 @@
     "zoomIn": "放大",
     "zoomOut": "縮小",
     "layers": "圖層",
+    "fullScreen": "全螢幕",
+    "exitFullScreen": "結束全螢幕",
     "photosInRegions": "區域內的照片：{{count}} 張",
     "selectPhotos": "選取照片",
     "setRegionByRectangle": "以矩形設定區域",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在為 HEIF 檔案產生縮圖...",
-    "fasterInSettings": "若要更快顯示，<settingsLink>請在設定中選擇「速度優先」</settingsLink>。",
+    "fasterInSettings": "若要更快顯示，<settingsLink>請在設定中選擇「應用程式效能優先」</settingsLink>。",
     "completed": "HEIF 檔案的縮圖已產生完畢。",
     "finishedWithErrors": "HEIF 檔案縮圖的產生已結束，但發生了錯誤。",
     "showDetails": "顯示詳細資訊",
@@ -241,15 +243,16 @@
       "example": "範例"
     },
     "thumbnails": {
-      "title": "縮圖",
-      "description": "請選擇縮圖要優先考慮畫質還是速度。",
-      "highQuality": "高畫質",
-      "highQualityDescription": "從整張照片按下方選擇的尺寸產生。產生之前，會顯示照片中儲存的小縮圖。首次開啟資料夾時產生需要一些時間；在圖形硬體無法解碼 HEVC 的電腦上，HEIF 檔案的產生需要更長時間。",
-      "size": "尺寸",
+      "title": "縮圖畫質與應用程式效能",
+      "highQuality": "縮圖畫質優先",
+      "highQualityDescription": "一律從照片檔案產生縮圖。",
+      "size": "縮圖尺寸",
       "sizeValue": "長邊 {{size}} 像素",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "關於縮圖尺寸",
       "sizeDescription": "尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
-      "fast": "速度優先",
-      "fastDescription": "立即顯示照片中儲存的小縮圖。畫質較低：大多數 JPEG 照片為 160 × 120 像素，用 iPhone 拍攝的 1200 萬像素照片為 320 × 240 像素。"
+      "fast": "應用程式效能優先",
+      "fastDescription": "如果 JPEG 或 PNG 等檔案本身帶有縮圖，則直接顯示。僅在其他情況下才產生長邊 400 像素的縮圖。"
     },
     "os": {
       "title": "檔案總管的右鍵選單",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "縮圖",
-        "description": "此應用程式產生的縮圖快取位於「縮圖」分頁中。",
+        "title": "縮圖快取",
+        "description": "縮圖快取的設定位於「縮圖」分頁中。",
         "open": "開啟「縮圖」分頁"
       },
       "map": {
-        "title": "地圖",
-        "description": "在地圖上檢視過的地點的 Esri World Imagery Wayback 影像拍攝日期會被快取，最多 {{max}} 個地點，以便下次立即顯示。",
+        "title": "地圖快取",
+        "description": "為了提高速度，使用 Esri World Imagery Wayback 顯示過的地點的影像拍攝日期會被快取，最多 {{max}} 個地點。",
         "count": "已快取的地點：{{count}} 個",
-        "delete": "刪除地圖快取"
+        "delete": "刪除地圖快取",
+        "confirmDelete": "要刪除地圖快取嗎？"
       },
       "all": {
         "title": "所有快取",
@@ -311,7 +315,8 @@
       "actualSize": "實際大小",
       "zoomIn": "放大",
       "zoomOut": "縮小",
-      "toggleFullScreen": "切換全螢幕"
+      "toggleFullScreen": "切換全螢幕",
+      "mapFullScreen": "地圖全螢幕"
     },
     "selection": {
       "title": "選取",

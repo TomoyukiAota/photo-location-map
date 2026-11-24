@@ -116,6 +116,8 @@
     "zoomIn": "Mărește",
     "zoomOut": "Micșorează",
     "layers": "Straturi",
+    "fullScreen": "Ecran complet",
+    "exitFullScreen": "Ieși din ecranul complet",
     "photosInRegions": "Poze în zone: {{count}}",
     "selectPhotos": "Selectează pozele",
     "setRegionByRectangle": "Stabilește o zonă cu un dreptunghi",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Se creează miniaturile fișierelor HEIF...",
-    "fasterInSettings": "Pentru a le afișa mai devreme, <settingsLink>alegeți miniaturile rapide în setări</settingsLink>.",
+    "fasterInSettings": "Pentru a le afișa mai devreme, <settingsLink>alegeți „Prioritate performanței aplicației” în setări</settingsLink>.",
     "completed": "Miniaturile fișierelor HEIF au fost create.",
     "finishedWithErrors": "Crearea miniaturilor fișierelor HEIF s-a încheiat cu erori.",
     "showDetails": "Afișează detaliile",
@@ -241,15 +243,16 @@
       "example": "Exemplu"
     },
     "thumbnails": {
-      "title": "Miniaturi",
-      "description": "Alegeți dacă miniaturile să fie create pentru calitate sau pentru viteză.",
-      "highQuality": "Calitate înaltă",
-      "highQualityDescription": "Create din întreaga fotografie, la dimensiunea aleasă mai jos. Până atunci se afișează miniatura mică salvată în fotografie. Crearea lor durează la prima deschidere a unui dosar, și mai mult pentru fișierele HEIF pe un computer al cărui hardware grafic nu poate decoda HEVC.",
-      "size": "Dimensiune",
+      "title": "Calitatea miniaturilor și performanța aplicației",
+      "highQuality": "Prioritate calității miniaturilor",
+      "highQualityDescription": "Miniaturile sunt create întotdeauna din fișierele fotografiilor.",
+      "size": "Dimensiunea miniaturilor",
       "sizeValue": "{{size}} de pixeli pe latura mai lungă",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Despre dimensiunea miniaturilor",
       "sizeDescription": "Cu cât dimensiunea este mai mare, cu atât miniaturile sunt afișate mai mari, dar crearea lor durează mai mult și ocupă mai mult spațiu în cache-ul pentru miniaturi.",
-      "fast": "Rapid",
-      "fastDescription": "Miniatura mică salvată în fotografie, afișată imediat. Este mai puțin clară: 160 × 120 de pixeli în majoritatea fotografiilor JPEG și 320 × 240 de pixeli pentru o fotografie de 12 megapixeli făcută cu un iPhone."
+      "fast": "Prioritate performanței aplicației",
+      "fastDescription": "Când un fișier, de exemplu un JPEG sau PNG, conține deja o miniatură, aceasta se afișează așa cum este. O miniatură de 400 de pixeli pe latura mai lungă se creează doar pentru un fișier care nu are una."
     },
     "os": {
       "title": "Meniul contextual din Explorer",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturi",
-        "description": "Cache-ul miniaturilor create de această aplicație se află în fila „Miniaturi”.",
+        "title": "Cache pentru miniaturi",
+        "description": "Setările cache-ului pentru miniaturi se află în fila „Miniaturi”.",
         "open": "Deschide fila „Miniaturi”"
       },
       "map": {
-        "title": "Hartă",
-        "description": "Datele la care au fost realizate imaginile Esri World Imagery Wayback sunt păstrate în cache pentru cel mult {{max}} de locuri văzute pe hartă, ca să fie afișate imediat data viitoare.",
+        "title": "Cache pentru hartă",
+        "description": "Pentru o funcționare mai rapidă, datele la care au fost realizate imaginile sunt păstrate în cache pentru cel mult {{max}} de locuri afișate cu Esri World Imagery Wayback.",
         "count": "Locuri în cache: {{count}}",
-        "delete": "Șterge cache-ul hărții"
+        "delete": "Șterge cache-ul hărții",
+        "confirmDelete": "Doriți să ștergeți cache-ul hărții?"
       },
       "all": {
         "title": "Toate cache-urile",
@@ -311,7 +315,8 @@
       "actualSize": "Dimensiune reală",
       "zoomIn": "Mărește",
       "zoomOut": "Micșorează",
-      "toggleFullScreen": "Activează/dezactivează ecranul complet"
+      "toggleFullScreen": "Activează/dezactivează ecranul complet",
+      "mapFullScreen": "Harta pe ecran complet"
     },
     "selection": {
       "title": "Selecție",

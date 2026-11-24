@@ -40,6 +40,14 @@ describe('the renderer\'s requests for settings (in main process)', () => {
     assert.deepStrictEqual(JSON.parse(fs.readFileSync(file, 'utf8')), { DateFormat: 'MM/DD/YYYY' });
   });
 
+  it('writes the sizes of the home view\'s panes, which the renderer reads at its next launch', async () => {
+    await writeFromRenderer(UserDataStoragePath.HomeLayout.SidebarWidth, '312');
+    await writeFromRenderer(UserDataStoragePath.HomeLayout.ChartHeight, '');
+    const snapshot = rendererStorageSnapshot(files);
+    assert.strictEqual(snapshot['HomeLayout/SidebarWidth'], '312');
+    assert.strictEqual(snapshot['HomeLayout/ChartHeight'], '');
+  });
+
   it('refuses the main process\'s own settings, other paths and values that are not strings', () => {
     for (const storagePath of [UserDataStoragePath.Analytics.UserId, UserDataStoragePath.History.LaunchCount,
       UserDataStoragePath.PhotoDataViewer.WindowWidth, ['..', 'UserSettings', 'DateFormat'], 'UserSettings/DateFormat',

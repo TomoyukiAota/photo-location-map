@@ -116,6 +116,8 @@
     "zoomIn": "Povečaj",
     "zoomOut": "Pomanjšaj",
     "layers": "Plasti",
+    "fullScreen": "Celozaslonski način",
+    "exitFullScreen": "Izhod iz celozaslonskega načina",
     "photosInRegions": "Fotografije na območjih: {{count}}",
     "selectPhotos": "Izberi fotografije",
     "setRegionByRectangle": "Določi območje s pravokotnikom",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Ustvarjanje sličic za datoteke HEIF...",
-    "fasterInSettings": "Če jih želite prikazati prej, <settingsLink>v nastavitvah izberite hitre sličice</settingsLink>.",
+    "fasterInSettings": "Če jih želite prikazati prej, <settingsLink>v nastavitvah izberite »Prednost zmogljivosti aplikacije«</settingsLink>.",
     "completed": "Sličice za datoteke HEIF so ustvarjene.",
     "finishedWithErrors": "Ustvarjanje sličic za datoteke HEIF se je končalo z napakami.",
     "showDetails": "Prikaži podrobnosti",
@@ -241,15 +243,16 @@
       "example": "Primer"
     },
     "thumbnails": {
-      "title": "Sličice",
-      "description": "Izberite, ali naj se sličice ustvarjajo s poudarkom na kakovosti ali na hitrosti.",
-      "highQuality": "Visoka kakovost",
-      "highQualityDescription": "Ustvarijo se iz celotne fotografije, v velikosti, izbrani spodaj. Do takrat je prikazana majhna sličica, shranjena v fotografiji. Njihovo ustvarjanje traja nekaj časa, ko se mapa odpre prvič, za datoteke HEIF pa še dlje v računalniku, katerega grafična strojna oprema ne zmore dekodirati HEVC.",
-      "size": "Velikost",
+      "title": "Kakovost sličic in zmogljivost aplikacije",
+      "highQuality": "Prednost kakovosti sličic",
+      "highQualityDescription": "Sličice se vedno ustvarijo iz datotek fotografij.",
+      "size": "Velikost sličic",
       "sizeValue": "{{size}} slikovnih pik na daljši stranici",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "O velikosti sličic",
       "sizeDescription": "Večja ko je velikost, večje so prikazane sličice, vendar njihovo ustvarjanje traja dlje in zasedejo več prostora v predpomnilniku sličic.",
-      "fast": "Hitro",
-      "fastDescription": "Majhna sličica, shranjena v fotografiji, je prikazana takoj. Je manj ostra: 160 × 120 slikovnih pik v večini fotografij JPEG in 320 × 240 slikovnih pik pri 12-megapikselski fotografiji, posneti z iPhonom."
+      "fast": "Prednost zmogljivosti aplikacije",
+      "fastDescription": "Ko datoteka, na primer JPEG ali PNG, že vsebuje sličico, je ta prikazana taka, kot je. Sličica s 400 slikovnimi pikami na daljši stranici se ustvari samo za datoteko, ki je nima."
     },
     "os": {
       "title": "Priročni meni Raziskovalca",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Sličice",
-        "description": "Predpomnilnik sličic, ki jih ustvari ta aplikacija, je na zavihku »Sličice«.",
+        "title": "Predpomnilnik sličic",
+        "description": "Nastavitve predpomnilnika sličic so na zavihku »Sličice«.",
         "open": "Odpri zavihek »Sličice«"
       },
       "map": {
-        "title": "Zemljevid",
-        "description": "Datumi posnetkov Esri World Imagery Wayback se shranijo v predpomnilnik za največ {{max}} krajev, ogledanih na zemljevidu, da so naslednjič takoj prikazani.",
+        "title": "Predpomnilnik zemljevida",
+        "description": "Zaradi hitrosti se datumi posnetkov shranijo v predpomnilnik za največ {{max}} krajev, prikazanih z Esri World Imagery Wayback.",
         "count": "Kraji v predpomnilniku: {{count}}",
-        "delete": "Izbriši predpomnilnik zemljevida"
+        "delete": "Izbriši predpomnilnik zemljevida",
+        "confirmDelete": "Ali želite izbrisati predpomnilnik zemljevida?"
       },
       "all": {
         "title": "Vsi predpomnilniki",
@@ -311,7 +315,8 @@
       "actualSize": "Dejanska velikost",
       "zoomIn": "Povečaj",
       "zoomOut": "Pomanjšaj",
-      "toggleFullScreen": "Vklopi/izklopi celozaslonski način"
+      "toggleFullScreen": "Vklopi/izklopi celozaslonski način",
+      "mapFullScreen": "Zemljevid v celozaslonskem načinu"
     },
     "selection": {
       "title": "Izbor",

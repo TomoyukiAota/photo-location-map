@@ -116,6 +116,8 @@
     "zoomIn": "Uvećaj",
     "zoomOut": "Umanji",
     "layers": "Slojevi",
+    "fullScreen": "Ceo ekran",
+    "exitFullScreen": "Izađi iz prikaza preko celog ekrana",
     "photosInRegions": "Fotografije u oblastima: {{count}}",
     "selectPhotos": "Izaberi fotografije",
     "setRegionByRectangle": "Zadaj oblast pravougaonikom",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Pravljenje sličica za datoteke HEIF...",
-    "fasterInSettings": "Da biste ih prikazali ranije, <settingsLink>izaberite brze sličice u podešavanjima</settingsLink>.",
+    "fasterInSettings": "Da biste ih prikazali ranije, <settingsLink>izaberite „Prednost performansama aplikacije“ u podešavanjima</settingsLink>.",
     "completed": "Sličice za datoteke HEIF su napravljene.",
     "finishedWithErrors": "Pravljenje sličica za datoteke HEIF završeno je sa greškama.",
     "showDetails": "Prikaži detalje",
@@ -241,15 +243,16 @@
       "example": "Primer"
     },
     "thumbnails": {
-      "title": "Sličice",
-      "description": "Izaberite da li se sličice prave s naglaskom na kvalitet ili na brzinu.",
-      "highQuality": "Visok kvalitet",
-      "highQualityDescription": "Prave se od cele fotografije, u veličini izabranoj ispod. Do tada se prikazuje mala sličica sačuvana u fotografiji. Njihovo pravljenje traje neko vreme kada se fascikla otvori prvi put, a duže za datoteke HEIF na računaru čiji grafički hardver ne može da dekodira HEVC.",
-      "size": "Veličina",
+      "title": "Kvalitet sličica i performanse aplikacije",
+      "highQuality": "Prednost kvalitetu sličica",
+      "highQualityDescription": "Sličice se uvek prave od datoteka fotografija.",
+      "size": "Veličina sličica",
       "sizeValue": "{{size}} piksela na dužoj stranici",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "O veličini sličica",
       "sizeDescription": "Što je veličina veća, sličice se prikazuju veće, ali njihovo pravljenje traje duže i zauzimaju više prostora u kešu sličica.",
-      "fast": "Brzo",
-      "fastDescription": "Mala sličica sačuvana u fotografiji, prikazana odmah. Manje je oštra: 160 × 120 piksela u većini fotografija JPEG i 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhone-om."
+      "fast": "Prednost performansama aplikacije",
+      "fastDescription": "Kada datoteka, na primer JPEG ili PNG, već sadrži sličicu, ona se prikazuje onakva kakva jeste. Sličica od 400 piksela na dužoj stranici pravi se samo za datoteku koja je nema."
     },
     "os": {
       "title": "Kontekstualni meni Istraživača datoteka",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Sličice",
-        "description": "Keš sličica koje pravi ova aplikacija nalazi se na kartici „Sličice“.",
+        "title": "Keš sličica",
+        "description": "Podešavanja keša sličica nalaze se na kartici „Sličice“.",
         "open": "Otvori karticu „Sličice“"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Datumi snimanja snimaka Esri World Imagery Wayback čuvaju se u kešu za najviše {{max}} mesta pregledanih na mapi, da bi se sledeći put odmah prikazali.",
+        "title": "Keš mape",
+        "description": "Radi brzine, datumi snimanja snimaka čuvaju se u kešu za najviše {{max}} mesta prikazanih pomoću Esri World Imagery Wayback.",
         "count": "Mesta u kešu: {{count}}",
-        "delete": "Izbriši keš mape"
+        "delete": "Izbriši keš mape",
+        "confirmDelete": "Želite li da izbrišete keš mape?"
       },
       "all": {
         "title": "Svi keševi",
@@ -311,7 +315,8 @@
       "actualSize": "Stvarna veličina",
       "zoomIn": "Uvećaj",
       "zoomOut": "Umanji",
-      "toggleFullScreen": "Uključi/isključi ceo ekran"
+      "toggleFullScreen": "Uključi/isključi ceo ekran",
+      "mapFullScreen": "Mapa preko celog ekrana"
     },
     "selection": {
       "title": "Izbor",

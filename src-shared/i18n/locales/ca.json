@@ -116,6 +116,8 @@
     "zoomIn": "Amplia",
     "zoomOut": "Redueix",
     "layers": "Capes",
+    "fullScreen": "Pantalla completa",
+    "exitFullScreen": "Surt de la pantalla completa",
     "photosInRegions": "Fotos a les regions: {{count}}",
     "selectPhotos": "Selecciona les fotos",
     "setRegionByRectangle": "Defineix una regió amb un rectangle",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "S’estan generant les miniatures dels fitxers HEIF...",
-    "fasterInSettings": "Per mostrar-les abans, <settingsLink>trieu les miniatures ràpides a la configuració</settingsLink>.",
+    "fasterInSettings": "Per mostrar-les abans, <settingsLink>trieu «Prioritza el rendiment de l’aplicació» a la configuració</settingsLink>.",
     "completed": "S’han generat les miniatures dels fitxers HEIF.",
     "finishedWithErrors": "La generació de miniatures dels fitxers HEIF ha acabat amb errors.",
     "showDetails": "Mostra els detalls",
@@ -241,15 +243,16 @@
       "example": "Exemple"
     },
     "thumbnails": {
-      "title": "Miniatures",
-      "description": "Trieu si les miniatures s’han de generar per a la qualitat o per a la rapidesa.",
-      "highQuality": "Alta qualitat",
-      "highQualityDescription": "Es generen a partir de la foto sencera, amb la mida triada a sota. Fins aleshores, es mostra la miniatura petita desada a la foto. Generar-les porta temps la primera vegada que s’obre una carpeta, i més per als fitxers HEIF en un ordinador que no pot descodificar HEVC amb el maquinari gràfic.",
-      "size": "Mida",
+      "title": "Qualitat de les miniatures i rendiment de l’aplicació",
+      "highQuality": "Prioritza la qualitat de les miniatures",
+      "highQualityDescription": "Les miniatures sempre es generen a partir dels fitxers de les fotos.",
+      "size": "Mida de les miniatures",
       "sizeValue": "{{size}} píxels al costat més llarg",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Sobre la mida de les miniatures",
       "sizeDescription": "Com més gran és la mida, més grans es mostren les miniatures, però més triguen a generar-se i més espai ocupen a la memòria cau de miniatures.",
-      "fast": "Ràpid",
-      "fastDescription": "La miniatura petita desada a la foto, que es mostra de seguida. És menys nítida: 160 × 120 píxels a la majoria de fotos JPEG, i 320 × 240 píxels en una foto de 12 megapíxels feta amb un iPhone."
+      "fast": "Prioritza el rendiment de l’aplicació",
+      "fastDescription": "Quan un fitxer, com ara un JPEG o un PNG, ja conté una miniatura, es mostra tal com és. Només es genera una miniatura de 400 píxels al costat més llarg per als fitxers que no en tenen."
     },
     "os": {
       "title": "Menú contextual de l’Explorador de fitxers",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniatures",
-        "description": "La memòria cau de les miniatures que fa aquesta aplicació és a la pestanya «Miniatures».",
+        "title": "Memòria cau de miniatures",
+        "description": "La configuració de la memòria cau de miniatures és a la pestanya «Miniatures».",
         "open": "Obre la pestanya «Miniatures»"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Les dates en què es van captar les imatges d’Esri World Imagery Wayback es desen a la memòria cau per a un màxim de {{max}} llocs vistos al mapa, perquè es mostrin a l’instant la vegada següent.",
+        "title": "Memòria cau del mapa",
+        "description": "Per més rapidesa, les dates en què es van captar les imatges es desen a la memòria cau per a un màxim de {{max}} llocs mostrats amb Esri World Imagery Wayback.",
         "count": "Llocs a la memòria cau: {{count}}",
-        "delete": "Suprimeix la memòria cau del mapa"
+        "delete": "Suprimeix la memòria cau del mapa",
+        "confirmDelete": "Voleu suprimir la memòria cau del mapa?"
       },
       "all": {
         "title": "Totes les memòries cau",
@@ -311,7 +315,8 @@
       "actualSize": "Mida real",
       "zoomIn": "Amplia",
       "zoomOut": "Redueix",
-      "toggleFullScreen": "Activa o desactiva la pantalla completa"
+      "toggleFullScreen": "Activa o desactiva la pantalla completa",
+      "mapFullScreen": "Mapa a pantalla completa"
     },
     "selection": {
       "title": "Selecció",

@@ -116,6 +116,8 @@
     "zoomIn": "Ampliar",
     "zoomOut": "Reduzir",
     "layers": "Camadas",
+    "fullScreen": "Tela cheia",
+    "exitFullScreen": "Sair da tela cheia",
     "photosInRegions": "Fotos nas áreas: {{count}}",
     "selectPhotos": "Selecionar fotos",
     "setRegionByRectangle": "Definir uma área com um retângulo",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Gerando miniaturas dos arquivos HEIF...",
-    "fasterInSettings": "Para exibi-las mais cedo, <settingsLink>escolha as miniaturas rápidas nas configurações</settingsLink>.",
+    "fasterInSettings": "Para exibi-las mais cedo, <settingsLink>escolha “Priorizar o desempenho do aplicativo” nas configurações</settingsLink>.",
     "completed": "A geração das miniaturas dos arquivos HEIF foi concluída.",
     "finishedWithErrors": "A geração das miniaturas dos arquivos HEIF terminou com erros.",
     "showDetails": "Mostrar detalhes",
@@ -241,15 +243,16 @@
       "example": "Exemplo"
     },
     "thumbnails": {
-      "title": "Miniaturas",
-      "description": "Escolha se as miniaturas são geradas priorizando a qualidade ou a velocidade.",
-      "highQuality": "Alta qualidade",
-      "highQualityDescription": "Geradas a partir da foto inteira, no tamanho escolhido abaixo. Até lá, é exibida a miniatura pequena salva na foto. Gerá-las leva tempo na primeira vez que uma pasta é aberta, e mais ainda para os arquivos HEIF em um computador cujo hardware gráfico não consegue decodificar HEVC.",
-      "size": "Tamanho",
+      "title": "Qualidade das miniaturas e desempenho do aplicativo",
+      "highQuality": "Priorizar a qualidade das miniaturas",
+      "highQualityDescription": "As miniaturas são sempre geradas a partir dos arquivos de foto.",
+      "size": "Tamanho das miniaturas",
       "sizeValue": "{{size}} pixels no lado maior",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Sobre o tamanho das miniaturas",
       "sizeDescription": "Quanto maior o tamanho, maiores as miniaturas são exibidas, mas mais tempo leva para gerá-las e mais espaço elas ocupam no cache de miniaturas.",
-      "fast": "Rápida",
-      "fastDescription": "A miniatura pequena salva na foto, exibida na hora. Ela é menos nítida: 160 × 120 pixels na maioria das fotos JPEG e 320 × 240 pixels em uma foto de 12 megapixels tirada com um iPhone."
+      "fast": "Priorizar o desempenho do aplicativo",
+      "fastDescription": "Quando um arquivo, como um JPEG ou PNG, já contém uma miniatura, ela é exibida como está. Uma miniatura de 400 pixels no lado maior só é gerada para um arquivo que não tem nenhuma."
     },
     "os": {
       "title": "Menu de contexto do Explorador de Arquivos",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturas",
-        "description": "O cache das miniaturas que este aplicativo cria fica na guia “Miniaturas”.",
+        "title": "Cache de miniaturas",
+        "description": "As configurações do cache de miniaturas ficam na guia “Miniaturas”.",
         "open": "Abrir a guia “Miniaturas”"
       },
       "map": {
-        "title": "Mapa",
-        "description": "As datas em que as imagens do Esri World Imagery Wayback foram capturadas ficam no cache para até {{max}} lugares vistos no mapa, para que apareçam na hora da próxima vez.",
+        "title": "Cache do mapa",
+        "description": "Para mais rapidez, as datas em que as imagens foram capturadas ficam no cache para até {{max}} lugares mostrados com o Esri World Imagery Wayback.",
         "count": "Lugares no cache: {{count}}",
-        "delete": "Apagar o cache do mapa"
+        "delete": "Apagar o cache do mapa",
+        "confirmDelete": "Deseja apagar o cache do mapa?"
       },
       "all": {
         "title": "Todos os caches",
@@ -311,7 +315,8 @@
       "actualSize": "Tamanho real",
       "zoomIn": "Ampliar",
       "zoomOut": "Reduzir",
-      "toggleFullScreen": "Ativar/desativar tela cheia"
+      "toggleFullScreen": "Ativar/desativar tela cheia",
+      "mapFullScreen": "Mapa em tela cheia"
     },
     "selection": {
       "title": "Seleção",

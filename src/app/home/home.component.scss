@@ -40,6 +40,24 @@
   }
 }
 
+// The map in full screen (MapFullScreenService): the map alone in the window. The sidebar and the chart are hidden,
+// and so are the gutters (global-styles.scss); the map's panes take the room over the sizes that Split.js gives them,
+// which they have again afterwards.
+.sidebar-and-map-container.map-full-screen {
+  #home-left-sidebar,
+  #home-chart {
+    display: none;
+  }
+
+  #home-right {
+    width: 100% !important;
+  }
+
+  #home-map {
+    height: 100% !important;
+  }
+}
+
 #home-sidebar-upper-pane {
   height: 100%;
   overflow-y: hidden;

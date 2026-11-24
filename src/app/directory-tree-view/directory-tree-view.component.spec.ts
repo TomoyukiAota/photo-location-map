@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 import type { MockInstance } from 'vitest';
+import { MapFullScreenService } from '../map/leaflet-map/full-screen/map-full-screen.service';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { EasedScroll } from '../shared/eased-scroll/eased-scroll';
 import { Photo } from '../shared/model/photo.model';
@@ -227,6 +228,36 @@ describe('DirectoryTreeViewComponent', () => {
 
       expect(tree.isExpanded(b)).toBe(true);
       expect(toMiddle).toHaveBeenCalledExactlyOnceWith(rowOf('photo.jpg'), expect.any(Function), { evenWhenShown: false });
+    });
+
+    it('waits while the map is in full screen, which hides the sidebar, and reveals the last photo asked for when it is shown again', async () => {
+      const mapFullScreen = TestBed.inject(MapFullScreenService);
+      mapFullScreen.enter('button');
+      await fixture.whenStable();
+
+      reveal(other, 'whenNotFullyShown');
+      reveal(photo, 'whenNotFullyShown');
+      await fixture.whenStable();
+      expect(tree.isExpanded(b)).toBe(false);
+      expect(toMiddle).not.toHaveBeenCalled();
+
+      mapFullScreen.leave('escape');
+      await fixture.whenStable();
+      expect(tree.isExpanded(b)).toBe(true);
+      expect(toMiddle).toHaveBeenCalledExactlyOnceWith(rowOf('photo.jpg'), expect.any(Function), { evenWhenShown: false });
+    });
+
+    it('reveals a photo of Reveal in Sidebar, which takes the map out of full screen, once the sidebar is shown again', async () => {
+      const mapFullScreen = TestBed.inject(MapFullScreenService);
+      mapFullScreen.enter('button');
+      await fixture.whenStable();
+
+      mapFullScreen.leave('revealInSidebar');
+      reveal(photo);
+      expect(toMiddle).not.toHaveBeenCalled();
+
+      await fixture.whenStable();
+      expect(toMiddle).toHaveBeenCalledExactlyOnceWith(rowOf('photo.jpg'), expect.any(Function), { evenWhenShown: true });
     });
 
     it('lights its row up once the sidebar has stopped scrolling', async () => {

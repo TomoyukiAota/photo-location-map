@@ -116,6 +116,8 @@
     "zoomIn": "Powiększ",
     "zoomOut": "Pomniejsz",
     "layers": "Warstwy",
+    "fullScreen": "Pełny ekran",
+    "exitFullScreen": "Zamknij pełny ekran",
     "photosInRegions": "Zdjęcia w obszarach: {{count}}",
     "selectPhotos": "Zaznacz zdjęcia",
     "setRegionByRectangle": "Wyznacz obszar prostokątem",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Tworzenie miniaturek plików HEIF...",
-    "fasterInSettings": "Aby wyświetlić je wcześniej, <settingsLink>wybierz szybkie miniaturki w ustawieniach</settingsLink>.",
+    "fasterInSettings": "Aby wyświetlić je wcześniej, <settingsLink>wybierz „Stawiaj na wydajność aplikacji” w ustawieniach</settingsLink>.",
     "completed": "Zakończono tworzenie miniaturek plików HEIF.",
     "finishedWithErrors": "Tworzenie miniaturek plików HEIF zakończyło się z błędami.",
     "showDetails": "Pokaż szczegóły",
@@ -241,15 +243,16 @@
       "example": "Przykład"
     },
     "thumbnails": {
-      "title": "Miniaturki",
-      "description": "Wybierz, czy miniaturki mają być tworzone z myślą o jakości, czy o szybkości.",
-      "highQuality": "Wysoka jakość",
-      "highQualityDescription": "Tworzone z całego zdjęcia, w rozmiarze wybranym poniżej. Do tego czasu wyświetlana jest mała miniaturka zapisana w zdjęciu. Ich tworzenie zajmuje czas przy pierwszym otwarciu folderu, a dłużej w przypadku plików HEIF na komputerze, którego sprzęt graficzny nie potrafi dekodować HEVC.",
-      "size": "Rozmiar",
+      "title": "Jakość miniaturek i wydajność aplikacji",
+      "highQuality": "Stawiaj na jakość miniaturek",
+      "highQualityDescription": "Miniaturki są zawsze tworzone z plików zdjęć.",
+      "size": "Rozmiar miniaturek",
       "sizeValue": "{{size}} pikseli na dłuższym boku",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Informacje o rozmiarze miniaturek",
       "sizeDescription": "Im większy rozmiar, tym większe są wyświetlane miniaturki, ale tym dłużej trwa ich tworzenie i tym więcej miejsca zajmują w pamięci podręcznej miniaturek.",
-      "fast": "Szybkie",
-      "fastDescription": "Mała miniaturka zapisana w zdjęciu, wyświetlana od razu. Jest mniej ostra: 160 × 120 pikseli w większości zdjęć JPEG i 320 × 240 pikseli w przypadku 12-megapikselowego zdjęcia z iPhone’a."
+      "fast": "Stawiaj na wydajność aplikacji",
+      "fastDescription": "Gdy plik, na przykład JPEG lub PNG, zawiera już miniaturkę, jest ona wyświetlana bez zmian. Miniaturka o rozmiarze 400 pikseli na dłuższym boku jest tworzona tylko dla pliku, który jej nie ma."
     },
     "os": {
       "title": "Menu kontekstowe Eksploratora plików",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturki",
-        "description": "Pamięć podręczna miniaturek tworzonych przez aplikację znajduje się na karcie „Miniaturki”.",
+        "title": "Pamięć podręczna miniaturek",
+        "description": "Ustawienia pamięci podręcznej miniaturek znajdują się na karcie „Miniaturki”.",
         "open": "Otwórz kartę „Miniaturki”"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Daty wykonania zdjęć satelitarnych Esri World Imagery Wayback są przechowywane w pamięci podręcznej dla maksymalnie {{max}} miejsc oglądanych na mapie, aby następnym razem wyświetlały się od razu.",
+        "title": "Pamięć podręczna mapy",
+        "description": "Aby przyspieszyć działanie, daty wykonania zdjęć są przechowywane w pamięci podręcznej dla maksymalnie {{max}} miejsc wyświetlonych za pomocą Esri World Imagery Wayback.",
         "count": "Miejsca w pamięci podręcznej: {{count}}",
-        "delete": "Usuń pamięć podręczną mapy"
+        "delete": "Usuń pamięć podręczną mapy",
+        "confirmDelete": "Czy chcesz usunąć pamięć podręczną mapy?"
       },
       "all": {
         "title": "Cała pamięć podręczna",
@@ -311,7 +315,8 @@
       "actualSize": "Rzeczywisty rozmiar",
       "zoomIn": "Powiększ",
       "zoomOut": "Pomniejsz",
-      "toggleFullScreen": "Włącz/wyłącz pełny ekran"
+      "toggleFullScreen": "Włącz/wyłącz pełny ekran",
+      "mapFullScreen": "Mapa na pełnym ekranie"
     },
     "selection": {
       "title": "Zaznaczenie",

@@ -116,6 +116,8 @@
     "zoomIn": "Handitu",
     "zoomOut": "Txikitu",
     "layers": "Geruzak",
+    "fullScreen": "Pantaila osoa",
+    "exitFullScreen": "Irten pantaila osotik",
     "photosInRegions": "Eskualdeetako argazkiak: {{count}}",
     "selectPhotos": "Hautatu argazkiak",
     "setRegionByRectangle": "Zehaztu eskualdea laukizuzen batekin",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF fitxategien miniaturak sortzen...",
-    "fasterInSettings": "Lehenago erakusteko, <settingsLink>aukeratu miniatura azkarrak ezarpenetan</settingsLink>.",
+    "fasterInSettings": "Lehenago erakusteko, <settingsLink>aukeratu «Lehenetsi aplikazioaren errendimendua» ezarpenetan</settingsLink>.",
     "completed": "HEIF fitxategien miniaturak sortu dira.",
     "finishedWithErrors": "HEIF fitxategien miniaturen sorrera erroreekin amaitu da.",
     "showDetails": "Erakutsi xehetasunak",
@@ -241,15 +243,16 @@
       "example": "Adibidea"
     },
     "thumbnails": {
-      "title": "Miniaturak",
-      "description": "Aukeratu miniaturak sortzean kalitateari edo abiadurari eman nahi diozun lehentasuna.",
-      "highQuality": "Kalitate handia",
-      "highQualityDescription": "Argazki osotik sortzen dira, behean aukeratutako tamainan. Bitartean, argazkian gordetako miniatura txikia erakusten da. Denbora behar da horiek sortzeko karpeta bat lehen aldiz irekitzean, eta gehiago HEIF fitxategietarako grafikoen hardwarearekin HEVC deskodetu ezin duen ordenagailu batean.",
-      "size": "Tamaina",
+      "title": "Miniaturen kalitatea eta aplikazioaren errendimendua",
+      "highQuality": "Lehenetsi miniaturen kalitatea",
+      "highQualityDescription": "Miniaturak beti argazki-fitxategietatik sortzen dira.",
+      "size": "Miniaturen tamaina",
       "sizeValue": "{{size}} pixel alde luzeenean",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Miniaturen tamainari buruz",
       "sizeDescription": "Zenbat eta tamaina handiagoa, orduan eta handiago erakusten dira miniaturak, baina denbora gehiago behar da horiek sortzeko eta leku gehiago hartzen dute miniaturen cachean.",
-      "fast": "Azkarra",
-      "fastDescription": "Argazkian gordetako miniatura txikia, berehala erakusten dena. Ez da hain zorrotza: 160 × 120 pixel JPEG argazki gehienetan, eta 320 × 240 pixel iPhone batekin ateratako 12 megapixeleko argazki batean."
+      "fast": "Lehenetsi aplikazioaren errendimendua",
+      "fastDescription": "Fitxategi batek, JPEG edo PNG batek adibidez, miniatura bat badu jada, dagoen bezala erakusten da. Miniaturarik ez duen fitxategi baterako soilik sortzen da miniatura bat, 400 pixel alde luzeenean dituena."
     },
     "os": {
       "title": "Fitxategi-arakatzailearen laster-menua",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturak",
-        "description": "Aplikazio honek sortzen dituen miniaturen cachea «Miniaturak» fitxan dago.",
+        "title": "Miniaturen cachea",
+        "description": "Miniaturen cachearen ezarpenak «Miniaturak» fitxan daude.",
         "open": "Ireki «Miniaturak» fitxa"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Esri World Imagery Wayback-eko irudiak noiz atera ziren cachean gordetzen da mapan ikusitako gehienez {{max}} lekutarako, hurrengoan berehala erakusteko.",
+        "title": "Maparen cachea",
+        "description": "Azkarrago ibiltzeko, irudiak noiz atera ziren cachean gordetzen da Esri World Imagery Wayback-ekin erakutsitako gehienez {{max}} lekutarako.",
         "count": "Cachean dauden lekuak: {{count}}",
-        "delete": "Ezabatu maparen cachea"
+        "delete": "Ezabatu maparen cachea",
+        "confirmDelete": "Maparen cachea ezabatu nahi duzu?"
       },
       "all": {
         "title": "Cache guztiak",
@@ -311,7 +315,8 @@
       "actualSize": "Benetako tamaina",
       "zoomIn": "Handitu",
       "zoomOut": "Txikitu",
-      "toggleFullScreen": "Aktibatu/desaktibatu pantaila osoa"
+      "toggleFullScreen": "Aktibatu/desaktibatu pantaila osoa",
+      "mapFullScreen": "Mapa pantaila osoan"
     },
     "selection": {
       "title": "Hautapena",

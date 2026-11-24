@@ -116,6 +116,8 @@
     "zoomIn": "Povećaj",
     "zoomOut": "Smanji",
     "layers": "Slojevi",
+    "fullScreen": "Cijeli zaslon",
+    "exitFullScreen": "Izađi iz prikaza preko cijelog zaslona",
     "photosInRegions": "Fotografije u područjima: {{count}}",
     "selectPhotos": "Odaberi fotografije",
     "setRegionByRectangle": "Zadaj područje pravokutnikom",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Izrada minijatura za datoteke HEIF...",
-    "fasterInSettings": "Da bi se prikazale ranije, <settingsLink>odaberite brze minijature u postavkama</settingsLink>.",
+    "fasterInSettings": "Da bi se prikazale ranije, <settingsLink>odaberite „Prednost performansama aplikacije” u postavkama</settingsLink>.",
     "completed": "Minijature za datoteke HEIF su izrađene.",
     "finishedWithErrors": "Izrada minijatura za datoteke HEIF završila je s pogreškama.",
     "showDetails": "Prikaži pojedinosti",
@@ -241,15 +243,16 @@
       "example": "Primjer"
     },
     "thumbnails": {
-      "title": "Minijature",
-      "description": "Odaberite izrađuju li se minijature s naglaskom na kvalitetu ili na brzinu.",
-      "highQuality": "Visoka kvaliteta",
-      "highQualityDescription": "Izrađuju se od cijele fotografije, u veličini odabranoj ispod. Do tada se prikazuje mala minijatura spremljena u fotografiji. Njihova izrada traje neko vrijeme kad se mapa otvori prvi put, a dulje za datoteke HEIF na računalu čiji grafički hardver ne može dekodirati HEVC.",
-      "size": "Veličina",
+      "title": "Kvaliteta minijatura i performanse aplikacije",
+      "highQuality": "Prednost kvaliteti minijatura",
+      "highQualityDescription": "Minijature se uvijek izrađuju iz datoteka fotografija.",
+      "size": "Veličina minijatura",
       "sizeValue": "{{size}} piksela na duljoj stranici",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "O veličini minijatura",
       "sizeDescription": "Što je veličina veća, minijature se prikazuju veće, ali njihova izrada traje dulje i zauzimaju više mjesta u predmemoriji minijatura.",
-      "fast": "Brzo",
-      "fastDescription": "Mala minijatura spremljena u fotografiji, prikazana odmah. Manje je oštra: 160 × 120 piksela u većini fotografija JPEG i 320 × 240 piksela u fotografiji od 12 megapiksela snimljenoj iPhoneom."
+      "fast": "Prednost performansama aplikacije",
+      "fastDescription": "Kad datoteka, primjerice JPEG ili PNG, već sadrži minijaturu, ona se prikazuje kakva jest. Minijatura od 400 piksela na duljoj stranici izrađuje se samo za datoteku koja je nema."
     },
     "os": {
       "title": "Kontekstni izbornik Eksplorera za datoteke",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Minijature",
-        "description": "Predmemorija minijatura koje izrađuje ova aplikacija nalazi se na kartici „Minijature”.",
+        "title": "Predmemorija minijatura",
+        "description": "Postavke predmemorije minijatura nalaze se na kartici „Minijature”.",
         "open": "Otvori karticu „Minijature”"
       },
       "map": {
-        "title": "Karta",
-        "description": "Datumi snimanja snimaka Esri World Imagery Wayback spremaju se u predmemoriju za najviše {{max}} mjesta pregledanih na karti kako bi se sljedeći put odmah prikazali.",
+        "title": "Predmemorija karte",
+        "description": "Radi brzine, datumi snimanja snimaka spremaju se u predmemoriju za najviše {{max}} mjesta prikazanih pomoću Esri World Imagery Wayback.",
         "count": "Mjesta u predmemoriji: {{count}}",
-        "delete": "Izbriši predmemoriju karte"
+        "delete": "Izbriši predmemoriju karte",
+        "confirmDelete": "Želite li izbrisati predmemoriju karte?"
       },
       "all": {
         "title": "Sve predmemorije",
@@ -311,7 +315,8 @@
       "actualSize": "Stvarna veličina",
       "zoomIn": "Povećaj",
       "zoomOut": "Smanji",
-      "toggleFullScreen": "Uključi/isključi prikaz preko cijelog zaslona"
+      "toggleFullScreen": "Uključi/isključi prikaz preko cijelog zaslona",
+      "mapFullScreen": "Karta preko cijelog zaslona"
     },
     "selection": {
       "title": "Odabir",

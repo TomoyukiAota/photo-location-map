@@ -116,6 +116,8 @@
     "zoomIn": "Lähennä",
     "zoomOut": "Loitonna",
     "layers": "Tasot",
+    "fullScreen": "Koko näyttö",
+    "exitFullScreen": "Poistu koko näytön tilasta",
     "photosInRegions": "Kuvia alueilla: {{count}}",
     "selectPhotos": "Valitse kuvat",
     "setRegionByRectangle": "Määritä alue suorakulmiolla",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Luodaan pikkukuvia HEIF-tiedostoille...",
-    "fasterInSettings": "Jos haluat ne näkyviin aiemmin, <settingsLink>valitse asetuksista nopeat pikkukuvat</settingsLink>.",
+    "fasterInSettings": "Jos haluat ne näkyviin aiemmin, <settingsLink>valitse asetuksista ”Sovelluksen suorituskyky ensin”</settingsLink>.",
     "completed": "HEIF-tiedostojen pikkukuvat on luotu.",
     "finishedWithErrors": "HEIF-tiedostojen pikkukuvien luonti päättyi virheisiin.",
     "showDetails": "Näytä lisätiedot",
@@ -241,15 +243,16 @@
       "example": "Esimerkki"
     },
     "thumbnails": {
-      "title": "Pikkukuvat",
-      "description": "Valitse, luodaanko pikkukuvat laadun vai nopeuden mukaan.",
-      "highQuality": "Korkea laatu",
-      "highQualityDescription": "Luodaan koko kuvasta alla valitun kokoisina. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Niiden luominen vie aikaa, kun kansio avataan ensimmäisen kerran, ja kauemmin HEIF-tiedostoille tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta.",
-      "size": "Koko",
+      "title": "Pikkukuvien laatu ja sovelluksen suorituskyky",
+      "highQuality": "Pikkukuvien laatu ensin",
+      "highQualityDescription": "Pikkukuvat luodaan aina kuvatiedostoista.",
+      "size": "Pikkukuvien koko",
       "sizeValue": "pidempi sivu {{size}} pikseliä",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Tietoa pikkukuvien koosta",
       "sizeDescription": "Mitä suurempi koko, sitä suurempina pikkukuvat näytetään, mutta sitä kauemmin niiden luominen kestää ja sitä enemmän tilaa ne vievät pikkukuvien välimuistissa.",
-      "fast": "Nopea",
-      "fastDescription": "Kuvaan tallennettu pieni pikkukuva, joka näytetään heti. Se on epätarkempi: useimmissa JPEG-kuvissa 160 × 120 pikseliä ja iPhonella otetussa 12 megapikselin kuvassa 320 × 240 pikseliä."
+      "fast": "Sovelluksen suorituskyky ensin",
+      "fastDescription": "Kun tiedostossa, kuten JPEG- tai PNG-tiedostossa, on jo pikkukuva, se näytetään sellaisenaan. Pikkukuva, jonka pidempi sivu on 400 pikseliä, luodaan vain tiedostolle, jossa sitä ei ole."
     },
     "os": {
       "title": "Resurssienhallinnan pikavalikko",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Pikkukuvat",
-        "description": "Tämän sovelluksen tekemien pikkukuvien välimuisti on ”Pikkukuvat”-välilehdellä.",
+        "title": "Pikkukuvien välimuisti",
+        "description": "Pikkukuvien välimuistin asetukset ovat ”Pikkukuvat”-välilehdellä.",
         "open": "Avaa ”Pikkukuvat”-välilehti"
       },
       "map": {
-        "title": "Kartta",
-        "description": "Esri World Imagery Waybackin ilmakuvien kuvauspäivät tallennetaan välimuistiin enintään {{max}} kartalla katsotulle paikalle, jotta ne näkyvät seuraavalla kerralla heti.",
+        "title": "Kartan välimuisti",
+        "description": "Nopeuden vuoksi kuvien kuvauspäivät tallennetaan välimuistiin enintään {{max}} paikalle, jotka on näytetty Esri World Imagery Waybackilla.",
         "count": "Paikkoja välimuistissa: {{count}}",
-        "delete": "Poista kartan välimuisti"
+        "delete": "Poista kartan välimuisti",
+        "confirmDelete": "Haluatko poistaa kartan välimuistin?"
       },
       "all": {
         "title": "Kaikki välimuistit",
@@ -311,7 +315,8 @@
       "actualSize": "Todellinen koko",
       "zoomIn": "Lähennä",
       "zoomOut": "Loitonna",
-      "toggleFullScreen": "Koko näyttö päälle/pois"
+      "toggleFullScreen": "Koko näyttö päälle/pois",
+      "mapFullScreen": "Kartta koko näytöllä"
     },
     "selection": {
       "title": "Valinta",

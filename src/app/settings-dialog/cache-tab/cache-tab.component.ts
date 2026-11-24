@@ -17,7 +17,8 @@ function formatted(count: number): string {
  * TL;DR: The cache of the thumbnails is on the Thumbnails tab (CacheSettingsComponent), which this opens. The cache of
  * the dates of the map's imagery (WaybackDateCache) is counted and deleted here. Both are deleted at once here.
  * Details:
- * - Deleting the map's cache needs no restart: the map asks Wayback again for the places looked at.
+ * - Deleting the map's cache, once the user confirms, needs no restart: the map asks Wayback again for the places
+ *   looked at.
  * - Deleting all of them deletes the map's first, then has the main process delete the thumbnails' and restart the
  *   app, as Delete Thumbnail Cache does.
  */
@@ -45,8 +46,11 @@ export class CacheTabComponent {
     this.waybackDateCache.count().then(count => this.mapPlaces.set(count));
   }
 
-  /** Forgets the dates of the map's imagery, which the map asks Wayback for again. */
+  /** Once the user confirms, forgets the dates of the map's imagery, which the map asks Wayback for again. */
   public async deleteMapCache(): Promise<void> {
+    const isOkPressed = await this.confirmDialogService.confirm(t('settings.cacheTab.map.confirmDelete'));
+    if (!isOkPressed)
+      return;
     Logger.info('Delete the map cache.');
     await this.waybackDateCache.clear();
     this.mapPlaces.set(0);

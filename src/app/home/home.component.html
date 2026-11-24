@@ -1,21 +1,28 @@
-<div class="sidebar-and-map-container">
+<!--
+  Each gutter is Split.js's, which it takes from here rather than making one, so that a double-click on it can put its
+  panes back to their default sizes (pane-sizes/pane-split.ts).
+-->
+<div class="sidebar-and-map-container" [class.map-full-screen]="mapFullScreenService.on()">
   <div id="home-left-sidebar" #sidebar>
     <div id="home-sidebar-upper-pane" #sidebarUpperPane>
       <app-sidebar-upper-pane></app-sidebar-upper-pane>
     </div>
+    <div class="gutter gutter-vertical" #sidebarPanesGutter (dblclick)="resetSidebarUpperPaneHeight()"></div>
     <!--
       A row that the keyboard focuses is scrolled into view below the rows that the folder tree keeps at its top,
       rather than under them (DirTreeViewStickyRowsComponent).
     -->
-    <div id="home-sidebar-lower-pane" [style.scroll-padding-top.px]="stickyRowsService.coveredHeight()">
+    <div id="home-sidebar-lower-pane" #sidebarLowerPane [style.scroll-padding-top.px]="stickyRowsService.coveredHeight()">
       <app-sidebar-lower-pane></app-sidebar-lower-pane>
     </div>
   </div>
-  <div id="home-right">
-    <div id="home-map">
+  <div class="gutter gutter-horizontal" #sidebarGutter (dblclick)="resetSidebarWidth()"></div>
+  <div id="home-right" #right>
+    <div id="home-map" #map>
       <app-leaflet-map></app-leaflet-map>
     </div>
-    <div id="home-chart">
+    <div class="gutter gutter-vertical" #mapGutter (dblclick)="resetChartHeight()"></div>
+    <div id="home-chart" #chart>
       <app-date-time-taken-chart></app-date-time-taken-chart>
     </div>
   </div>

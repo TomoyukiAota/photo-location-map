@@ -923,12 +923,13 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await expect(page.locator('app-thumbnail-settings')).toBeVisible();
-  // The tab, with the cache under the quality, is higher than the dialog leaves it: it scrolls between the header and
-  // the footer, which stay, rather than the dialog as a whole.
+  // TL;DR: The tab scrolls between the header and the footer where it is higher than the dialog leaves it, rather than
+  // the dialog as a whole: Cancel stays in view, at the tab's top and once the cache's Delete button is scrolled to.
+  // Details: In English, the tab ends at about the dialog's height since its texts were shortened, so that whether it
+  // scrolls, and whether the Delete button shows at its top, depends on how the platform sets text: on CI's runner the
+  // button showed, and here it did not. Japanese, with higher lines, scrolls.
   const settingsContent = page.locator('app-settings-dialog .settings-content');
-  expect(await settingsContent.evaluate(content => content.scrollHeight > content.clientHeight)).toBe(true);
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
-  await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).not.toBeInViewport();
   await shot('settings-thumbnails', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).scrollIntoViewIfNeeded();
   await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).toBeInViewport();
@@ -969,7 +970,7 @@ const menuInEnglish = [
     label: 'The name of the first menu item is the application name on macOS',
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
-  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
+  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen', 'Map in Full Screen'] },
   { label: 'Selection', items: ['Undo', 'Redo', 'Photo Taken Before', 'Photo Taken After', 'Narrow Down to Photos with Faces'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
@@ -980,7 +981,7 @@ const menuInJapanese = [
     label: 'The name of the first menu item is the application name on macOS',
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
-  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
+  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え', 'マップをフルスクリーンで表示'] },
   { label: '選択', items: ['元に戻す', 'やり直す', '前に撮影された写真', '次に撮影された写真', '顔が写っている写真に絞り込む'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
@@ -1227,6 +1228,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(page.getByTitle('長方形で範囲を指定', { exact: true })).toBeVisible();
   await expect(page.locator('.leaflet-control-zoom-in')).toHaveAttribute('title', '拡大');
   await expect(page.locator('.leaflet-control-layers-toggle')).toHaveAttribute('title', 'レイヤー');
+  await expect(page.locator('.plm-leaflet-map-full-screen-button')).toHaveAttribute('title', 'フルスクリーン');
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
   }, photoFolder);
@@ -1339,6 +1341,20 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const sidebarAfterDrag = await sidebar.boundingBox();
   expect(Math.abs(sidebarAfterDrag.width - sidebarAtStart.width - 120)).toBeLessThan(3);
   expect(Math.abs(sidebarAfterDrag.x - (sidebarAtStart.x - 120))).toBeLessThan(3);
+  // The map in full screen has the window alone, with its button at its top left, as the map stays laid out from left
+  // to right. Out of it, the sidebar is back at the map's right, as wide as it was. The window keeps its size here:
+  // the English case has it go to full screen.
+  await app.evaluate(({ BrowserWindow }) => { BrowserWindow.prototype.setFullScreen = () => undefined; });
+  const fullScreenButton = page.locator('.leaflet-top.leaflet-left .plm-leaflet-map-full-screen-button');
+  await expect(fullScreenButton).toHaveAttribute('title', 'ملء الشاشة');
+  await fullScreenButton.click();
+  await expect(sidebar).toBeHidden();
+  await expect(fullScreenButton).toHaveAttribute('title', 'الخروج من ملء الشاشة');
+  await expect.poll(async () => Math.round((await map.boundingBox()).x)).toBe(0);
+  await page.keyboard.press('Escape');
+  await expect(sidebar).toBeVisible();
+  await expect.poll(async () => Object.values(await sidebar.boundingBox()).map(Math.round))
+    .toEqual(Object.values(sidebarAfterDrag).map(Math.round));
   // A folder of photos: the status bar, the tree and the map, which itself stays laid out from left to right.
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
@@ -1492,7 +1508,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
       label: 'The name of the first menu item is the application name on macOS',
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
-    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
+    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة', 'الخريطة بملء الشاشة'] },
     { label: 'التحديد', items: ['تراجع', 'إعادة', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها', 'تضييق التحديد إلى الصور التي تظهر فيها وجوه'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
@@ -1511,6 +1527,13 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await page.getByRole('button', { name: 'فتح مجلد', exact: true }).click();
   await expect(treeRow('without location data').locator('.disabled-checkbox-alternative')).toBeVisible();
   expect(await nameStart('without location data')).toBeCloseTo(await nameStart('with location data'), 0);
+  // At the next launch, the sidebar is on the right, at the width that the drag gave it (src/app/home/pane-sizes/).
+  await app.close();
+  await launch({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
+  const sidebarAtNextLaunch = await page.locator('#home-left-sidebar').boundingBox();
+  const mapAtNextLaunch = await page.locator('#home-map').boundingBox();
+  expect(Math.abs(sidebarAtNextLaunch.width - sidebarAfterDrag.width)).toBeLessThan(1);
+  expect(sidebarAtNextLaunch.x).toBeGreaterThanOrEqual(mapAtNextLaunch.x + mapAtNextLaunch.width);
 });
 test('on a computer whose language is Arabic, the application in English lists the operating system\'s entry in Arabic, from right to left', async () => {
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
@@ -1933,13 +1956,18 @@ test('the dates of Wayback\'s imagery at a place looked at before are shown afte
   expect(asked).toEqual([]);
 
   // The Cache tab counts the places kept, the one that the photo is fitted at and the one at zoom 16, and deletes them
-  // without a restart. The places are then asked about again.
+  // once the user confirms, without a restart. The places are then asked about again.
   await settings('Cache');
   const count = page.locator('app-cache-tab .cache-tab-map-count');
   await expect(count).toHaveText(/^Places cached: [1-9]\d*$/);
-  await page.getByRole('button', { name: 'Delete Map Cache', exact: true }).click();
+  const deleteMapCache = page.getByRole('button', { name: 'Delete Map Cache', exact: true });
+  await deleteMapCache.click();
+  await answerConfirmation(['Do you want to delete the map cache?'], 'Cancel');
+  await expect(count).toHaveText(/^Places cached: [1-9]\d*$/);
+  await deleteMapCache.click();
+  await answerConfirmation(['Do you want to delete the map cache?'], 'OK');
   await expect(count).toHaveText('Places cached: 0');
-  await expect(page.getByRole('button', { name: 'Delete Map Cache', exact: true })).toBeDisabled();
+  await expect(deleteMapCache).toBeDisabled();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await lookAtTheRing();
   expect(asked.filter(pathname => pathname.endsWith('/query')).length).toBeGreaterThan(0);
@@ -2239,11 +2267,18 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
       await cdp.detach();
     }
   }
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'SidebarWidth'])).toBe(`${Math.round(after.width)}`);
   await app.close();
   await launch();
-  // The original app resets Split.js to 25/75 on restart; keep that behavior.
+  // The sidebar keeps the width that the drag gave it at the next launch. A double-click on its gutter puts back 25% of
+  // the window, at the next launch too (src/app/home/pane-sizes/).
   const restarted = await page.locator('#home-left-sidebar').boundingBox();
-  expect(Math.abs(restarted.width - before.width)).toBeLessThan(1);
+  expect(Math.abs(restarted.width - after.width)).toBeLessThan(1);
+  await page.locator('.sidebar-and-map-container > .gutter-horizontal').dblclick();
+  const reset = await page.locator('#home-left-sidebar').boundingBox();
+  expect(Math.abs(reset.width - before.width)).toBeLessThan(1);
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'SidebarWidth'])).toBe('');
 });
 test('the map starts and shows photos while the network cannot be reached', async () => {
   // Leaflet and its plugins once came from a CDN, so a launch without the network (offline, no DNS, or a firewall
@@ -2570,6 +2605,106 @@ test('Select Only This from a marker popup selects that photo in the tree and on
   expect(Object.keys(folders)).toContain(photoName);
   for (const [name, folder] of Object.entries(folders))
     await expect(treeCheckbox(folder)).toBeChecked({ checked: name === photoName });
+});
+test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, and ends inside the map, as they take the room that the map leaves', async () => {
+  // Leaflet's popup was 300 pixels wide at most, which left a box of 500 pixels outside it, and taller than the map,
+  // which cut its buttons off. The popup's content takes the room that the map leaves (photo-info-viewer.component.scss):
+  // its thumbnail, and its name, which takes more lines, though it has no spaces. The map centers the popup below its
+  // top edge (centerOnPopup()). As the map's size changes, the popup is laid out again without moving the map
+  // (layOutPopupAtEachSize()). The window keeps the size that launch() gives it, and is made smaller from there.
+  const folder = index => path.join(profile, 'Popups of large thumbnails', String(index));
+  const longNames = [
+    'Kobe harbour seen from the Meriken Park walk at dusk with the Port Tower lit in red and the museum.JPG',
+    'Kobe_harbour_seen_from_the_Meriken_Park_walk_at_dusk_with_the_Port_Tower_lit_in_red_and_the_museum.JPG',
+  ];
+  for (const [index, name] of ['Kobe.JPG', ...longNames].entries()) {
+    await mkdir(folder(index), { recursive: true });
+    await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder(index), name));
+  }
+  await dismissWelcome();
+  const dialog = page.locator('app-settings-dialog');
+  await settings('Thumbnails');
+  await dialog.locator('.thumbnail-size-slider input').fill('1000');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await openFolderWithPicker(folder(0));
+  // The map opens the popup of the one photo that it shows.
+  await expect.poll(() => page.locator('.leaflet-popup .photo-info-viewer-thumbnail').getAttribute('src'), { timeout: 30000 })
+    .toMatch(/Kobe\.JPG\.plm\.jpg\?size=1000$/);
+  /** The map, the popup, its white box, the thumbnail's box and the photo's name, in pixels of the page. */
+  const places = () => page.evaluate(() => Object.fromEntries(Object.entries({
+    map: '.leaflet-container', popup: '.leaflet-popup', wrapper: '.leaflet-popup-content-wrapper',
+    box: '.leaflet-popup .photo-info-viewer-thumbnail-container', name: '.leaflet-popup .photo-info-viewer-name',
+  }).map(([name, selector]) => [name, document.querySelector(selector).getBoundingClientRect().toJSON()])));
+  const inside = (inner, outer) =>
+    inner.left >= outer.left && inner.right <= outer.right && inner.top >= outer.top && inner.bottom <= outer.bottom;
+  /**
+   * Whether the box and the name are inside the white box; and the popup, with its tip under it, inside the map, and
+   * no larger than the map.
+   */
+  const fits = async () => {
+    const { map, popup, wrapper, box, name } = await places();
+    return {
+      boxInPopup: inside(box, wrapper),
+      nameInPopup: inside(name, wrapper),
+      popupInMap: inside({ ...popup, bottom: popup.bottom + 20 }, map),
+      popupFitsMap: popup.width <= map.width && popup.height + 20 <= map.height,
+    };
+  };
+  const fitting = { boxInPopup: true, nameInPopup: true, popupInMap: true, popupFitsMap: true };
+  await expect.poll(fits).toEqual(fitting);
+  const box = (await places()).box.height;
+  expect(box).toBeLessThanOrEqual(500);
+
+  // A smaller window, with a smaller map, by as much as the map has room to lose: the thumbnail of the popup, which
+  // stays open, is smaller too, and the popup still fits the map. Where it is in the map is the user's: the map does not
+  // move.
+  const mainWindow = await app.browserWindow(page);
+  const [width, height] = await mainWindow.evaluate(window => window.getContentSize());
+  const { map } = await places();
+  const smaller = { width: Math.max(0, Math.min(300, Math.floor(map.width) - 400)),
+    height: Math.max(0, Math.min(100, Math.floor(map.height) - 330)) };
+  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [width - smaller.width, height - smaller.height]);
+  if (smaller.height > 0)
+    await expect.poll(async () => (await places()).box.height).toBeLessThan(box);
+  await expect.poll(async () => {
+    const { boxInPopup, nameInPopup, popupFitsMap } = await fits();
+    return { boxInPopup, nameInPopup, popupFitsMap };
+  }).toEqual({ boxInPopup: true, nameInPopup: true, popupFitsMap: true });
+
+  // A long name, with spaces and without, takes two lines or more in the popup, rather than widening it past the map.
+  for (const [index, name] of longNames.entries()) {
+    await openFolderWithPicker(folder(index + 1));
+    await expect(page.locator('.leaflet-popup .photo-info-viewer-name')).toHaveText(name);
+    await expect.poll(fits).toEqual(fitting);
+    expect((await places()).name.height).toBeGreaterThan(40);
+  }
+
+  // A map too short and narrow for the smallest thumbnail and the whole of the long name without spaces: the popup's
+  // column scrolls, inside the popup, and its parts follow each other, with the buttons under the shooting time.
+  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [Math.min(width, 600), Math.min(height, 380)]);
+  await openFolderWithPicker(folder(2));
+  const column = () => page.evaluate(() => {
+    const rect = selector => document.querySelector(selector).getBoundingClientRect().toJSON();
+    const host = document.querySelector('.leaflet-popup app-photo-info-viewer');
+    return {
+      wrapper: rect('.leaflet-popup-content-wrapper'), host: host.getBoundingClientRect().toJSON(),
+      box: rect('.leaflet-popup .photo-info-viewer-thumbnail-container'), name: rect('.leaflet-popup .photo-info-viewer-name'),
+      date: rect('.leaflet-popup .photo-info-viewer-date-time-taken'), buttons: rect('.leaflet-popup .photo-info-viewer-lower-div'),
+      scrolls: host.scrollHeight > host.clientHeight,
+    };
+  });
+  await expect.poll(async () => {
+    const { wrapper, host, box, name, date, buttons, scrolls } = await column();
+    return {
+      columnInPopup: inside(host, wrapper),
+      apart: box.bottom <= name.top + 0.5 && name.bottom <= date.top + 0.5 && date.bottom <= buttons.top + 0.5,
+      scrolls,
+    };
+  }).toEqual({ columnInPopup: true, apart: true, scrolls: true });
+  await page.locator('.leaflet-popup app-photo-info-viewer').evaluate(host => host.scrollTop = host.scrollHeight);
+  const { host, buttons } = await column();
+  expect(inside(buttons, host)).toBe(true);
 });
 test('a cluster of photos taken at one place opens a popup with each of them', async () => {
   const folder = path.join(profile, 'photos taken at one place');
@@ -3956,10 +4091,10 @@ test('a photo whose GPS values are empty leaves the other photos on the map', as
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
-test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
-  // Home sets the sidebar's split again on a resize, keeping its upper pane's height, and Leaflet takes its pane's new
-  // size, which the map watches, as Leaflet itself tracks only the window's size. Neither goes through change
-  // detection.
+test('a window resize keeps the sizes of the panes around the map, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
+  // Home sets its splits again on a resize, keeping the sidebar's width, its upper pane's height and the chart's height
+  // where they have one, and Leaflet takes its pane's new size, which the map watches, as Leaflet itself tracks only
+  // the window's size. Neither goes through change detection.
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -3987,12 +4122,24 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   });
   const before = await mapSizes();
   expect(before.leaflet).toEqual(before.pane);
+  // The sidebar, dragged wider, keeps its width while the window is resized: the map takes the change
+  // (src/app/home/pane-sizes/).
+  const sidebar = page.locator('#home-left-sidebar');
+  const sidebarGutter = await page.locator('.sidebar-and-map-container > .gutter-horizontal').boundingBox();
+  await page.mouse.move(sidebarGutter.x + sidebarGutter.width / 2, sidebarGutter.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(sidebarGutter.x + sidebarGutter.width / 2 + 60, sidebarGutter.y + 100, { steps: 5 });
+  await page.mouse.up();
+  const sidebarWidth = (await sidebar.boundingBox()).width;
+  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 50);
+  const afterSidebarDrag = await mapSizes();
   await app.evaluate(({ BrowserWindow }) => {
     const window = BrowserWindow.getAllWindows()[0];
     const [width, height] = window.getContentSize();
     window.setContentSize(width - 200, height - 120);
   });
-  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 100);
+  await expect.poll(async () => Math.abs((await mapSizes()).pane[0] - (afterSidebarDrag.pane[0] - 200))).toBeLessThanOrEqual(1);
+  expect(Math.abs((await sidebar.boundingBox()).width - sidebarWidth)).toBeLessThan(1);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expect.poll(async () => Math.round((await upperPane.boundingBox()).height)).toBe(Math.round(upperPaneHeight));
   await expectRepresentedPhotos(4);
@@ -4006,6 +4153,161 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   await expect.poll(async () => (await mapSizes()).pane[1]).toBeLessThan(beforeDrag.pane[1] - 50);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expectRepresentedPhotos(4);
+  // The chart keeps the height that the drag gave it while the window is resized: the map takes the change.
+  const chart = page.locator('#home-chart');
+  const chartHeight = (await chart.boundingBox()).height;
+  const afterChartDrag = await mapSizes();
+  await app.evaluate(({ BrowserWindow }) => {
+    const window = BrowserWindow.getAllWindows()[0];
+    const [width, height] = window.getContentSize();
+    window.setContentSize(width, height + 120);
+  });
+  await expect.poll(async () => Math.abs((await mapSizes()).pane[1] - (afterChartDrag.pane[1] + 120))).toBeLessThanOrEqual(1);
+  expect(Math.abs((await chart.boundingBox()).height - chartHeight)).toBeLessThan(1);
+  await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
+  // A double-click on the gutter puts the chart back to 30% of the map's side, at the next launch too.
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'ChartHeight'])).toBe(`${Math.round(chartHeight)}`);
+  await page.locator('#home-right > .gutter').dblclick();
+  const rightHeight = (await page.locator('#home-right').boundingBox()).height;
+  expect(Math.abs((await chart.boundingBox()).height - (rightHeight * 0.3 - 4))).toBeLessThan(1);
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'ChartHeight'])).toBe('');
+});
+test('the map in full screen has the window alone, in full screen, with its controls, popups and menus, until Esc, the View menu or the window ends it', async () => {
+  // TL;DR: The window goes to full screen on Windows alone, whose window is transparent in a headless run.
+  // Details: The map asks the main process for the window's full screen, which this records. A hidden window on macOS
+  // would be shown by its full screen, and the window that Linux shows would take the screen: there, the window keeps
+  // its size, and the map fills it as it would fill the screen, while the window says that it is in full screen as it
+  // would, so that the main process asks it the same everywhere. The window leaves full screen by itself, as View >
+  // Toggle Full Screen has it, through __plmLeaveFullScreenByItself.
+  const windowGoesFullScreen = process.platform === 'win32';
+  await app.evaluate(({ BrowserWindow }, goesFullScreen) => {
+    globalThis.__plmFullScreenRequests = [];
+    const { setFullScreen } = BrowserWindow.prototype;
+    let fullScreen = false;
+    BrowserWindow.prototype.setFullScreen = function (flag) {
+      globalThis.__plmFullScreenRequests.push(flag);
+      if (goesFullScreen) setFullScreen.call(this, flag);
+      else fullScreen = flag;
+    };
+    if (!goesFullScreen) BrowserWindow.prototype.isFullScreen = () => fullScreen;
+    globalThis.__plmLeaveFullScreenByItself = window => {
+      if (goesFullScreen) {
+        setFullScreen.call(window, false);
+      } else {
+        fullScreen = false;
+        window.emit('leave-full-screen');
+      }
+    };
+  }, windowGoesFullScreen);
+  const fullScreenRequests = () => app.evaluate(() => globalThis.__plmFullScreenRequests);
+  const windowIsFullScreen = () => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen());
+  const viewMenuItemChecked = () => app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('view-map-full-screen').checked);
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id === 'plm-leaflet-map') window.__plmLeafletMap = this;
+        });
+      }
+    });
+  });
+  await page.reload();
+  // The map is made a second after the home view, by when the Welcome dialog is there to be dismissed.
+  await page.waitForFunction(() => !!window.__plmLeafletMap);
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expectRepresentedPhotos(4);
+  const leafletFitsItsPane = () => page.evaluate(() => {
+    const size = window.__plmLeafletMap.getSize();
+    const container = window.__plmLeafletMap.getContainer();
+    return size.x === container.clientWidth && size.y === container.clientHeight;
+  });
+  const sidebar = page.locator('#home-left-sidebar');
+  const chart = page.locator('#home-chart');
+  const mapPane = page.locator('#plm-leaflet-map');
+  // Where the sidebar, the map and the chart are, above the status bars.
+  const container = page.locator('.sidebar-and-map-container');
+  const gutters = page.locator('.gutter');
+  const roundedBox = async element => Object.values(await element.boundingBox()).map(Math.round);
+  const boxes = async () => ({ sidebar: await roundedBox(sidebar), chart: await roundedBox(chart), map: await roundedBox(mapPane) });
+  const boxesBefore = await boxes();
+  // The button is alone at the map's top left, which nothing else is in.
+  const button = page.locator('.leaflet-top.leaflet-left .plm-leaflet-map-full-screen-button');
+  await expect(button).toHaveAttribute('title', 'Full Screen');
+  const buttonBox = await button.boundingBox();
+  const mapBox = await mapPane.boundingBox();
+  expect(buttonBox.x - mapBox.x).toBeLessThan(20);
+  expect(buttonBox.y - mapBox.y).toBeLessThan(20);
+
+  // The map takes the window, but for the status bars at its bottom, and Leaflet fits it.
+  await button.click();
+  await expect(sidebar).toBeHidden();
+  await expect(chart).toBeHidden();
+  for (const gutter of await gutters.all()) await expect(gutter).toBeHidden();
+  await expect(button).toHaveAttribute('title', 'Exit Full Screen');
+  await expect.poll(async () => JSON.stringify([await roundedBox(mapPane), await page.evaluate(() => window.innerWidth)]))
+    .toBe(JSON.stringify([await roundedBox(container), (await roundedBox(container))[2]]));
+  await expect.poll(leafletFitsItsPane).toBe(true);
+  expect(await fullScreenRequests()).toEqual([true]);
+  expect(await viewMenuItemChecked()).toBe(true);
+  await expect.poll(windowIsFullScreen).toBe(true);
+  await expectRepresentedPhotos(4);
+  // Its controls are there, and a popup with its menu. Esc closes the menu, which takes the key, not the full screen.
+  await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
+  await expect(page.locator('.leaflet-control-layers')).toBeVisible();
+  await expect(page.locator('.leaflet-control-zoom')).toBeVisible();
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup).toBeVisible();
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
+  await openMoreOptions(popup.getByRole('button', { name: 'More Options' }));
+  await expect(page.getByRole('menuitem', { name: 'Reveal in Sidebar', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.photo-info-viewer-more-options-menu')).toHaveCount(0);
+  await expect(sidebar).toBeHidden();
+
+  // Esc, which nothing else takes now, gives the sidebar and the chart back as they were.
+  await page.keyboard.press('Escape');
+  await expect(sidebar).toBeVisible();
+  await expect(chart).toBeVisible();
+  for (const gutter of await gutters.all()) await expect(gutter).toBeVisible();
+  await expect(button).toHaveAttribute('title', 'Full Screen');
+  await expect.poll(boxes).toEqual(boxesBefore);
+  await expect.poll(leafletFitsItsPane).toBe(true);
+  expect(await fullScreenRequests()).toEqual([true, false]);
+  expect(await viewMenuItemChecked()).toBe(false);
+  await expect.poll(windowIsFullScreen).toBe(false);
+
+  // The View menu's item puts the map in full screen too. The window leaving full screen by its own means, as View >
+  // Toggle Full Screen does, ends the map's full screen.
+  await app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('view-map-full-screen').click());
+  await expect(sidebar).toBeHidden();
+  await expect.poll(viewMenuItemChecked).toBe(true);
+  expect(await fullScreenRequests()).toEqual([true, false, true]);
+  await expect.poll(windowIsFullScreen).toBe(true);
+  await app.evaluate(({ BrowserWindow }) => globalThis.__plmLeaveFullScreenByItself(BrowserWindow.getAllWindows()[0]));
+  await expect(sidebar).toBeVisible();
+  await expect.poll(viewMenuItemChecked).toBe(false);
+  await expect.poll(windowIsFullScreen).toBe(false);
+  await expect.poll(boxes).toEqual(boxesBefore);
+
+  // Reveal in Sidebar, from the popup of the map in full screen, shows the sidebar with the photo's row lit.
+  await button.click();
+  await expect(sidebar).toBeHidden();
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
+  const name = await popup.locator('.photo-info-viewer-name').textContent();
+  await chooseFromMoreOptions(popup.getByRole('button', { name: 'More Options' }), 'Reveal in Sidebar');
+  await expect(sidebar).toBeVisible();
+  await expect(page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) }))
+    .toHaveAttribute('data-reveal-highlight', 'lit');
+  await expect(button).toHaveAttribute('title', 'Full Screen');
+  expect(await viewMenuItemChecked()).toBe(false);
 });
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
@@ -4535,9 +4837,36 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
   const tab = page.locator('app-thumbnail-settings');
   const slider = tab.locator('.thumbnail-size-slider input');
   await expect(slider).toBeEnabled();
-  await expect(tab.locator('.thumbnail-size-value')).toHaveText('400 pixels on the longer side');
+  await expect(slider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
+  // The sizes under the slider, each centered under its mark, from the first to the last. Angular Material draws the
+  // marks once it has measured the slider, a moment after the tab is shown.
+  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(7);
+  const ticks = await tab.locator('.thumbnail-size-scale').evaluate(scale => {
+    const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
+    const range = document.createRange();
+    return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
+      range.selectNodeContents(tick);
+      return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
+    });
+  });
+  expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px']);
+  expect(ticks.every(tick => tick.offset < 1)).toBe(true);
+  // What a larger size costs, in a note that the button after the size opens, and a click elsewhere or Escape closes.
+  const aboutSize = tab.getByRole('button', { name: 'About the thumbnail size', exact: true });
+  const sizeNote = page.locator('.thumbnail-size-note');
+  await expect(sizeNote).toHaveCount(0);
+  await aboutSize.click();
+  await expect(sizeNote).toHaveText('A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
+  await expect(aboutSize).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(sizeNote).toHaveCount(0);
+  await expect(page.locator('app-settings-dialog')).toHaveCount(1);
+  await aboutSize.click();
+  await expect(sizeNote).toBeVisible();
+  await tab.locator('.setting-title').first().click();
+  await expect(sizeNote).toHaveCount(0);
   await slider.fill('800');
-  await expect(tab.locator('.thumbnail-size-value')).toHaveText('800 pixels on the longer side');
+  await expect(slider).toHaveAttribute('aria-valuetext', '800 pixels on the longer side');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
   await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('800x600');
@@ -4547,7 +4876,7 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
 
   // Fast: the photo's own thumbnail, in today's box, and the slider disabled.
   await settings('Thumbnails');
-  await tab.getByRole('radio', { name: /^Fast/ }).check();
+  await tab.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await expect(slider).toBeDisabled();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
@@ -4570,12 +4899,12 @@ test('the thumbnail status bar offers the fast thumbnails, which are the thumbna
   await dismissWelcome();
   await openFolderWithPicker(folder);
   const statusBar = page.locator('app-thumbnail-generation-status-bar');
-  await expect(statusBar).toContainText('Generating thumbnails for HEIF files... To show them sooner, choose fast thumbnails in Settings.');
-  await statusBar.getByText('choose fast thumbnails in Settings', { exact: true }).click();
+  await expect(statusBar).toContainText('Generating thumbnails for HEIF files... To show them sooner, choose “Prefer app performance” in Settings.');
+  await statusBar.getByText('choose “Prefer app performance” in Settings', { exact: true }).click();
   const dialog = page.locator('app-settings-dialog');
   await expect(dialog.locator('mat-list-item.selected-tab')).toHaveText('Thumbnails');
   await expect(dialog.locator('app-thumbnail-settings')).toBeVisible();
-  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect(statusBar).toBeHidden();
@@ -4615,7 +4944,7 @@ test('Fast shows the thumbnail that a HEIF photo holds, though the folder was op
   await expect.poll(async () => (await shown())?.src, { timeout: 30000 }).toMatch(/a\.heic\.plm\.jpg\?size=800$/);
 
   await settings('Thumbnails');
-  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('240x320');

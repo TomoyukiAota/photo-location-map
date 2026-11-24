@@ -116,6 +116,8 @@
     "zoomIn": "Suurenda",
     "zoomOut": "Vähenda",
     "layers": "Kihid",
+    "fullScreen": "Täisekraan",
+    "exitFullScreen": "Välju täisekraanist",
     "photosInRegions": "Fotosid piirkondades: {{count}}",
     "selectPhotos": "Vali fotod",
     "setRegionByRectangle": "Määra piirkond ristkülikuga",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF-failide pisipiltide loomine...",
-    "fasterInSettings": "Et neid varem kuvada, <settingsLink>valige seadetes kiired pisipildid</settingsLink>.",
+    "fasterInSettings": "Et neid varem kuvada, <settingsLink>valige seadetes „Eelista rakenduse jõudlust“</settingsLink>.",
     "completed": "HEIF-failide pisipildid on loodud.",
     "finishedWithErrors": "HEIF-failide pisipiltide loomine lõppes vigadega.",
     "showDetails": "Kuva üksikasjad",
@@ -241,15 +243,16 @@
       "example": "Näide"
     },
     "thumbnails": {
-      "title": "Pisipildid",
-      "description": "Valige, kas pisipildid luuakse kvaliteedi või kiiruse järgi.",
-      "highQuality": "Kõrge kvaliteet",
-      "highQualityDescription": "Luuakse tervest fotost, allpool valitud suuruses. Seni kuvatakse fotosse salvestatud väike pisipilt. Nende loomine võtab aega, kui kausta esimest korda avatakse, ja kauem HEIF-failide puhul arvutis, mis ei suuda HEVC-d graafikariistvaraga dekodeerida.",
-      "size": "Suurus",
+      "title": "Pisipiltide kvaliteet ja rakenduse jõudlus",
+      "highQuality": "Eelista pisipiltide kvaliteeti",
+      "highQualityDescription": "Pisipildid luuakse alati fotofailidest.",
+      "size": "Pisipiltide suurus",
       "sizeValue": "pikem külg {{size}} pikslit",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Pisipiltide suurusest",
       "sizeDescription": "Mida suurem suurus, seda suuremana pisipildid kuvatakse, kuid seda kauem võtab nende loomine aega ja seda rohkem ruumi võtavad need pisipiltide vahemälus.",
-      "fast": "Kiire",
-      "fastDescription": "Fotosse salvestatud väike pisipilt, mis kuvatakse kohe. See on vähem terav: enamikus JPEG-fotodes 160 × 120 pikslit ja iPhone’iga tehtud 12-megapikslise foto puhul 320 × 240 pikslit."
+      "fast": "Eelista rakenduse jõudlust",
+      "fastDescription": "Kui failis, näiteks JPEG- või PNG-failis, on juba pisipilt, kuvatakse see muutmata kujul. Pisipilt, mille pikem külg on 400 pikslit, luuakse ainult failile, milles seda pole."
     },
     "os": {
       "title": "File Exploreri kontekstimenüü",
@@ -274,15 +277,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Pisipildid",
-        "description": "Selle rakenduse loodud pisipiltide vahemälu on vahekaardil „Pisipildid“.",
+        "title": "Pisipiltide vahemälu",
+        "description": "Pisipiltide vahemälu seaded on vahekaardil „Pisipildid“.",
         "open": "Ava vahekaart „Pisipildid“"
       },
       "map": {
-        "title": "Kaart",
-        "description": "Esri World Imagery Waybacki piltide tegemise kuupäevad salvestatakse vahemällu kuni {{max}} kaardil vaadatud koha kohta, et need järgmisel korral kohe kuvada.",
+        "title": "Kaardi vahemälu",
+        "description": "Kiiruse huvides salvestatakse piltide tegemise kuupäevad vahemällu kuni {{max}} koha kohta, mida on näidatud Esri World Imagery Waybackiga.",
         "count": "Kohti vahemälus: {{count}}",
-        "delete": "Kustuta kaardi vahemälu"
+        "delete": "Kustuta kaardi vahemälu",
+        "confirmDelete": "Kas soovite kaardi vahemälu kustutada?"
       },
       "all": {
         "title": "Kõik vahemälud",
@@ -311,7 +315,8 @@
       "actualSize": "Tegelik suurus",
       "zoomIn": "Suurenda",
       "zoomOut": "Vähenda",
-      "toggleFullScreen": "Lülita täisekraan sisse/välja"
+      "toggleFullScreen": "Lülita täisekraan sisse/välja",
+      "mapFullScreen": "Kaart täisekraanil"
     },
     "selection": {
       "title": "Valik",
