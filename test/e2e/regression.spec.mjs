@@ -3147,6 +3147,48 @@ test('Reveal in Sidebar reaches a row far down the sidebar, though the rows abov
   expect(await page.evaluate(() => globalThis.grownRows)).toBeGreaterThan(0);
   // In the middle of what the sidebar shows, as in the case above.
   await expectWhereRevealPutsIt(row);
+
+  // TL;DR: The rows stay where they are when the row above gets the thumbnail that the app makes of its photo, though
+  // its image shows the small one that the photo holds at its own size until the new one has loaded.
+  // Details: Chromium kept that image in place (scroll anchoring), and moved the rows below it down by 40 pixels, which
+  // left the revealed row below the middle now and then on Windows CI (photo-info-viewer.component.scss). Once it has
+  // its made thumbnail, the row above is put near where the sidebar of Windows CI, 501 pixels high, leaves it: 89
+  // pixels above the top of what the sidebar shows, with its checkbox under the rows kept at the top and the lower part
+  // of its image below them. Its thumbnail is then replaced as the page does it, by images of the sizes that its
+  // photo's have: the class of the small one goes at once, and the new image loads a moment later.
+  const rowAbove = treeNode('20.JPG');
+  const imageAbove = rowAbove.locator('.photo-info-viewer-thumbnail');
+  await expect.poll(() => imageAbove.evaluate(image => `${image.naturalWidth}x${image.naturalHeight}`)).toBe('300x400');
+  await expect(imageAbove).not.toHaveClass(/photo-info-viewer-provisional-thumbnail/);
+  const moved = await rowAbove.evaluate(async above => {
+    const sidebar = above.closest('#home-sidebar-lower-pane');
+    const revealed = above.nextElementSibling;
+    const image = above.querySelector('.photo-info-viewer-thumbnail');
+    const topOf = element => element.getBoundingClientRect().top - sidebar.getBoundingClientRect().top - sidebar.clientTop;
+    const frames = async count => {
+      for (let index = 0; index < count; index++) await new Promise(resolve => requestAnimationFrame(resolve));
+    };
+    const show = async (url, provisional) => {
+      const loaded = new Promise(resolve => image.addEventListener('load', resolve, { once: true }));
+      image.classList.toggle('photo-info-viewer-provisional-thumbnail', provisional);
+      if (!provisional) await frames(2);
+      image.src = url;
+      await loaded;
+      await frames(2);
+    };
+    const imageOfSize = async (width, height) => {
+      const canvas = new OffscreenCanvas(width, height);
+      canvas.getContext('2d').fillRect(0, 0, width, height);
+      return URL.createObjectURL(await canvas.convertToBlob({ type: 'image/jpeg' }));
+    };
+    const [small, made] = await Promise.all([imageOfSize(160, 120), imageOfSize(300, 400)]);
+    sidebar.scrollTop += topOf(above) + 89;
+    await show(small, true);
+    const before = topOf(revealed);
+    await show(made, false);
+    return topOf(revealed) - before;
+  });
+  expect(moved, 'How far the revealed row moved when the row above got its made thumbnail').toBe(0);
 });
 test('Reveal in Map from a row of the tree opens the photo\'s popup, selecting the photo too when it is not, and ending the chart\'s zoom when that leaves the photo out', async () => {
   await dismissWelcome();
