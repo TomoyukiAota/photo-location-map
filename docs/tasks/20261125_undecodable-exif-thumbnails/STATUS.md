@@ -59,8 +59,8 @@ of what `orientedJpeg()` gives, or of the bytes where it gives nothing), in a hi
 So the error, and the fallback, come only for a thumbnail whose tables or headers Chromium rejects while
 `orientedJpeg()`, which reads no more than the frame's size, takes them: an encoder that writes them wrong, or damage
 that falls on those 600 bytes rather than on the 9,700 of the image data. Damage to the image data, as a file cut short
-or overwritten has, loads, and shows part of the thumbnail or nothing, which nothing in the app finds. That is left as
-it is: High quality replaces a camera's thumbnail with the one that it makes anyway.
+or overwritten has, loads, and shows part of the thumbnail or nothing, which nothing in the app found: a thumbnail cut
+short is now left out while the folder opens ("Thumbnails cut short", below), and the others are left as they are.
 
 How rare such photos are is not known. None of the fixtures has one, and no camera or app that writes such
 thumbnails is known. Since #796, the viewer only logs a warning for one (`onThumbnailError()`). Before it, from #697
@@ -99,6 +99,31 @@ that the page cannot decode. It then showed its photo's whole file at Fast; it n
 the tree is replaced, as the service does not take a photo of another folder, nor one of the same path whose new EXIF
 thumbnail decodes. This was read from the code, not reproduced.
 
+## Thumbnails cut short
+
+Changed on 2026-11-25 too, after #836, as the owner asked about the thumbnails whose image data are damaged.
+
+A thumbnail whose image data are damaged was shown as Chromium drew it, with part of it or nothing: as it is at Fast,
+and at High quality where it was as large as the size; stretched at High quality otherwise, until the thumbnail that
+the app makes came; and as it is for a photo of another format, as a TIFF file. Of the damage in the table above, one
+kind can be found without decoding the thumbnail: a JPEG without its EOI, the marker with which every JPEG ends,
+which a thumbnail cut short lacks. The others, data overwritten, no quantization tables and a frame larger than its
+data, are left as they are: only decoding finds them, which #796 stopped doing while a folder opens.
+
+- How one is cut short: exifr gives as many bytes of the thumbnail as the EXIF data say that it has
+  (JPEGInterchangeFormatLength), so an app that rewrites them with the length too short leaves the thumbnail without
+  its end. With Kobe's photo whose length was so set to 60% (`test/test-util/jpeg-with-cut-short-exif-thumbnail.mjs`),
+  exifr gave the first 6,176 of the thumbnail's 10,294 bytes, and the location and the shooting time as they were.
+- `isCutShort()` (`src/app/shared/cut-short-jpeg.ts`) looks for EOI from the end: a whole thumbnail ends with it, so
+  that each costs one or two comparisons; one cut short is read back to its start. Bytes after EOI, which some writers
+  add as padding, are allowed. The 5 EXIF thumbnails of the fixtures end with EOI, with nothing after it.
+- `createThumbnail()` (`src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.ts`) leaves such a thumbnail
+  out, with a line in the log, so that the photo has no thumbnail of its EXIF data from the start: a JPEG or PNG photo
+  gets the thumbnail that the app makes, at Fast too, a HEIF photo the one that HeifThumbnailService makes, and a
+  photo of another format, as a TIFF file, the image that says that there is none, rather than part of a thumbnail.
+- Each is counted as `thumbnail-cut-short` in the analytics event "Opened Folder: EXIF Read Failed"
+  (`src/app/shared/exif-fetcher/exif-read-failures.ts`), so that how often it happens will be known.
+
 ## Checked
 
 - Unit tests: `needsMadeThumbnail()` at both qualities, and the photo taken late in `jpeg-png-thumbnail.service.spec.ts`
@@ -108,12 +133,18 @@ thumbnail decodes. This was read from the code, not reproduced.
   place, and High with an EXIF thumbnail as large as the size. The tests that expect a thumbnail to be made fail
   without the change.
 - The end-to-end case "Fast shows a thumbnail of 400 pixels that the app makes of a JPEG whose EXIF thumbnail the page
-  cannot decode, never the photo itself", with Kobe's photo whose EXIF thumbnail has a quantization table of the number
-  5 (`test/test-util/jpeg-with-undecodable-exif-thumbnail.mjs`, the one byte changed): the row and the popup show the
-  thumbnail of the cache, the page never asks for the photo's file, and the log says that the EXIF thumbnail could not
-  be decoded. Against a build of `main` at 19d97763, the row showed the photo itself, 4032 x 3024, and the case failed.
+  cannot decode or is cut short, never the photo itself", with Kobe's photo whose EXIF thumbnail has a quantization
+  table of the number 5 (`test/test-util/jpeg-with-undecodable-exif-thumbnail.mjs`, the one byte changed): the row and
+  the popup show the thumbnail of the cache, the page never asks for the photo's file, and the log says that the EXIF
+  thumbnail could not be decoded. Against a build of `main` at 19d97763, the row showed the photo itself,
+  4032 x 3024, and the case failed.
 - The 15 end-to-end cases whose names speak of thumbnails, against a development build and against the production
   build of the change, on macOS, with the windows hidden.
+- For the thumbnails cut short: `isCutShort()` in `src/app/shared/cut-short-jpeg.spec.ts`; Kobe's photo with its
+  thumbnail cut short in `test/src/app/shared/exif-fetcher.spec.em.renderer.ts`, which reads it with exifr as the app
+  does (no thumbnail, the rest of the EXIF data, the reason counted), and fails without the change; and the
+  end-to-end case of Fast, now with Unga's photo, which has no location, cut short too: its row shows the thumbnail of
+  300 x 400 that the app made, the page never asks for its file, the log says why, and the event counts it.
 - What the rows of the tree cost, as `test/performance/tree-rows.mjs` measures it (2,000 photos, 3 trials of each
   build, production builds of `main` at 19d97763 and of the change, a load average under 2): the medians were the same
   within the trials' spread. `openMs` 1,127 and 1,046 ms, `rowsAgainMs` 225 and 210 ms, `checkboxMs` 29 and 28 ms,

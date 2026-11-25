@@ -18,6 +18,8 @@ import { Thumbnail } from '../shared/model/thumbnail.model';
  *   thumbnail whose image data are damaged loads, and shows what Chromium could decode of it, part of it or nothing:
  *   cut short, with bytes overwritten, without its end or without its quantization tables. Seen in Electron 45, with
  *   copies of a fixture's EXIF thumbnail damaged in each way (docs/tasks/20261125_undecodable-exif-thumbnails/STATUS.md).
+ *   One cut short, or without its end, is left out while the folder opens (isCutShort() in
+ *   src/app/shared/cut-short-jpeg.ts).
  */
 @Service()
 export class UndecodableThumbnailService {
