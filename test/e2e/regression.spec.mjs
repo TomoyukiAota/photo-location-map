@@ -372,8 +372,9 @@ async function shot(name, mask = []) {
   }
   if (name === 'empty-home') {
     await expect(page.locator('app-sidebar-upper-pane')).toHaveScreenshot('toolbar.png', { animations: 'disabled' });
-    // Reference pixels are cropped from the original full-page screenshot.
-    await expect(page).toHaveScreenshot('map-toolbar.png', { clip: { x: 1155, y: 210, width: 36, height: 185 } });
+    // Reference pixels are cropped from the original full-page screenshot: Leaflet-Geoman's toolbar, which the bar of the
+    // map's full screen, below it, moved 44 pixels up from y 210.
+    await expect(page).toHaveScreenshot('map-toolbar.png', { clip: { x: 1155, y: 166, width: 36, height: 185 } });
   }
   const isDialog = /^(welcome|about|language-dialog|settings-)/.test(name);
   const dialog = isDialog ? page.locator('mat-dialog-container') : page;
@@ -1378,12 +1379,14 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const sidebarAfterDrag = await sidebar.boundingBox();
   expect(Math.abs(sidebarAfterDrag.width - sidebarAtStart.width - 120)).toBeLessThan(3);
   expect(Math.abs(sidebarAfterDrag.x - (sidebarAtStart.x - 120))).toBeLessThan(3);
-  // The map in full screen has the window alone, with its button at its top left, as the map stays laid out from left
-  // to right. Out of it, the sidebar is back at the map's right, as wide as it was. The window keeps its size here:
-  // the English case has it go to full screen.
+  // The map in full screen has the window alone, with its button above the zoom buttons at the map's right, as the map
+  // stays laid out from left to right. Out of it, the sidebar is back at the map's right, as wide as it was. The window
+  // keeps its size here: the English case has it go to full screen.
   await app.evaluate(({ BrowserWindow }) => { BrowserWindow.prototype.setFullScreen = () => undefined; });
-  const fullScreenButton = page.locator('.leaflet-top.leaflet-left .plm-leaflet-map-full-screen-button');
+  const fullScreenButton = page.locator('.leaflet-bottom.leaflet-right .plm-leaflet-map-full-screen-button');
   await expect(fullScreenButton).toHaveAttribute('title', 'ملء الشاشة');
+  const fullScreenButtonBox = await fullScreenButton.boundingBox();
+  expect(fullScreenButtonBox.x).toBeGreaterThan(mapAtStart.x + mapAtStart.width / 2);
   await fullScreenButton.click();
   await expect(sidebar).toBeHidden();
   await expect(fullScreenButton).toHaveAttribute('title', 'الخروج من ملء الشاشة');
@@ -4316,13 +4319,28 @@ test('the map in full screen has the window alone, in full screen, with its cont
   const roundedBox = async element => Object.values(await element.boundingBox()).map(Math.round);
   const boxes = async () => ({ sidebar: await roundedBox(sidebar), chart: await roundedBox(chart), map: await roundedBox(mapPane) });
   const boxesBefore = await boxes();
-  // The button is alone at the map's top left, which nothing else is in.
-  const button = page.locator('.leaflet-top.leaflet-left .plm-leaflet-map-full-screen-button');
+  // The button is in a bar of its own right above the zoom buttons, and below Leaflet-Geoman's toolbar, at the map's
+  // bottom right. In a map shorter than 460 pixels, the bar is at the left of the zoom out button instead
+  // (_plm-leaflet-map-full-screen.scss): in a window of 960 x 600 (PLM_E2E_COMPACT), and at the end of this case.
+  const button = page.locator('.leaflet-bottom.leaflet-right .plm-leaflet-map-full-screen-button');
   await expect(button).toHaveAttribute('title', 'Full Screen');
-  const buttonBox = await button.boundingBox();
-  const mapBox = await mapPane.boundingBox();
-  expect(buttonBox.x - mapBox.x).toBeLessThan(20);
-  expect(buttonBox.y - mapBox.y).toBeLessThan(20);
+  expect(await button.evaluate(element => {
+    const bar = element.closest('.leaflet-control');
+    return [bar.previousElementSibling?.classList.contains('leaflet-pm-toolbar'), bar.nextElementSibling?.classList.contains('leaflet-control-zoom')];
+  })).toEqual([true, true]);
+  const buttonBar = page.locator('.plm-leaflet-map-full-screen');
+  const zoomBar = page.locator('.leaflet-control-zoom');
+  // Each gives the gaps that its place has, 10 pixels and none, from the zoom buttons' bar.
+  const aboveZoom = async () => {
+    const [bar, zoom] = [await buttonBar.boundingBox(), await zoomBar.boundingBox()];
+    return [Math.round(zoom.y - (bar.y + bar.height)), Math.round(zoom.x + zoom.width - (bar.x + bar.width))];
+  };
+  const besideZoomOut = async () => {
+    const [bar, zoom] = [await buttonBar.boundingBox(), await zoomBar.boundingBox()];
+    return [Math.round(zoom.x - (bar.x + bar.width)), Math.round(bar.y + bar.height - (zoom.y + zoom.height))];
+  };
+  const inItsPlace = async () => (await mapPane.boundingBox()).height < 460 ? besideZoomOut() : aboveZoom();
+  expect(await inItsPlace()).toEqual([10, 0]);
 
   // The map takes the window, but for the status bars at its bottom, and Leaflet fits it.
   await button.click();
@@ -4386,8 +4404,31 @@ test('the map in full screen has the window alone, in full screen, with its cont
   await expect(sidebar).toBeVisible();
   await expect(page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) }))
     .toHaveAttribute('data-reveal-highlight', 'lit');
+  // TL;DR: The menu is gone before the next Esc, which it would take.
+  // Details: Angular Material's menu takes every Esc, and prevents its default, until it has faded out, as the CDK
+  // gives the keys of the page to an overlay while it is attached. Twice in the hidden window of a busy computer, the
+  // Esc below came before the fade had ended, and did not leave the full screen.
+  await expect(page.locator('.photo-info-viewer-more-options-menu')).toHaveCount(0);
   await expect(button).toHaveAttribute('title', 'Full Screen');
   expect(await viewMenuItemChecked()).toBe(false);
+
+  // In a map too short for the bar above the zoom buttons, the bar is at the left of the zoom out button, and the layers
+  // button at the top right leaves Leaflet-Geoman's first button free. In full screen, the map is tall enough again.
+  expect(await inItsPlace()).toEqual([10, 0]);
+  await app.evaluate(({ BrowserWindow }) => {
+    const window = BrowserWindow.getAllWindows()[0];
+    window.setContentSize(window.getContentSize()[0], 600);
+  });
+  await expect.poll(async () => (await mapPane.boundingBox()).height).toBeLessThan(460);
+  await expect.poll(besideZoomOut).toEqual([10, 0]);
+  await page.getByTitle('Set Region by Rectangle', { exact: true }).click({ trial: true });
+  await button.click();
+  await expect(sidebar).toBeHidden();
+  await expect.poll(async () => (await mapPane.boundingBox()).height).toBeGreaterThanOrEqual(460);
+  await expect.poll(aboveZoom).toEqual([10, 0]);
+  await page.keyboard.press('Escape');
+  await expect(sidebar).toBeVisible();
+  await expect.poll(besideZoomOut).toEqual([10, 0]);
 });
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
