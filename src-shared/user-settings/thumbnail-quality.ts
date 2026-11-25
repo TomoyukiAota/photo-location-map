@@ -6,7 +6,9 @@
  *   small one is shown until then. A JPEG's EXIF thumbnail is 160 x 120 from most cameras and phones, and a HEIF
  *   photo's thumbnail item 320 x 240 from an iPhone of 12 megapixels.
  * - 'fast': the thumbnails that the photos hold, shown right away, in the place of a thumbnail of 400 pixels; one of
- *   400 pixels is made only of a photo that holds none.
+ *   400 pixels is made only of a photo that holds none, or, for a JPEG or PNG photo, none that can be shown: one that
+ *   the page cannot decode, or one that lies on its side against the photo (needsMadeThumbnail in
+ *   src/app/jpeg-png-thumbnail/jpeg-png-thumbnail.service.ts).
  * TL;DR: High quality by default, which the owner chose: the faster one is offered where the making is seen to take
  * time, the status bar of the generation of thumbnails.
  */

@@ -6,6 +6,7 @@ import { logged } from '../../../src-shared/log/logged-line';
 import { isFilePathTooLongOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { ThumbnailQuality } from '../../../src-shared/user-settings/thumbnail-quality';
 import { UndecodableThumbnailService } from '../photo-info-viewer/undecodable-thumbnail.service';
+import { isExifThumbnailOnItsSide } from '../shared/exif-thumbnail-on-its-side';
 import { Photo } from '../shared/model/photo.model';
 import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { JpegPngImageSource } from './jpeg-png-image-source';
@@ -22,8 +23,8 @@ export type JpegPngThumbnailState =
   | { readonly kind: 'decoded', readonly url: string }
   /**
    * The photo itself, as every such photo without an EXIF thumbnail showed before, or the EXIF thumbnail of one that
-   * has one: the page cannot make a thumbnail, the file could not be decoded, or the thumbnail's path would be too long
-   * for Windows.
+   * has one that a place may show (hasUsableExifThumbnail): the page cannot make a thumbnail, the file could not be
+   * decoded, or the thumbnail's path would be too long for Windows.
    */
   | { readonly kind: 'photoItself' };
 
@@ -40,8 +41,18 @@ export const backgroundStartDelayMs = 1000;
 const photosPerStateRequest = 1000;
 
 /**
+ * Whether a JPEG or PNG photo has a thumbnail in its EXIF data that a place may show for it: one that the page
+ * decodes, as far as `undecodable` knows, and that does not lie on its side against the photo
+ * (isExifThumbnailOnItsSide). The app makes the thumbnail of a photo that has none, at either quality.
+ */
+export function hasUsableExifThumbnail(photo: Photo, undecodable: UndecodableThumbnailService): boolean {
+  const exifThumbnail = photo.exif?.thumbnail;
+  return !!exifThumbnail && !undecodable.isUndecodable(exifThumbnail) && !isExifThumbnailOnItsSide(photo.exif);
+}
+
+/**
  * Whether the app makes the photo's thumbnail, of `longerSide` pixels at `quality`: a JPEG or PNG file without an
- * EXIF thumbnail that the page decodes, as far as `undecodable` knows, and at High quality one whose EXIF thumbnail is
+ * EXIF thumbnail that a place may show (hasUsableExifThumbnail), and at High quality one whose EXIF thumbnail is
  * smaller than that, which a place would show stretched (src-shared/user-settings/thumbnail-quality.ts). A camera's is
  * 160 x 120 in most photos.
  */
@@ -49,10 +60,9 @@ export function needsMadeThumbnail(photo: Photo, quality: ThumbnailQuality, long
                                    undecodable: UndecodableThumbnailService): boolean {
   if (!FilenameExtension.isDisplayableInBrowser(photo.filenameExtension))
     return false;
-  const exifThumbnail = photo.exif?.thumbnail;
-  if (!exifThumbnail || undecodable.isUndecodable(exifThumbnail))
+  if (!hasUsableExifThumbnail(photo, undecodable))
     return true;
-  const { width, height } = exifThumbnail.dimensions ?? { width: 0, height: 0 };
+  const { width, height } = photo.exif.thumbnail.dimensions ?? { width: 0, height: 0 };
   return quality === 'high' && Math.max(width, height) < longerSide;
 }
 
@@ -74,9 +84,8 @@ function isRefusedData(error: unknown): boolean {
 
 /**
  * The thumbnails that the app makes of the opened folder's JPEG and PNG photos (needsMadeThumbnail): of those that have
- * none in their EXIF data, or none that the page decodes, which the page made by showing the whole photo, and at High
- * quality of those whose EXIF thumbnail is smaller than the chosen size; made in the page, kept in the cache, and shown
- * from it.
+ * none in their EXIF data that a place may show (hasUsableExifThumbnail), and at High quality of those whose EXIF
+ * thumbnail is smaller than the chosen size; made in the page, kept in the cache, and shown from it.
  * TL;DR: Those that a place shows are made first, the last asked for first; then the folder's others, one at a time,
  * so that the next time it is opened every thumbnail is in the cache. They are made at the size that the settings
  * chose when the folder was opened, or when the settings were saved since (applySettings).
@@ -95,9 +104,11 @@ function isRefusedData(error: unknown): boolean {
  *   that a jump brought near above them, the first tiles of a popup first. Those of a later turn are made before
  *   them, as a scroll brings them nearer.
  * - Each photo has a signal of its own, so that a thumbnail made renders only the places of its photo.
- * - A photo whose thumbnail cannot be made shows itself, as before, or its EXIF thumbnail where it has one; the cache
- *   says so for one whose file the decoder refused, so that it is not tried again until the file or the size
- *   changes.
+ * - A photo whose thumbnail cannot be made shows itself, as before, or its EXIF thumbnail where it has one that a place
+ *   may show; the cache says so for one whose file the decoder refused, so that it is not tried again until the file
+ *   or the size changes.
+ * - A photo whose EXIF thumbnail lies on its side against the photo (isExifThumbnailOnItsSide) is taken when the
+ *   folder opens, at either quality, as one without an EXIF thumbnail is: its EXIF data say so already.
  * - A photo whose EXIF thumbnail the page turns out not to decode once a place shows it (UndecodableThumbnailService) is
  *   taken when a place asks for it then. The folder did not take it when it was opened, at Fast, which makes no
  *   thumbnail of a photo with an EXIF thumbnail, or at High quality where that thumbnail was as large as the size

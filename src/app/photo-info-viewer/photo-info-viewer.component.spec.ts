@@ -393,6 +393,77 @@ describe('PhotoInfoViewerComponent', () => {
       });
     });
 
+    // An app turned the photo's pixels, and left its thumbnail as it was (isExifThumbnailOnItsSide).
+    describe('in the EXIF data, which lies on its side against the photo', () => {
+      let canMake: boolean;
+      let decoded: (jpeg: Blob) => void;
+
+      beforeEach(() => {
+        canMake = true;
+        decoded = undefined;
+        TestBed.overrideProvider(JpegPngImageSource, {
+          useValue: {
+            canMake: () => canMake,
+            states: async (photoPaths: string[]) => photoPaths.map((photoPath): ThumbnailState =>
+              ({ attemptFinished: false, cacheAvailable: false, thumbnailFilePath: `/cache${photoPath}.plm.jpg` })),
+            readPhoto: async () => ({ bytes: new Uint8Array([1]), lastModified: '2026-11-23T01:02:03.000Z' }),
+            makeThumbnail: () => new Promise<Blob>(resolve => { decoded = resolve; }),
+            save: async (photoPath: string) => `/cache${photoPath}.plm.jpg`,
+          },
+        });
+      });
+
+      /**
+       * A photo whose pixels stand portrait, with the landscape thumbnail of before, as Windows Photo Viewer left
+       * test/test-resources/actual-photos/Unga/IMG_2581.JPG.
+       */
+      function turnedPhoto(path = '/photos/IMG_2581.JPG'): Photo {
+        return photoAt(path, {
+          thumbnail: new Thumbnail('blob:thumbnail-of-IMG_2581', new Dimensions(160, 120)),
+          imageDimensions: new Dimensions(2448, 3264),
+          dateTimeOriginal: new DateTimeOriginal(new Date(2015, 0, 17, 12, 0, 0)),
+        });
+      }
+
+      for (const [name, chosen] of [['High quality', 'high'], ['Fast', 'fast']] as const) {
+        it(`is shown nowhere at ${name}: the image that says that the thumbnail is being made, then the one that the app makes`, async () => {
+          quality.set(chosen);
+          const photo = turnedPhoto();
+          await TestBed.inject(JpegPngThumbnailService).prepare([photo]);
+          await show(photo, 'dir-tree-view');
+          expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
+          expect(thumbnail().classList.contains('photo-info-viewer-provisional-thumbnail')).toBe(false);
+
+          await vi.waitFor(() => expect(decoded).toBeDefined());
+          decoded(new Blob(['jpeg']));
+          await vi.waitFor(() => {
+            fixture.detectChanges();
+            expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_2581.JPG.plm.jpg'));
+          });
+          // Another place that shows the photo, as its marker's popup, shows the one made at once.
+          await show(photo, 'leaflet-map-popup');
+          expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_2581.JPG.plm.jpg'));
+        });
+      }
+
+      it('gives way to the photo itself, which stands as it is shown, where the page cannot make the thumbnail', async () => {
+        canMake = false;
+        const photo = turnedPhoto();
+        await TestBed.inject(JpegPngThumbnailService).prepare([photo]);
+        await show(photo, 'leaflet-map-popup');
+
+        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/photos/IMG_2581.JPG')}`);
+      });
+
+      it('is shown as it is for a photo that the page cannot show itself, rather than the image that says that there is none', async () => {
+        await show(photoAt('/photos/scan.tif', {
+          thumbnail: new Thumbnail('blob:thumbnail-of-scan', new Dimensions(160, 120)), imageDimensions: new Dimensions(2448, 3264),
+        }), 'leaflet-map-popup');
+
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-scan');
+      });
+    });
+
     describe('of a HEIF photo, which the main process makes where the page cannot', () => {
       let finished: boolean;
 
