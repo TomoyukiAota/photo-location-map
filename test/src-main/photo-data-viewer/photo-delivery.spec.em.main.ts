@@ -22,6 +22,26 @@ const navigate = (contents: Contents, url: string, details: Partial<{ isMainFram
 const request = (url: string, referrer = `${viewerOrigin}/`, mode: RequestMode = 'cors') =>
   ({ url, referrer, mode, headers: new Headers() }) as unknown as Request;
 
+/**
+ * What `run` gives while every URL of Node.js has the parts of `other`, as a URL made while code that the inspector ran
+ * parsed another had them in the e2e suite (src-main/file-server/app-page.ts). They are each URL's own again once `run`
+ * has returned: for a handler, at its first await.
+ */
+function withPartsOf<T>(other: string, run: () => T): T {
+  const names = ['protocol', 'host', 'hostname', 'port', 'pathname', 'search', 'hash', 'origin'] as const;
+  const otherUrl = new URL(other);
+  const values = names.map(name => [name, otherUrl[name]] as const);
+  const descriptors = names.map(name => [name, Object.getOwnPropertyDescriptor(URL.prototype, name)!] as const);
+  for (const [name, value] of values)
+    Object.defineProperty(URL.prototype, name, { configurable: true, get: () => value });
+  try {
+    return run();
+  } finally {
+    for (const [name, descriptor] of descriptors)
+      Object.defineProperty(URL.prototype, name, descriptor);
+  }
+}
+
 describe('The photo of Photo Data Viewer\'s window (in main process)', () => {
   let root: string;
   let photo: { name: string, path: string };
@@ -58,6 +78,26 @@ describe('The photo of Photo Data Viewer\'s window (in main process)', () => {
     assert.strictEqual((await respondToPhotoRequest(request(given.url, `${viewerOrigin}/`, 'no-cors'))).status, 403);
     const anotherToken = given.url.slice(0, -1) + (given.url.endsWith('0') ? '1' : '0');
     assert.strictEqual((await respondToPhotoRequest(request(anotherToken))).status, 404);
+    contents.destroy();
+  });
+
+  // The handler reads the photo's token, and the origin of the page that asks, from the addresses themselves, so that a
+  // URL of Node.js whose parts are another URL's, such as a file: URL that code which the e2e suite evaluates in the main
+  // process parses, does not change the answer (photo-delivery.ts, and app-page.spec.em.main.ts for the main window).
+  it('answers the photo to the viewer\'s page alone whatever parts a URL that Node.js parses meanwhile has', async () => {
+    const contents = new Contents();
+    grantPhoto(asWebContents(contents), photo);
+    const given = await photoFor(asWebContents(contents), 'url');
+    if (!('url' in given)) throw new Error('No URL');
+    const other = 'file:///C:/photos/a.jpg';
+    const answer = await withPartsOf(other, () => respondToPhotoRequest(request(given.url)));
+    assert.strictEqual(answer.status, 200);
+    assert.strictEqual(answer.headers.get('access-control-allow-origin'), viewerOrigin);
+    assert.deepStrictEqual(Buffer.from(await answer.arrayBuffer()), fs.readFileSync(photo.path));
+    assert.strictEqual((await withPartsOf(other, () => respondToPhotoRequest(request(given.url, 'https://example.com/')))).status, 403);
+    // The pages that the window may stay on and keep its photo for (keepOnViewerPages, grantPhoto).
+    assert.deepStrictEqual(withPartsOf(other, () => [`${viewerOrigin}/?plmBridge=1`, 'https://example.com/'].map(url => isViewerPage(url))),
+      [true, false]);
     contents.destroy();
   });
 

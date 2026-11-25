@@ -188,7 +188,10 @@ if (testRoot) {
     const offline = process.env.PLM_TEST_OFFLINE === '1';
     globalThis.__plmOfflineCancelled = [];
     session.defaultSession.webRequest.onBeforeRequest({ urls: offline ? ['*://*/*'] : interceptedUrls }, (details, callback) => {
-      const { hostname } = new URL(details.url);
+      // The host, between "//" and the path of the address as Chromium writes it, without a user or a port: read as a
+      // text, not with Node.js's URL, whose parts were now and then another URL's in this suite
+      // (src-main/file-server/app-page.ts).
+      const hostname = (details.url.split('/')[2] ?? '').replace(/^.*@/, '').replace(/:\d*$/, '');
       const intercepted = /(^|\.)(analytics\.photo-location-map\.tomoyukiaota\.com|analytics\.photo-data-viewer\.tomoyukiaota\.com|mixpanel\.com|amplitude\.com|google-analytics\.com)$/.test(hostname)
         || hostname === 'www.googletagmanager.com'
         || youTubeHosts.some(host => hostname === host || hostname.endsWith(`.${host}`))
