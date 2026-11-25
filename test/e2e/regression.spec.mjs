@@ -137,6 +137,44 @@ function launchOptions(extraEnv = {}) {
     cwd: packagedExecutable ? profile : root, env, timeout: packagedExecutable ? 90000 : 30000 };
 }
 /**
+ * Evaluates `change` with `arg` in the main process, as `target.evaluate(change, arg)` does, where `target` is the
+ * application or a handle of a window, but in a task of its own. A change of the main window's size, place or full
+ * screen is evaluated so.
+ * TL;DR: Where Playwright's evaluation comes in, in the middle of the main process's code, the window's change runs
+ * electron-window-state's listener (src-main/window-config.ts), which can clear the timer that Node.js is just
+ * calling: Node.js then throws "TypeError: timer._onTimeout is not a function".
+ * Details:
+ * - On Windows CI, on main at d8de540a (run 45246484850), the main process threw that error 108 ms after it had logged
+ *   "Launching the main window.", while launch() resized the window. The application's dialog of an unhandled error
+ *   then held the main process: the resize was never answered, the case timed out, and its quit failed too.
+ * - Node.js's inspector, through which Playwright evaluates, runs what comes in at an interrupt check of the code that
+ *   runs then (src-main/file-server/app-page.ts has another case of it). listOnTimeout checks that a due timer has its
+ *   callback, and calls it a few function calls later (lib/internal/timers.js of Node.js 24.22.2, in Electron 45.3.2,
+ *   and of Node.js's main branch in November 2026). setBounds and setContentSize emit 'resize' before they return,
+ *   and electron-window-state 5.0.3 listens to 'resize' and 'move' by clearing its timer of 100 ms and setting
+ *   another. An evaluation that came in between the check and the call cleared the timer being called.
+ * - Reproduced on macOS with Electron 45.3.2: an inspector client evaluated setBounds of a hidden window that
+ *   electron-window-state managed. With an async hook that held each start of the library's timer for 80 ms, each of
+ *   its 19 starts threw the error, with the stack of CI; without the hook, none of 19. With 200 timers of 1 ms kept
+ *   due, evaluations that cleared them threw it 25 to 75 times in 5 seconds, and in some runs the timers set later
+ *   never ran, as Node.js's lists of timers were broken.
+ * - Users are not affected: no inspector runs in the package's main process, whose fuse enableNodeCliInspectArguments
+ *   is off (docs/contributing/electron-fuses.md). The suite runs a copy of the package with it on.
+ * - In a task of its own, the change runs when no other code of the main process does, as a user's change does; the
+ *   interrupt only schedules it. The suite's other evaluations still run where they come in: watchQuit has to, to
+ *   watch a main process that is busy (quitApplication), and none of the others is known to clear a timer.
+ */
+function inTaskOfItsOwn(target, change, arg) {
+  // Playwright sends a function as its source: `change` is made again from its source, in the task.
+  return target.evaluate((value, [source, argument]) => new Promise((resolve, reject) => setImmediate(() => {
+    try {
+      resolve((0, eval)(`(${source})`)(value, argument));
+    } catch (error) {
+      reject(error);
+    }
+  })), [String(change), arg]);
+}
+/**
  * Launches the application on the test profile, finds its main window as `page`, and checks how it runs. In a
  * profile whose user has not confirmed a language, the application shows the Language dialog first: it is confirmed
  * here, with the language that it offers, unless `languageDialog` is 'keep', for the cases about the dialog. The
@@ -232,7 +270,7 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
   if (liveReload) {
     expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
   }
-  if (resize) await mainWindow.evaluate((window, { visual, compact }) => {
+  if (resize) await inTaskOfItsOwn(mainWindow, (window, { visual, compact }) => {
     if (visual) {
       window.setContentSize(1200, 800);
       return;
@@ -2663,7 +2701,7 @@ test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, an
   const { map } = await places();
   const smaller = { width: Math.max(0, Math.min(300, Math.floor(map.width) - 400)),
     height: Math.max(0, Math.min(100, Math.floor(map.height) - 330)) };
-  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [width - smaller.width, height - smaller.height]);
+  await inTaskOfItsOwn(mainWindow, (window, [w, h]) => window.setContentSize(w, h), [width - smaller.width, height - smaller.height]);
   if (smaller.height > 0)
     await expect.poll(async () => (await places()).box.height).toBeLessThan(box);
   await expect.poll(async () => {
@@ -2681,7 +2719,7 @@ test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, an
 
   // A map too short and narrow for the smallest thumbnail and the whole of the long name without spaces: the popup's
   // column scrolls, inside the popup, and its parts follow each other, with the buttons under the shooting time.
-  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [Math.min(width, 600), Math.min(height, 380)]);
+  await inTaskOfItsOwn(mainWindow, (window, [w, h]) => window.setContentSize(w, h), [Math.min(width, 600), Math.min(height, 380)]);
   await openFolderWithPicker(folder(2));
   const column = () => page.evaluate(() => {
     const rect = selector => document.querySelector(selector).getBoundingClientRect().toJSON();
@@ -4132,7 +4170,7 @@ test('a window resize keeps the sizes of the panes around the map, and Leaflet f
   const sidebarWidth = (await sidebar.boundingBox()).width;
   await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 50);
   const afterSidebarDrag = await mapSizes();
-  await app.evaluate(({ BrowserWindow }) => {
+  await inTaskOfItsOwn(app, ({ BrowserWindow }) => {
     const window = BrowserWindow.getAllWindows()[0];
     const [width, height] = window.getContentSize();
     window.setContentSize(width - 200, height - 120);
@@ -4156,7 +4194,7 @@ test('a window resize keeps the sizes of the panes around the map, and Leaflet f
   const chart = page.locator('#home-chart');
   const chartHeight = (await chart.boundingBox()).height;
   const afterChartDrag = await mapSizes();
-  await app.evaluate(({ BrowserWindow }) => {
+  await inTaskOfItsOwn(app, ({ BrowserWindow }) => {
     const window = BrowserWindow.getAllWindows()[0];
     const [width, height] = window.getContentSize();
     window.setContentSize(width, height + 120);
@@ -4289,7 +4327,7 @@ test('the map in full screen has the window alone, in full screen, with its cont
   await expect.poll(viewMenuItemChecked).toBe(true);
   expect(await fullScreenRequests()).toEqual([true, false, true]);
   await expect.poll(windowIsFullScreen).toBe(true);
-  await app.evaluate(({ BrowserWindow }) => globalThis.__plmLeaveFullScreenByItself(BrowserWindow.getAllWindows()[0]));
+  await inTaskOfItsOwn(app, ({ BrowserWindow }) => globalThis.__plmLeaveFullScreenByItself(BrowserWindow.getAllWindows()[0]));
   await expect(sidebar).toBeVisible();
   await expect.poll(viewMenuItemChecked).toBe(false);
   await expect.poll(windowIsFullScreen).toBe(false);
@@ -4311,13 +4349,13 @@ test('the map in full screen has the window alone, in full screen, with its cont
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
   if (process.platform === 'win32') {
-    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
+    await inTaskOfItsOwn(app, ({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(true);
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
-    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
+    await inTaskOfItsOwn(app, ({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
   }
-  const saved = await app.evaluate(({ BrowserWindow, screen }) => {
+  const saved = await inTaskOfItsOwn(app, ({ BrowserWindow, screen }) => {
     const win = BrowserWindow.getAllWindows()[0];
     const area = screen.getDisplayMatching(win.getBounds()).workArea;
     const bounds = { x: area.x + 40, y: area.y + 40,
@@ -5025,7 +5063,7 @@ test('the thumbnail error dialog lists, sorts and filters the HEIF files without
   await expect(dialog).toHaveCount(0);
   // In a narrow window, the details take more lines, and their area is as tall as they are: none of them is under
   // the status bar of the loaded files, as the ones past a height of 150px were.
-  await (await app.browserWindow(page)).evaluate(window => window.setContentSize(400, 800));
+  await inTaskOfItsOwn(await app.browserWindow(page), window => window.setContentSize(400, 800));
   await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(400);
   await expect.poll(() => details.evaluate(area => Math.round(area.querySelector('.details').getBoundingClientRect().bottom
     - area.getBoundingClientRect().bottom))).toBeLessThanOrEqual(0);
