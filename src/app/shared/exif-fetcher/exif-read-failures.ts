@@ -9,7 +9,9 @@ import { FailureReasons } from '../../../../src-shared/analytics/failure-reasons
  * - exif-failed: the app could not make its model of what was read;
  * - rotate-failed: the embedded thumbnail could not be turned on a canvas, so the photo has no thumbnail of its EXIF
  *   data. Only a thumbnail that is not a JPEG of a frame that the page decodes is turned so; the page finds that
- *   another one cannot be decoded only once it shows it (createThumbnail() in using-exifr/fetch-exif-using-exifr.ts).
+ *   another one cannot be decoded only once it shows it (createThumbnail() in using-exifr/fetch-exif-using-exifr.ts);
+ * - thumbnail-cut-short: the embedded thumbnail is a JPEG without its end, as the EXIF data give its length too short,
+ *   so the photo has no thumbnail of its EXIF data (src/app/shared/cut-short-jpeg.ts).
  */
 export const exifReadFailures = new FailureReasons('Opened Folder Info', 'Opened Folder: EXIF Read Failed');
 

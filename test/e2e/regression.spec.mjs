@@ -13,6 +13,7 @@ import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 import { jpegWithLocationAndDate } from '../test-util/jpeg-with-location-and-date.mjs';
 import { jpegWithoutExifThumbnail } from '../test-util/jpeg-without-exif-thumbnail.mjs';
 import { jpegWithUndecodableExifThumbnail } from '../test-util/jpeg-with-undecodable-exif-thumbnail.mjs';
+import { jpegWithCutShortExifThumbnail } from '../test-util/jpeg-with-cut-short-exif-thumbnail.mjs';
 import { answerDatedLayers } from '../test-util/dated-layer-answers.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
@@ -4888,15 +4889,19 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
   expect(await expectThumbnailsOfCache()).toEqual(files);
   expect(await Promise.all(files.map(async file => (await stat(file)).mtimeMs))).toEqual(madeAt);
 });
-test('Fast shows a thumbnail of 400 pixels that the app makes of a JPEG whose EXIF thumbnail the page cannot decode, never the photo itself', async () => {
+test('Fast shows a thumbnail of 400 pixels that the app makes of a JPEG whose EXIF thumbnail the page cannot decode or is cut short, never the photo itself', async () => {
   // Fast shows a photo's EXIF thumbnail as it is, and makes no thumbnail of a photo that has one. The page finds that it
   // cannot decode one only once a place shows it, by the img element's error: the photo then gets the thumbnail that
   // the app makes of a photo without one, rather than show itself, its whole file, which the page would keep for the
   // rest of the session (JpegPngThumbnailService). The photo has Kobe's location, so that its marker's popup shows it.
+  // A thumbnail cut short loads without an error, with its first rows only: it is left out while the folder opens
+  // (src/app/shared/cut-short-jpeg.ts), and Unga's photo, which has no location, is one without an EXIF thumbnail.
   const folder = path.join(profile, 'Undecodable EXIF thumbnail');
   await mkdir(folder);
   const kobe = path.join(folder, 'Kobe.JPG');
   await writeFile(kobe, jpegWithUndecodableExifThumbnail(await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'))));
+  const unga = path.join(folder, 'Unga.JPG');
+  await writeFile(unga, jpegWithCutShortExifThumbnail(await readFile(path.join(photoFolder, 'Unga/IMG_2581_WithoutGpsInfo.JPG'))));
   await dismissWelcome();
   await settings('Thumbnails');
   await page.locator('app-thumbnail-settings').getByRole('radio', { name: /^Prefer app performance/ }).check();
@@ -4908,24 +4913,33 @@ test('Fast shows a thumbnail of 400 pixels that the app makes of a JPEG whose EX
   await openFolderWithPicker(folder);
   const inTree = page.locator('mat-tree-node').filter({ hasText: 'Kobe.JPG' }).locator('.photo-info-viewer-thumbnail');
   const inPopup = page.locator('.leaflet-popup .photo-info-viewer-thumbnail');
+  const ungaInTree = page.locator('mat-tree-node').filter({ hasText: 'Unga.JPG' }).locator('.photo-info-viewer-thumbnail');
   /** The image that a thumbnail shows, once it has loaded one: not the image that stands in for one being made. */
   const shown = thumbnail => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
     ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}` } : null);
-  for (const thumbnail of [inTree, inPopup]) {
-    await expect.poll(async () => (await shown(thumbnail))?.size, { timeout: 30000 }).toBe('400x300');
-    expect((await shown(thumbnail)).src).toMatch(/Kobe\.JPG\.plm\.jpg\?size=400$/);
+  for (const [thumbnail, size, name] of [[inTree, '400x300', /Kobe\.JPG/], [inPopup, '400x300', /Kobe\.JPG/], [ungaInTree, '300x400', /Unga\.JPG/]]) {
+    await expect.poll(async () => (await shown(thumbnail))?.size, { timeout: 30000 }).toBe(size);
+    expect((await shown(thumbnail)).src).toMatch(new RegExp(`${name.source}\\.plm\\.jpg\\?size=400$`));
+    const file = decodeURIComponent((await shown(thumbnail)).src.slice('plm-file://local/'.length).replace(/\?size=400$/, ''));
+    expect(file.startsWith(path.join(profile, 'thumbnail-cache') + path.sep), file).toBe(true);
   }
-  const file = decodeURIComponent((await shown(inTree)).src.slice('plm-file://local/'.length).replace(/\?size=400$/, ''));
-  expect(file.startsWith(path.join(profile, 'thumbnail-cache') + path.sep), file).toBe(true);
-  expect(requested).not.toContain(`plm-file://local/${encodeURIComponent(kobe)}`);
+  for (const photo of [kobe, unga]) expect(requested).not.toContain(`plm-file://local/${encodeURIComponent(photo)}`);
+  // The folder's EXIF data were read with one thumbnail left out as cut short, which is recorded, without paths.
+  await expect.poll(() => app.evaluate(() => globalThis.__plmAnalyticsEvents.filter(event =>
+    event.service === 'amplitude' && event.action === 'Opened Folder: EXIF Read Failed').map(({ label, value }) => ({ label, value }))))
+    .toEqual([{ label: 'thumbnail-cut-short', value: 'Files: 1' }]);
   // The page tried the photo's EXIF thumbnail first, as the log says: the photo was not taken for one without it.
   const logFile = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     const configPath = require('node:path').join(app.getAppPath(), 'out/app/src-shared/log/file-config/log-file-config.js');
     return require(configPath).LogFileConfig.filePath;
   });
-  expect((await readFile(logFile, 'utf8')).split(/\r?\n/).filter(line => line.includes('could not be decoded'))).toEqual([
+  const log = (await readFile(logFile, 'utf8')).split(/\r?\n/);
+  expect(log.filter(line => line.includes('could not be decoded'))).toEqual([
     expect.stringContaining(`The thumbnail in the EXIF data of ${kobe} could not be decoded. The photo is shown as one without it.`),
+  ]);
+  expect(log.filter(line => line.includes('is cut short'))).toEqual([
+    expect.stringContaining(`The thumbnail of "${unga}" is cut short, so the photo is shown as one without it.`),
   ]);
 });
 test('a JPEG whose EXIF thumbnail lies on its side against the photo shows the thumbnail that the app makes of the photo, upright, at High quality and at Fast', async () => {

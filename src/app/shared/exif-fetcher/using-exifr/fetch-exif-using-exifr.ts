@@ -7,6 +7,7 @@ import { Exif } from '../../model/exif.model.js';
 import { GpsInfo } from '../../model/gps-info.model.js';
 import { LatLng } from '../../model/lat-lng.model.js';
 import { Thumbnail } from '../../model/thumbnail.model.js';
+import { isCutShort } from '../../cut-short-jpeg.js';
 import { rotateImage, getRotatedSize } from '../../image-rotation.js';
 import { orientedJpeg } from '../../oriented-jpeg.js';
 import { ThumbnailObjectUrlStorage } from '../../thumbnail-object-url-storage.js';
@@ -127,11 +128,21 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
  *   found once it is shown: the viewers then show what they show for a photo without one, the thumbnail that the app
  *   makes of a JPEG or PNG photo (UndecodableThumbnailService). The canvas left such a photo without a thumbnail
  *   ('rotate-failed').
- * - A thumbnail that an app left as it was when it turned the photo's pixels lies on its side against the photo: the
- *   viewers show a JPEG or PNG photo with such a thumbnail as one without it (isExifThumbnailOnItsSide in
- *   src/app/shared/exif-thumbnail-on-its-side.ts).
+ * - A thumbnail cut short is left out, so that the photo is one without a thumbnail of its EXIF data from the start,
+ *   and a JPEG or PNG photo gets the thumbnail that the app makes, at Fast too ('thumbnail-cut-short'). The page
+ *   decodes such a thumbnail without an error, and shows its first rows only (isCutShort()).
+ * - A thumbnail that an app left as it was when it turned the photo's pixels lies on its side against the photo. It is
+ *   kept, unlike one cut short, as it shows the whole photo: the viewers show a JPEG or PNG photo with such a thumbnail
+ *   as one without it, and a photo that the app makes no thumbnail of, as a TIFF file, with it
+ *   (isExifThumbnailOnItsSide in src/app/shared/exif-thumbnail-on-its-side.ts).
  */
 async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number, filePath: string): Promise<Thumbnail> {
+  if (isCutShort(thumbnailBuffer)) {
+    Logger.info(`[using exifr] The thumbnail of "${filePath}" is cut short, so the photo is shown as one without it.`);
+    exifReadFailures.add('thumbnail-cut-short');
+    return null;
+  }
+
   const oriented = orientedJpeg(thumbnailBuffer, orientation);
   if (oriented) {
     const objectUrl = URL.createObjectURL(new Blob(oriented.parts as BlobPart[], { type: 'image/jpeg' }));
