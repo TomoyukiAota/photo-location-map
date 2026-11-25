@@ -8,14 +8,14 @@ import type { LeafletEventHandlerFn, Marker } from 'leaflet';
  * - Leaflet closes a marker's popup when the marker is taken off the map, and moves the popup with the marker
  *   (bindPopup() in leaflet/src/layer/Popup.js).
  * - At a zoom, Leaflet.markercluster takes markers off the map, and puts back those that the map shows at the new zoom
- *   level: the marker of a single photo at every zoom, in a group that does not animate; in the group of several
- *   photos, which does, a marker that goes into a cluster or far out of view. A marker that comes out of a cluster is
- *   moved to the cluster's place for the animation, and back at once.
- * - The markers do not leave the map otherwise: the map closes the popup that is open before it takes its markers off
- *   for other photos (LeafletMapComponent.removeMarkers()). Nor do they move, as a photo's place does not change.
- * - The popup of a marker that goes into a cluster stays where the photo is, rather than closing or going to the
- *   cluster's place. The marker comes back under it at the zoom that takes it out of the cluster, with its label
- *   colored as chosen, as the popup did not close meanwhile.
+ *   level: in a group that does not animate, every marker at every zoom, as the group of a single photo and that of
+ *   what the popup open shows (PhotosOfOpenPopup) do; in the group of several photos, which does, a marker that goes
+ *   into a cluster or far out of view. A marker that comes out of a cluster is moved to the cluster's place for the
+ *   animation, and back at once.
+ * - The map also takes the marker of a popup that opens off its group, into that of what the popup open shows, and puts
+ *   it back once the popup closes. The markers do not leave the map otherwise: the map closes the popup that is open
+ *   before it takes its markers off for other photos (LeafletMapComponent.removeMarkers()). Nor do they move, as a
+ *   photo's place does not change.
  * - Moved with the marker, the popup would come back with it, but Leaflet pans the map to bring a popup that moves into
  *   view (DivOverlay.setLatLng()): the map would move by itself while the user zooms.
  */
