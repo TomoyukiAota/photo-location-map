@@ -1,3 +1,5 @@
+import { pathOfAddress } from './url/address-path.js';
+
 // The schemes of the main window's page, which the main process answers (src-main/file-server/) and registers with
 // their privileges (src-main/privileged-schemes-setup.ts), and which the page and the analytics of its errors know.
 
@@ -46,11 +48,5 @@ export const photoFileAddressPattern = /\bplm-file:\/\/[\w.~%/-]*/gi;
 
 /** The path that an address of photoFileUrl stands for; undefined for any other address, or an escape that is not one. */
 export function photoFilePathOf(url: string): string | undefined {
-  if (!url.startsWith(`${photoFileOrigin}/`))
-    return undefined;
-  try {
-    return decodeURIComponent(url.slice(photoFileOrigin.length + 1).replace(/[?#][\s\S]*$/, ''));
-  } catch {
-    return undefined;
-  }
+  return pathOfAddress(url, photoFileOrigin);
 }
