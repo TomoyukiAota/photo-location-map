@@ -43,6 +43,16 @@ For Claude Code, this is not a promise to remember:
 which turns its memory off entirely (both reading and writing). That file is
 tracked, so the switch travels with the repository.
 
+## A session's title starts with "PLM: "
+
+When you start a session of the Claude desktop app for work on this
+repository, such as a child session for one task, give it a title that starts
+with `PLM: `, as in `PLM: Propose a full-screen mode for the map`. When you
+rename one, keep the prefix.
+
+**Why:** the app's sidebar lists the sessions of the owner's other projects
+too, and the owner asked for the prefix on 2026-11-25.
+
 ## Keep CONTRIBUTING.md short
 
 [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) is the introduction that a human
