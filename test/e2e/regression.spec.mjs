@@ -4958,6 +4958,62 @@ test('Fast shows a thumbnail of 400 pixels that the app makes of a JPEG whose EX
     expect.stringContaining(`The thumbnail of "${unga}" is cut short, so the photo is shown as one without it.`),
   ]);
 });
+test('a JPEG whose EXIF thumbnail lies on its side against the photo shows the thumbnail that the app makes of the photo, upright, at High quality and at Fast', async () => {
+  // Windows Photo Viewer of Windows 7 turned the pixels of Unga's photo to portrait, 2448 x 3264, at the orientation 1,
+  // and left its EXIF thumbnail as it was: landscape, 160 x 120, with the scene on its side. Neither quality shows that
+  // thumbnail: High quality shows the image that says that a thumbnail is being made rather than that one, until the
+  // one of 400 pixels is made, and Fast makes such a thumbnail too, as of a file that holds none
+  // (isExifThumbnailOnItsSide in src/app/shared/exif-thumbnail-on-its-side.ts). The photo has a location, so that its
+  // marker's popup shows it. A folder for each quality, so that Fast makes a thumbnail of its own, and a name for each
+  // copy, as the rows and the popup of the folder opened first are shown until those of the next one replace them.
+  const photos = { high: path.join(profile, 'Thumbnail on its side', 'Unga.JPG'), fast: path.join(profile, 'Thumbnail on its side at Fast', 'Unga at Fast.JPG') };
+  for (const photo of Object.values(photos)) {
+    await mkdir(path.dirname(photo));
+    await copyFile(path.join(photoFolder, 'Unga/IMG_2581.JPG'), photo);
+  }
+  await dismissWelcome();
+  // Every image that a thumbnail loads, in the tree and on the map, from before the folder opens: High quality shows a
+  // photo's EXIF thumbnail until the one made of the photo replaces it. The image that says that a thumbnail is being
+  // made is a data: URL, which is not counted.
+  await page.evaluate(() => {
+    window.__plmThumbnailLoads = [];
+    document.addEventListener('load', event => {
+      const image = event.target;
+      if (image instanceof HTMLImageElement && image.classList.contains('photo-info-viewer-thumbnail') && !image.src.startsWith('data:')) {
+        window.__plmThumbnailLoads.push({ place: image.closest('[data-place]')?.dataset.place, src: image.src,
+          size: `${image.naturalWidth}x${image.naturalHeight}` });
+      }
+    }, true);
+  });
+  /** The image that a thumbnail shows, once it has loaded one: not the image that stands in for one being made. */
+  const shown = thumbnail => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+    ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}` } : null);
+  /** Opens the photo's folder, and expects its row and its popup to show only the thumbnail made of it, as it stands. */
+  async function expectUpright(photo) {
+    const name = path.basename(photo);
+    const inTree = page.locator('mat-tree-node').filter({ hasText: name }).locator('.photo-info-viewer-thumbnail');
+    const inPopup = page.locator('.leaflet-popup').filter({ hasText: name }).locator('.photo-info-viewer-thumbnail');
+    await page.evaluate(() => { window.__plmThumbnailLoads = []; });
+    await openFolderWithPicker(path.dirname(photo));
+    for (const thumbnail of [inTree, inPopup]) {
+      await expect.poll(async () => (await shown(thumbnail))?.size, { timeout: 30000 }).toBe('300x400');
+      const file = decodeURIComponent((await shown(thumbnail)).src.slice('plm-file://local/'.length).replace(/\?size=400$/, ''));
+      expect(file.startsWith(path.join(profile, 'thumbnail-cache') + path.sep), file).toBe(true);
+      expect(path.basename(file)).toBe(`${name}.plm.jpg`);
+    }
+    // Nothing showed the EXIF thumbnail, 160 x 120, before the one made of the photo, in either place.
+    const loads = await page.evaluate(() => window.__plmThumbnailLoads);
+    expect(loads.filter(load => load.size !== '300x400'), JSON.stringify(loads)).toEqual([]);
+    expect(new Set(loads.map(load => load.place))).toEqual(new Set(['dir-tree-view', 'leaflet-map-popup']));
+  }
+
+  await expectUpright(photos.high);
+  await settings('Thumbnails');
+  await page.locator('app-thumbnail-settings').getByRole('radio', { name: /^Prefer app performance/ }).check();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expectUpright(photos.fast);
+});
 test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and on the map, which apply at once, with thumbnails made from the photos at the larger one', async () => {
   // A camera's JPEG holds a thumbnail of 160 x 120, which High quality does not show stretched: the app makes one from
   // the photo at the larger of the two sizes chosen, 400 pixels by default, which the folder tree and the map's popup
