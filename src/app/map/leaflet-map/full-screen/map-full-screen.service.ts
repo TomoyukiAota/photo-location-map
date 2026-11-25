@@ -30,9 +30,9 @@ function isTextField(target: EventTarget | null): boolean {
  * TL;DR: While it is on, the home view hides the sidebar, the chart and their gutters (HomeComponent), and the main
  * process keeps the window in full screen (src-main/map-full-screen/), which it gives back as it was afterwards.
  * Details:
- * - The button at the map's top left (MapFullScreenButtonComponent) and the View menu's Map in Full Screen enter and
- *   leave it. Esc leaves it when nothing else takes the key: a popup of the map, a menu or a dialog that Esc closes
- *   takes it first, a dialog that Esc does not close keeps the map as it is, and so does a text field.
+ * - The button above the map's zoom buttons (MapFullScreenButtonComponent) and the View menu's Map in Full Screen
+ *   enter and leave it. Esc leaves it when nothing else takes the key: a popup of the map, a menu or a dialog that
+ *   Esc closes takes it first, a dialog that Esc does not close keeps the map as it is, and so does a text field.
  * - The window leaving full screen by its own means, as View > Toggle Full Screen, ends it too.
  * - Reveal in Sidebar leaves it, to show the photo's row (MoreOptionsMenuComponent). Select Previous and Select Next go
  *   on in it, on the map: the folder tree shows the photo's row once the sidebar is shown again

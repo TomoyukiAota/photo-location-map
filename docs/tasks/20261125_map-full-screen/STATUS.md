@@ -192,3 +192,38 @@ C, on 2026-11-25. The shortcut was left as proposed: none.
 - **Not done**: the map's full screen is not saved, and the application starts without it. Quitting during it starts
   the next launch with the window in full screen, as after View > Toggle Full Screen, which electron-window-state
   saves.
+
+## The button moved above the zoom buttons
+
+After the merge of #823, the owner asked to move the button from the map's top left to right above the zoom buttons,
+in a bar of its own (2026-11-25):
+
+- **With the zoom buttons**: the buttons that change how much of the map is seen are together at the bottom right,
+  and the map's top left is free again, for its markers and popups.
+- **A bar of its own**: zooming in and out is one operation of two buttons, which step the map's zoom, while full
+  screen is another, which turns a state on and off. Leaflet.fullscreen puts its button in the zoom buttons' bar, but
+  the owner preferred to keep the two operations apart, as Google Maps and Mapbox do.
+- **Above them**: Leaflet stacks the controls of a bottom corner upward, so a bar added above the zoom buttons leaves
+  them where they were. One added below would have moved them up.
+- **At the left of the zoom out button in a short map**: the bar, between Leaflet-Geoman's toolbar and the zoom
+  buttons, made the column at the bottom right 44 pixels taller. Its top, Geoman's first button, Set Region by
+  Rectangle, then went under the layers button at the top right in a map shorter than about 425 pixels, against about
+  380 before. That is a window whose content is shorter than about 640 pixels, such as a maximized window on a
+  screen of 1920 x 1080 at Windows' scale of 150%. In the e2e suite's window of 960 x 600, the region case could not
+  click the button. The owner then asked for the bar beside the zoom out button, at its left, in a short map only. In
+  a map shorter than 460 pixels, a container query on the map's element takes the bar out of the column and anchors
+  it there (CSS anchor positioning, `_plm-leaflet-map-full-screen.scss`), so that the column is as tall as it was
+  before the bar. In full screen the map is tall, and the bar is above the zoom buttons again.
+- **Screenshots taken anew**:
+  - CI's set (`snapshots-ci/macos-26-arm64/`), from run 45621391189 of "CI on macOS" with `update_screenshots`:
+    `empty-home.png`, `loaded-home.png`, `loaded-home-ar.png` and `resized-home.png`.
+  - The crop of `map-toolbar.png` moved 44 pixels up with the toolbar, so CI's copy stayed the same.
+  - `snapshots/`, on the Mac that it matches: `empty-home.png`, `map-toolbar.png`, `resized-home.png`,
+    `loaded-home.png` and `loaded-home-ar.png`.
+- **A problem found on the way, not from this change**: on that Mac, `loaded-home.png` and `loaded-home-ar.png` catch
+  the chart before its bars have grown.
+  - The bars are short ticks at the bottom, in each of five captures, and with `main`'s code too.
+  - Their references of 2026-11-14 have the bars grown, as CI's runner catches them, and as `resized-home.png`
+    catches them locally.
+  - The two were taken anew all the same, for the button, as the Mac draws them now. They pass there. Once the
+    chart is caught grown again, they have to be taken anew once more.
