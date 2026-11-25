@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { readExif } from '../../../src-main/exif/read-exif.js';
+import { jpegWithSwappedExifSize } from '../../test-util/jpeg-with-swapped-exif-size.mjs';
 import { repositoryPath } from '../../test-util/repository.js';
 
 const resources = repositoryPath('test', 'test-resources');
@@ -27,10 +28,26 @@ describe('readExif (in main process)', () => {
     assert.strictEqual(result.thumbnailError, undefined);
   });
 
-  it('gives the rotation of a HEIC', async () => {
+  it('gives the rotation of a HEIC, and no size of a frame, which only a JPEG has', async () => {
     const result = await readExif(repositoryPath('test', 'e2e', 'fixtures', 'demo.heic'));
     assert.strictEqual(result.parse, 'ok');
     if (result.parse === 'ok') assert.strictEqual(result.output.Orientation, 6);
+    if (result.parse === 'ok') assert.strictEqual(result.frame, null);
+  });
+
+  // An app that turns a photo's pixels may leave the size in its EXIF data as it was. Windows Photo Viewer wrote it
+  // anew for Unga's photo, which the copy here gives back the size of before.
+  it('gives the size of a JPEG\'s frame, as its pixels stand, whatever size its EXIF data give', async () => {
+    const unga = path.join(resources, 'actual-photos', 'Unga', 'IMG_2581.JPG');
+    const turned = path.join(directory, 'turned.JPG');
+    fs.writeFileSync(turned, jpegWithSwappedExifSize(fs.readFileSync(unga)));
+    const results = await Promise.all([path.join(resources, 'actual-photos', 'Kobe', 'IMG_4676.JPG'), unga, turned].map(readExif));
+    assert.deepStrictEqual(results.map(result => result.parse === 'ok'
+      ? { exif: [result.output.ExifImageWidth, result.output.ExifImageHeight], frame: result.frame } : result.parse), [
+      { exif: [4032, 3024], frame: { width: 4032, height: 3024 } },
+      { exif: [2448, 3264], frame: { width: 2448, height: 3264 } },
+      { exif: [3264, 2448], frame: { width: 2448, height: 3264 } },
+    ]);
   });
 
   it('reports a file that cannot be read as failed, with why', async () => {

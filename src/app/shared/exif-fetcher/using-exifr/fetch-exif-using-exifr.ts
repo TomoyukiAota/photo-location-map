@@ -1,5 +1,6 @@
 import { bridge } from '../../../../../src-shared/bridge/plm-bridge.js';
 import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result.js';
+import type { FrameSize } from '../../../../../src-shared/jpeg/jpeg-segments.js';
 import { Logger } from '../../../../../src-shared/log/logger.js';
 import { DateTimeOriginal } from '../../model/date-time-original.js';
 import { Dimensions } from '../../model/dimensions.model.js';
@@ -53,6 +54,8 @@ export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
 
 interface ExifrRead {
   output: ExifReadOutput;
+  /** The size of a JPEG's frame, as stored, which the main process read; null for another file. */
+  frame: FrameSize | null;
   thumbnail: Uint8Array | null;
   thumbnailError?: string;
 }
@@ -63,7 +66,9 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrRead | null
   if (result.parse === 'failed')
     throw new ExifReadError('read-failed', result.error);
 
-  return result.parse === 'ok' ? { output: result.output, thumbnail: result.thumbnail, thumbnailError: result.thumbnailError } : null;
+  return result.parse === 'ok'
+    ? { output: result.output, frame: result.frame ?? null, thumbnail: result.thumbnail, thumbnailError: result.thumbnailError }
+    : null;
 }
 
 /**
@@ -81,8 +86,12 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
     exif.dateTimeOriginal = new DateTimeOriginal(exifrParseOutput.DateTimeOriginal);
   }
 
-  if (exifrParseOutput.ExifImageWidth && exifrParseOutput.ExifImageHeight) {
-    const rotatedSize = getRotatedSize(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageHeight, exifrParseOutput.Orientation);
+  // The size of the pixels: a JPEG's frame's, or else the size that the EXIF data give, which an app that turned the
+  // pixels may have left as it was (isExifThumbnailOnItsSide in ../../exif-thumbnail-on-its-side.ts).
+  const { ExifImageWidth, ExifImageHeight } = exifrParseOutput;
+  const storedSize = read.frame ?? (ExifImageWidth && ExifImageHeight ? { width: ExifImageWidth, height: ExifImageHeight } : null);
+  if (storedSize) {
+    const rotatedSize = getRotatedSize(storedSize.width, storedSize.height, exifrParseOutput.Orientation);
     exif.imageDimensions = new Dimensions(rotatedSize.width, rotatedSize.height);
   }
 

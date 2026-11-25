@@ -111,6 +111,41 @@ describe('managed exifr file readers', () => {
     assert(opened.every(entry => entry.closed));
   });
 
+  it('reads a file through the file that it opens once for the parse, which gives the same as without the read', async () => {
+    const filename = repositoryPath('test', 'test-resources', 'actual-photos', 'Kobe', 'IMG_4676.JPG');
+    const bytes = fs.readFileSync(filename);
+    const options = { translateValues: false, pick: ['DateTimeOriginal', 'ExifImageWidth', 'Orientation', 'GPSLatitude', 'GPSLatitudeRef'] };
+
+    const result = await managedExifr.parseWithRead(filename, options, async read => ({
+      start: await read(0, 4),
+      // Past the EXIF data, from the bytes read ahead and from a read of their own, to the end of the file, not past it.
+      near: await read(10, 8),
+      middle: await read(100000, 16),
+      end: await read(bytes.length - 2, 2),
+      pastEnd: await read(bytes.length - 1, 2),
+    }));
+    assert.deepEqual(result.output, await exifr.parse(bytes, options));
+    assert.deepEqual(result.read, {
+      start: Uint8Array.from(bytes.subarray(0, 4)),
+      near: Uint8Array.from(bytes.subarray(10, 18)),
+      middle: Uint8Array.from(bytes.subarray(100000, 100016)),
+      end: Uint8Array.from(bytes.subarray(bytes.length - 2)),
+      pastEnd: undefined,
+    });
+    assert.equal(opened.length, 1);
+    assert.equal(opened[0].closed, true);
+    assert(opened[0].bytesRead < bytes.length);
+  });
+
+  it('gives nothing to read of what exifr reads otherwise than with a file handle, as a buffer', async () => {
+    const input = fs.readFileSync(repositoryPath('test', 'test-resources', 'actual-photos', 'Kobe', 'IMG_4676.JPG'));
+    const options = { translateValues: false, pick: ['Orientation'] };
+
+    const result = await managedExifr.parseWithRead(input, options, read => read(0, 2));
+    assert.deepEqual(result, { output: await exifr.parse(input, options), read: undefined });
+    assert.equal(opened.length, 0);
+  });
+
   it('keeps the parse error when cleanup also fails', async () => {
     const filename = path.join(directory, 'malformed.jpg');
     fs.writeFileSync(filename, Buffer.from([0xff]));
