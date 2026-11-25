@@ -23,6 +23,7 @@ import { createDivIconHtml } from './div-icon';
 import { addMapFullScreenControl } from './full-screen/map-full-screen-control';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
+import { PhotosOfOpenPopup } from './photos-of-open-popup';
 import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 import { RegionInfoComponent } from './region-info/region-info.component';
@@ -37,6 +38,9 @@ declare let L: any;
  * around it. A higher one that the user chose is kept while one photo follows another (renderMap()).
  */
 const maxZoomToShowPhotos = 13;
+
+/** The photo of a marker on the map (addMarkerToMarkerClusterGroup()). */
+const photoOf = (marker: Marker): Photo => (marker.options as any).photo;
 
 /**
  * The map of the home view, with a marker for each photo pinned.
@@ -94,6 +98,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   // opens again (configurePopups()).
   private popupOpen: Popup | null = null;
   private readonly popupClosedByDoubleClick = new PopupClosedByDoubleClick<Popup>();
+  // The markers that each popup shows, the viewer of each cluster's popup, and the markers of the popup open, which the
+  // map keeps under it (configurePopups()).
+  private markersOfPopup = new WeakMap<Popup, readonly Marker[]>();
+  private viewerOfClusterPopup = new WeakMap<Popup, ComponentRef<PhotoClusterViewerComponent>>();
+  private photosOfOpenPopup: PhotosOfOpenPopup | null = null;
   private photos: Photo[] = [];
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
   // What is needed to reveal a photo once the map shows it. The effect that asks the map to render the pinned photos
@@ -220,11 +229,14 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private removeMarkers(): void {
     this.map?.closePopup();
     this.popupClosedByDoubleClick.forget();
+    this.photosOfOpenPopup?.forget();
     if (this.markerClusterGroup)
       this.map.removeLayer(this.markerClusterGroup);
     this.markerClusterGroup = null;
     this.markers.clear();
     this.clusterViewers = new WeakMap();
+    this.markersOfPopup = new WeakMap();
+    this.viewerOfClusterPopup = new WeakMap();
     for (const content of this.markerContents)
       content.destroy();
     this.markerContents.clear();
@@ -238,6 +250,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       this.map.remove();
       this.map = null;
     }
+    this.photosOfOpenPopup = null;
     this.markerClusterGroup = null;
     this.markers.clear();
     this.markerContents.clear();
@@ -260,23 +273,26 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.configureZoom();
     addMapFullScreenControl(this.map, this.leafletContentService);
     this.configureBaseLayer();
+    // After the base layer, up to whose last zoom level Leaflet.markercluster makes the clusters of its group.
+    this.photosOfOpenPopup = new PhotosOfOpenPopup(this.map);
     this.configureRegionSelector();
     this.layOutPopupAtEachSize();
   }
 
   /**
    * Keeps the popup that is open through a zoom of the map, however the map zooms: the popup stays as it is, where it
-   * is, with what it shows. It closes as before: by its close button, a click on the map, Escape, another popup, or
-   * other photos pinned.
-   * TL;DR: A zoom closed the popup of a photo, whose marker Leaflet.markercluster takes off the map and puts back.
+   * is, with what it shows, and so does what it points at. It closes as before: by its close button, a click on the
+   * map, Escape, another popup, or other photos pinned.
+   * TL;DR: A zoom closed the popup of a photo, whose marker Leaflet.markercluster takes off the map and puts back. Kept
+   * open, the popup pointed at nothing once a zoom out had put its marker into a cluster.
    * Details:
-   * - A marker's popup stays open where its photo is while a zoom puts the marker into a cluster, rather than closing
-   *   or going to the cluster's place, and the marker comes back under it at the zoom that takes it out again
-   *   (keepPopupThroughZoom()).
-   * - A cluster's popup stays where the cluster was, with the photo chosen in it, while a zoom splits the cluster into
-   *   markers or puts it into a larger cluster, rather than becoming the popup of the chosen photo's marker, which
-   *   would change what it shows. Leaflet does not close it, as it is opened on the map at the cluster's place, not
-   *   bound to the cluster (showPopupForMarkerCluster()).
+   * - Leaflet does not close the popup of a marker that Leaflet.markercluster takes off the map (keepPopupThroughZoom()),
+   *   nor a cluster's popup, which is opened on the map at the cluster's place, not bound to the cluster
+   *   (showPopupForMarkerCluster()).
+   * - The map keeps what the popup open shows under it, out of its clusters, at every zoom (PhotosOfOpenPopup): the
+   *   photo's marker, rather than a cluster that it would go into, or the photos of a cluster's popup as one cluster,
+   *   rather than markers that it would split into, or a larger cluster. They go back into the clusters once the popup
+   *   closes.
    * - The first click of a double-click closes the popup, as any click on the map does, and the double-click, which
    *   zooms the map, opens it again (PopupClosedByDoubleClick). These listeners come before those of any popup, so that
    *   a click is seen before the popup closes at it.
@@ -284,10 +300,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private configurePopups(): void {
     this.map.on('popupopen', (event: PopupEvent) => {
       this.popupOpen = event.popup;
+      this.photosOfOpenPopup.take(this.markersOfPopup.get(event.popup) ?? [], this.markerClusterGroup);
     });
     this.map.on('popupclose', (event: PopupEvent) => {
       if (event.popup === this.popupOpen)
         this.popupOpen = null;
+      this.photosOfOpenPopup.giveBack();
     });
     this.map.on('preclick', (event: LeafletMouseEvent) =>
       this.popupClosedByDoubleClick.clicked(this.popupOpen, event.originalEvent.detail));
@@ -538,6 +556,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   // Permalink to Leaflet.markercluster's repo as of Feb 3, 2023:
   // https://github.com/Leaflet/Leaflet.markercluster/blob/b2512acb4dcf444352ea258472ae05871c12eda7/src/MarkerClusterGroup.js#L856-L886
   private handleClusterClick(e: LeafletEvent) {
+    // The markers of the popup that the click has just closed are in the cluster again, if they go into it.
+    this.photosOfOpenPopup.giveBackNow();
     const cluster = e.layer;
     if (cluster._childClusters.length >= 2) {
       cluster.zoomToBounds();
@@ -562,26 +582,35 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   /** Opens the popup of a cluster's photos, with the tile of the photo given chosen, or of the first one without. */
   private showPopupForMarkerCluster(cluster, chosenPhoto: Photo | null = null): Popup {
-    const markers = cluster.getAllChildMarkers();
-    const photos: Photo[] = markers.map(marker => marker.options.photo);
+    const markers: Marker[] = cluster.getAllChildMarkers();
+    const photos = markers.map(photoOf);
     let viewer = this.clusterViewers.get(cluster);
     if (viewer) {
-      // Given its photos again, the viewer chooses the tile given, or the first one, as in a popup that is opened for
-      // the first time.
-      viewer.setInput('photos', photos);
-      viewer.setInput('chosenPhoto', chosenPhoto);
-      viewer.changeDetectorRef.detectChanges();
+      this.giveViewerPhotos(viewer, photos, chosenPhoto);
     } else {
       viewer = this.createMarkerContent(PhotoClusterViewerComponent, { photos, chosenPhoto });
       this.clusterViewers.set(cluster, viewer);
     }
     const popupContent: HTMLElement = viewer.location.nativeElement;
-    return L.popup({
+    const popup: Popup = L.popup({
       maxWidth: 100000,   // Set to some large number so that there is no maxWidth limit.
       offset: L.point(0, -10),
     }).setLatLng(cluster.getLatLng())
-      .setContent(popupContent)
-      .openOn(this.map);
+      .setContent(popupContent);
+    // Before the popup opens, which takes its markers under it (configurePopups()).
+    this.markersOfPopup.set(popup, markers);
+    this.viewerOfClusterPopup.set(popup, viewer);
+    return popup.openOn(this.map);
+  }
+
+  /**
+   * Gives a cluster's viewer its photos again, after which it chooses the tile given, or the first one, as in a popup
+   * that is opened for the first time.
+   */
+  private giveViewerPhotos(viewer: ComponentRef<PhotoClusterViewerComponent>, photos: Photo[], chosenPhoto: Photo | null): void {
+    viewer.setInput('photos', photos);
+    viewer.setInput('chosenPhoto', chosenPhoto);
+    viewer.changeDetectorRef.detectChanges();
   }
 
   private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
@@ -605,6 +634,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       return viewer.location.nativeElement as HTMLElement;
     }, { maxWidth: 100000 });
     keepPopupThroughZoom(marker);
+    this.markersOfPopup.set(marker.getPopup(), [marker]);
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
     marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
     (marker.options as any).photo = photo;
@@ -695,6 +725,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const map = this.map;
     const markerClusterGroup = this.markerClusterGroup;
     this.whenStill(map, markerClusterGroup, () => {
+      if (this.photosOfOpenPopup.shows(marker)) {
+        this.revealInPopupOpen(photo);
+        return;
+      }
       const view = viewToReveal(marker as unknown as ClusteredMarker, map.getMaxZoom());
       map.setView(view.center, Math.max(map.getZoom(), view.zoom), { animate: false });
       this.whenStill(map, markerClusterGroup, () => {
@@ -709,6 +743,18 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         }
       });
     });
+  }
+
+  /**
+   * Reveals a photo that the popup open shows, whose marker the map keeps under the popup at every zoom
+   * (PhotosOfOpenPopup): its tile is chosen in a cluster's popup, and the popup comes to the middle of the map.
+   */
+  private revealInPopupOpen(photo: Photo): void {
+    const popup = this.popupOpen;
+    const viewer = this.viewerOfClusterPopup.get(popup);
+    if (viewer)
+      this.giveViewerPhotos(viewer, this.markersOfPopup.get(popup).map(photoOf), photo);
+    this.centerOnPopup(popup);
   }
 
   /**
