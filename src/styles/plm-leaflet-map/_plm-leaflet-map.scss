@@ -45,6 +45,12 @@
   transition: none;
 }
 
+// What the popup open shows, which the map keeps under the popup at every zoom (photos-of-open-popup.ts): above the
+// other markers and clusters (600 in leaflet.css), which may be near it, and below the tooltips (650) and popups (700).
+.plm-leaflet-map-photos-of-open-popup-pane {
+  z-index: 620;
+}
+
 @include meta.load-css("plm-leaflet-map-div-icon");
 @include meta.load-css("plm-leaflet-map-region-info");
 @include meta.load-css("plm-leaflet-map-date");
