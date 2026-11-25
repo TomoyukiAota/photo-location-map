@@ -214,5 +214,16 @@ in a bar of its own (2026-11-25):
   a map shorter than 460 pixels, a container query on the map's element takes the bar out of the column and anchors
   it there (CSS anchor positioning, `_plm-leaflet-map-full-screen.scss`), so that the column is as tall as it was
   before the bar. In full screen the map is tall, and the bar is above the zoom buttons again.
-- The screenshots of the map's toolbar (`map-toolbar.png`, whose crop moved 44 pixels up with the toolbar) and of the
-  empty home view (`empty-home.png`) were taken anew, in `snapshots/` and in CI's `snapshots-ci/macos-26-arm64/`.
+- **Screenshots taken anew**:
+  - CI's set (`snapshots-ci/macos-26-arm64/`), from run 45621391189 of "CI on macOS" with `update_screenshots`:
+    `empty-home.png`, `loaded-home.png`, `loaded-home-ar.png` and `resized-home.png`.
+  - The crop of `map-toolbar.png` moved 44 pixels up with the toolbar, so CI's copy stayed the same.
+  - `snapshots/`, on the Mac that it matches: `empty-home.png`, `map-toolbar.png`, `resized-home.png`,
+    `loaded-home.png` and `loaded-home-ar.png`.
+- **A problem found on the way, not from this change**: on that Mac, `loaded-home.png` and `loaded-home-ar.png` catch
+  the chart before its bars have grown.
+  - The bars are short ticks at the bottom, in each of five captures, and with `main`'s code too.
+  - Their references of 2026-11-14 have the bars grown, as CI's runner catches them, and as `resized-home.png`
+    catches them locally.
+  - The two were taken anew all the same, for the button, as the Mac draws them now. They pass there. Once the
+    chart is caught grown again, they have to be taken anew once more.
