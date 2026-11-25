@@ -114,9 +114,11 @@ data, are left as they are: only decoding finds them, which #796 stopped doing w
   (JPEGInterchangeFormatLength), so an app that rewrites them with the length too short leaves the thumbnail without
   its end. With Kobe's photo whose length was so set to 60% (`test/test-util/jpeg-with-cut-short-exif-thumbnail.mjs`),
   exifr gave the first 6,176 of the thumbnail's 10,294 bytes, and the location and the shooting time as they were.
-- `isCutShort()` (`src/app/shared/cut-short-jpeg.ts`) looks for EOI from the end: a whole thumbnail ends with it, so
-  that each costs one or two comparisons; one cut short is read back to its start. Bytes after EOI, which some writers
-  add as padding, are allowed. The 5 EXIF thumbnails of the fixtures end with EOI, with nothing after it.
+- `isCutShort()` (`src/app/shared/cut-short-jpeg.ts`) reads the segments before the first scan by their lengths, and
+  looks for EOI in the scans' data, from the end: a whole thumbnail ends with it, so that each costs its few segments
+  and a comparison or two. The content of a segment, as a comment or a table, can hold 0xFF 0xD9, which is not EOI, as
+  the review of #849 pointed out. Bytes after EOI, which some writers add as padding, are allowed. The 5 EXIF
+  thumbnails of the fixtures end with EOI, with nothing after it.
 - `createThumbnail()` (`src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.ts`) leaves such a thumbnail
   out, with a line in the log, so that the photo has no thumbnail of its EXIF data from the start: a JPEG or PNG photo
   gets the thumbnail that the app makes, at Fast too, a HEIF photo the one that HeifThumbnailService makes, and a

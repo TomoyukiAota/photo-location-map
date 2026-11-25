@@ -5,6 +5,8 @@ import { isCutShort } from './cut-short-jpeg.js';
 // test/src/app/shared/exif-fetcher.spec.em.renderer.ts.
 const soi = [0xff, 0xd8];
 const quantizationTable = [0xff, 0xdb, 0x00, 0x05, 0x00, 0x01, 0x02];
+/** A comment (COM) whose content is 0xFF 0xD9, which is not EOI. */
+const commentOfEoi = [0xff, 0xfe, 0x00, 0x04, 0xff, 0xd9];
 /** The scan's header, then its data, with a 0xFF that a zero follows and a restart marker. */
 const scan = [0xff, 0xda, 0x00, 0x08, 0x01, 0x01, 0x00, 0x00, 0x3f, 0x00, 0x12, 0xff, 0x00, 0x34, 0xff, 0xd0, 0x56];
 const eoi = [0xff, 0xd9];
@@ -18,10 +20,23 @@ describe('isCutShort', () => {
     expect(isCutShort(jpegOf(soi, quantizationTable, scan, eoi, [0x12, 0xff, 0xff]))).toBe(false);
   });
 
-  it('is true for a JPEG without its end: cut in its scan\'s data, in its scan\'s header or right after SOI', () => {
+  it('is true for a JPEG without its end: cut in its scan\'s data, in its scan\'s header, in a segment or right after SOI', () => {
     expect(isCutShort(jpegOf(soi, quantizationTable, scan))).toBe(true);
     expect(isCutShort(jpegOf(soi, quantizationTable, scan.slice(0, 5)))).toBe(true);
+    expect(isCutShort(jpegOf(soi, quantizationTable.slice(0, 5)))).toBe(true);
+    expect(isCutShort(jpegOf(soi, [0xff]))).toBe(true);
     expect(isCutShort(jpegOf(soi))).toBe(true);
+  });
+
+  it('does not take 0xFF 0xD9 in the content of a segment before the scan for EOI', () => {
+    expect(isCutShort(jpegOf(soi, commentOfEoi, quantizationTable, scan))).toBe(true);
+    expect(isCutShort(jpegOf(soi, commentOfEoi, quantizationTable, scan, eoi))).toBe(false);
+  });
+
+  it('is false for a JPEG whose segments are not as a JPEG has them, which is left as it was', () => {
+    expect(isCutShort(jpegOf(soi, [0x12, 0x34], quantizationTable, scan))).toBe(false);
+    expect(isCutShort(jpegOf(soi, [0xff, 0xdb, 0x00, 0x01], scan))).toBe(false);
+    expect(isCutShort(jpegOf(soi, eoi))).toBe(false);
   });
 
   it('is false for what is not a JPEG, which is turned on a canvas instead', () => {
