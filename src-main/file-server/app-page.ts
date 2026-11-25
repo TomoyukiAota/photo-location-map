@@ -8,6 +8,7 @@ import { createPrependedLogger } from '../../src-shared/log/create-prepended-log
 import { logged, shown } from '../../src-shared/log/logged-line.js';
 import { Logger } from '../../src-shared/log/logger.js';
 import { appPageOrigin, appPageScheme } from '../../src-shared/main-window-schemes.js';
+import { pathOfAddress } from '../../src-shared/url/address-path.js';
 import { appPageInLanguage } from './app-page-language.js';
 import { mainWindowContentSecurityPolicy } from './content-security-policy.js';
 
@@ -36,8 +37,8 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   if (request.method !== 'GET')
     return new Response(null, { status: 405 });
 
-  // TL;DR: The file's path is read from the request's address as a text, as photoFilePathOf reads a photo's, and not
-  // with Node.js's URL, whose parts were now and then those of another URL in the e2e suite.
+  // TL;DR: The file's path is read from the request's address as a text (pathOfAddress), and not with Node.js's URL,
+  // whose parts were now and then those of another URL in the e2e suite.
   // Details:
   // - What happened: on Windows CI, from 2026-11-18, one launch of the app in a run of the e2e suite now and then
   //   went without a file of its page: main.js, which left the home view unrendered, scripts.js, which left the map
@@ -60,7 +61,7 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   // - Ruled out on the way: stat of a path in app.asar, which looks the path up in the archive's header in memory; and
   //   a race of the requests among themselves, as 1,902 launches on Windows CI, after each of which the page's files
   //   were requested 660 times at once from the page and the main process, got every file.
-  const pathInBuild = pathInBuildOf(request.url);
+  const pathInBuild = pathOfAddress(request.url, appPageOrigin);
   if (pathInBuild === undefined)
     return notFound(request, 'it is not an address of the page, or an escape in it is not one');
   const filePath = path.join(distFolder, pathInBuild);
@@ -98,21 +99,6 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   // (pageInLanguage), whose body is a string of the size of the page, not a file read as it is sent.
   file.headers.set('Content-Security-Policy', mainWindowContentSecurityPolicy);
   return file;
-}
-
-/**
- * The path in the build that an address of the page stands for, decoded; undefined for an address of another scheme
- * or host, or an escape that is not one. The query and the fragment are not of the path.
- */
-function pathInBuildOf(url: string): string | undefined {
-  const start = `${appPageOrigin}/`;
-  if (!url.startsWith(start))
-    return undefined;
-  try {
-    return decodeURIComponent(url.slice(start.length).replace(/[?#][\s\S]*$/, ''));
-  } catch {
-    return undefined;
-  }
 }
 
 /**
