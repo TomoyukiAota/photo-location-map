@@ -1,5 +1,7 @@
 import assert from 'assert';
-import { assess, dequeuedLabel, feedbackOf, queuedLabel, startOf, unqueuedLimitMinutes } from '../../script/pull-request/merge-wait.js';
+import {
+  assess, dequeuedLabel, feedbackOf, missingLimitMinutes, queuedLabel, startOf, unqueuedLimitMinutes,
+} from '../../script/pull-request/merge-wait.js';
 
 // A pull request as `gh pr view --json <viewFields>` describes one: open, and with the label.
 const pullRequestWith = (fields: object = {}) => ({
@@ -172,24 +174,73 @@ describe('merge-wait (script/pull-request/)', () => {
     assert.strictEqual(waitThrough({}, {}, { checksAfter: [] }).status,
       '01234567: not in the merge queue, 0 of 4 required checks passed, 4 pending, 0 failed');
 
-    // test (ubuntu) has no check run until both parts of the tests on Ubuntu have ended, and gh lists the others alone.
+    // test (ubuntu) has no check run while the two parts of the tests on Ubuntu run, nor while one of them is run
+    // again, and gh lists the others alone: here for 20 minutes, longer than Mergify is given to queue the pull request,
+    // and shorter than a missing check is given to come.
     const waiting = pullRequestWith();
     const ubuntuMissing = checksWith('pass').filter(check => check.name !== 'test (ubuntu)');
     let result = assess(waiting, ubuntuMissing, startOf(waiting, ubuntuMissing), start, requiredNames);
-    result = assess(waiting, ubuntuMissing, result.seen, start + 60 * minute, requiredNames);
+    result = assess(waiting, ubuntuMissing, result.seen, start + 20 * minute, requiredNames);
     assert.strictEqual(result.end, false, result.message);
     assert.strictEqual(result.status, '01234567: not in the merge queue, 3 of 4 required checks passed, 1 pending, 0 failed');
     assert.strictEqual(result.seen.unqueuedSince, undefined);
 
     // Once it has passed too, Mergify has the minutes to queue the pull request from then on.
     const passed = checksWith('pass');
-    const passedAt = start + 61 * minute;
+    const passedAt = start + 21 * minute;
     result = assess(waiting, passed, result.seen, passedAt, requiredNames);
     result = assess(waiting, passed, result.seen, passedAt + unqueuedLimitMinutes * minute - 1, requiredNames);
     assert.strictEqual(result.end, false, result.message);
     result = assess(waiting, passed, result.seen, passedAt + unqueuedLimitMinutes * minute, requiredNames);
     assert.strictEqual(result.end, true);
     assert.match(result.message, /passed its required checks for 10 minutes, but is not in the merge queue/);
+  });
+
+  it('ends when a required check has had no check run for 30 minutes while no other is pending, as when its workflow did not start', () => {
+    // The workflow of test (windows-latest) did not start, and test (ubuntu) passed, was skipped, or failed or was
+    // canceled before the waiting began.
+    const waiting = pullRequestWith();
+    for (const bucket of ['pass', 'skipping', 'fail', 'cancel']) {
+      const checks = checksWith('pass').filter(check => check.name !== 'test (windows-latest)')
+        .map(check => check.name === 'test (ubuntu)' ? { ...check, bucket } : check);
+      let result = assess(waiting, checks, startOf(waiting, checks), start, requiredNames);
+      result = assess(waiting, checks, result.seen, start + missingLimitMinutes * minute - 1, requiredNames);
+      assert.strictEqual(result.end, false, result.message);
+      result = assess(waiting, checks, result.seen, start + missingLimitMinutes * minute, requiredNames);
+      assert.deepStrictEqual([result.end, result.merged], [true, false], bucket);
+      assert.strictEqual(result.message, 'On 01234567 of #7, the required check test (windows-latest) has had no check ' +
+        'run for 30 minutes, and no other required check is pending: its workflow may not have started, as when a ' +
+        'workflow file has an error. Look at the runs of 01234567 in the Actions tab.');
+    }
+
+    // Before gh lists any check of the commit, all of them are missing.
+    let result = assess(waiting, [], startOf(waiting, []), start, requiredNames);
+    result = assess(waiting, [], result.seen, start + missingLimitMinutes * minute, requiredNames);
+    assert.match(result.message, new RegExp('^On 01234567 of #7, the required checks test \\(ubuntu\\), test \\(windows-latest\\), ' +
+      'test \\(macos-arm64\\), e2e against the development build \\(ubuntu\\) have had no check run for 30 minutes, and no ' +
+      'other required check is pending: their workflows may not have started'));
+  });
+
+  it('does not end on a required check without a check run while another is pending, and gives it its minutes anew on a new commit', () => {
+    // While the tests on macOS run, the workflow of test (windows-latest) has not started.
+    const waiting = pullRequestWith();
+    const macosRunning = checksWith('pass').filter(check => check.name !== 'test (windows-latest)')
+      .map(check => check.name === 'test (macos-arm64)' ? { ...check, bucket: 'pending' } : check);
+    let result = assess(waiting, macosRunning, startOf(waiting, macosRunning), start, requiredNames);
+    result = assess(waiting, macosRunning, result.seen, start + 60 * minute, requiredNames);
+    assert.strictEqual(result.end, false, result.message);
+    assert.strictEqual(result.seen.missingSince, undefined);
+
+    // Its minutes start once the tests on macOS have ended. A new commit, of which gh lists no check at first, starts
+    // them again.
+    const windowsMissing = checksWith('pass').filter(check => check.name !== 'test (windows-latest)');
+    result = assess(waiting, windowsMissing, result.seen, start + 61 * minute, requiredNames);
+    assert.strictEqual(result.seen.missingSince, start + 61 * minute);
+    const pushed = pullRequestWith({ headRefOid: 'fedcba9876543210' });
+    result = assess(pushed, [], result.seen, start + 90 * minute, requiredNames);
+    result = assess(pushed, [], result.seen, start + 90 * minute + missingLimitMinutes * minute - 1, requiredNames);
+    assert.strictEqual(result.end, false, result.message);
+    assert.strictEqual(result.seen.missingSince, start + 90 * minute);
   });
 
   it('counts the checks that gh lists alone, as before, when those that branch protection requires could not be read', () => {

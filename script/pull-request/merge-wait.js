@@ -17,6 +17,11 @@ export const dequeuedLabel = 'dequeued';
  * Mergify is taken to have missed it: Mergify queues it within a minute or so. */
 export const unqueuedLimitMinutes = 10;
 
+/** How long a required check may have no check run while no other required check is pending, before its workflow is
+ * taken not to have started, as when a workflow file has an error. A part of the tests that is run again takes about 15
+ * minutes, after which the check of its gate comes back. */
+export const missingLimitMinutes = 30;
+
 /** The fields that wait-for-merge.js asks `gh pr view` for. */
 export const viewFields = 'number,state,mergedAt,mergeable,mergeStateStatus,labels,headRefOid,reviews,comments';
 
@@ -49,14 +54,17 @@ function failedChecksOf(checks) {
   return checks.filter(check => check.bucket === 'fail' || check.bucket === 'cancel');
 }
 
-/** The required checks, given those that `gh pr checks --required --json <checkFields>` lists and the names of those
- * that branch protection requires, with a pending one for each of these that has no check run yet. gh lists a check
+/** The buckets of `gh pr checks` of a check that has ended: passed, skipped, failed or canceled. */
+const endedBuckets = new Set(['pass', 'skipping', 'fail', 'cancel']);
+
+/** Those of `requiredNames`, the checks that branch protection requires (none when they could not be read), that have no
+ * check run yet, given the required checks that `gh pr checks --required --json <checkFields>` lists. gh lists a check
  * only once it has a check run, and a job that needs other jobs has none until they have ended: `test (ubuntu)`, which
- * reports the two parts of the tests on Ubuntu, has none while they run. Without the names, as when they could not be
- * read, they are the checks that gh lists. */
-function requiredChecksOf(checks, requiredNames = []) {
-  const missing = requiredNames.filter(name => !checks.some(check => check.name === name));
-  return [...checks, ...missing.map(name => ({ name, bucket: 'pending' }))];
+ * reports the two parts of the tests on Ubuntu, has none while they run. Nor has it while one of them is run again: gh
+ * then lists neither its new check run nor its failed one, as for `test (windows-latest)` and `test (macos-arm64)`, then
+ * a gate too, while parts of theirs were run again on #829. */
+function missingNamesOf(checks, requiredNames = []) {
+  return requiredNames.filter(name => !checks.some(check => check.name === name));
 }
 
 /** What is known when the waiting begins, given the pull request and its required checks as `assess` takes them. */
@@ -67,6 +75,8 @@ export function startOf(pullRequest, checks) {
     conflicting: pullRequest.mergeable === 'CONFLICTING',
     dequeued: hasLabel(pullRequest, dequeuedLabel),
     unqueuedSince: undefined,
+    commit: pullRequest.headRefOid,
+    missingSince: undefined,
   };
 }
 
@@ -128,10 +138,26 @@ export function assess(pullRequest, checks, seen, now, requiredNames) {
       '"merge queue: …", and classify the failure (AGENTS.md, "Classify a CI failure before rerunning it").');
   }
 
-  // Mergify did not queue a pull request that can be: it may have taken it out of the queue without the label.
+  // A required check that has had no check run for long, while no other is pending, may never get one: its workflow
+  // may not have started. A new commit, of which gh lists no check at first, starts the time again.
+  const missing = missingNamesOf(checks, requiredNames);
+  const missingAlone = missing.length > 0 && checks.every(check => endedBuckets.has(check.bucket));
+  const missingBefore = seen.commit === pullRequest.headRefOid ? seen.missingSince : undefined;
+  const missingSince = missingAlone ? (missingBefore ?? now) : undefined;
+  if (missingAlone && now - missingSince >= missingLimitMinutes * 60_000) {
+    const [what, workflow] = missing.length === 1
+      ? [`the required check ${missing[0]} has`, 'its workflow']
+      : [`the required checks ${missing.join(', ')} have`, 'their workflows'];
+    news.push(`On ${commit} of ${name}, ${what} had no check run for ${missingLimitMinutes} minutes, and no other ` +
+      `required check is pending: ${workflow} may not have started, as when a workflow file has an error. Look at ` +
+      `the runs of ${commit} in the Actions tab.`);
+  }
+
+  // Mergify did not queue a pull request that can be: it may have taken it out of the queue without the label. A
+  // required check that has no check run yet is pending.
   const labeled = hasLabel(pullRequest, label);
   const queued = hasLabel(pullRequest, queuedLabel);
-  const required = requiredChecksOf(checks, requiredNames);
+  const required = [...checks, ...missing.map(each => ({ name: each, bucket: 'pending' }))];
   const checksPassed = required.length > 0 && required.every(check => check.bucket === 'pass' || check.bucket === 'skipping');
   const unqueued = labeled && checksPassed && !queued && !conflicting;
   const unqueuedSince = unqueued ? (seen.unqueuedSince ?? now) : undefined;
@@ -151,6 +177,8 @@ export function assess(pullRequest, checks, seen, now, requiredNames) {
       conflicting,
       dequeued,
       unqueuedSince,
+      commit: pullRequest.headRefOid,
+      missingSince,
     },
   };
 }
