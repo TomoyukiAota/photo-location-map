@@ -9,6 +9,7 @@ import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewe
 import { photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger.js';
 import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config.js';
 import { logged } from '../../src-shared/log/logged-line.js';
+import { pathOfAddress } from '../../src-shared/url/address-path.js';
 
 // TL;DR: How Photo Data Viewer's page, without Node.js, gets the photo of its window: a capability, a random token
 // for that photo, which only that window's page has and may use, from the viewer's origin, until the window leaves
@@ -21,6 +22,8 @@ import { logged } from '../../src-shared/log/logged-line.js';
 // (docs/tasks/20261106_remove-electron-remote/).
 
 export const photoScheme = 'plm-photo';
+/** The origin of a photo's URL (photoUrl), before its token. */
+const photoOrigin = `${photoScheme}://photo`;
 
 type Transport = 'url' | 'ipc';
 
@@ -52,17 +55,19 @@ export function photoMimeType(fileName: string): string {
   return mimeTypes[path.extname(fileName).toLowerCase()] ?? '';
 }
 
+/** The viewer's origin, its server's address up to the path: "https://pdv-in-plm.vercel.app". */
 function viewerOrigin(): string {
-  return new URL(getPhotoDataViewerServerUrl()).origin;
+  const serverUrl = getPhotoDataViewerServerUrl();
+  return /^[^/]*\/\/[^/]*/.exec(serverUrl)?.[0] ?? serverUrl;
 }
 
-/** Whether `url` is a page of the viewer's origin. */
+/**
+ * Whether `url` is a page of the viewer's origin, as Chromium writes a page's address: the origin, then the path. The
+ * address is read as a text, not with Node.js's URL, whose parts were now and then another URL's in the e2e suite
+ * (src-main/file-server/app-page.ts).
+ */
 export function isViewerPage(url: string | undefined): boolean {
-  try {
-    return !!url && new URL(url).origin === viewerOrigin();
-  } catch {
-    return false;
-  }
+  return !!url && url.startsWith(`${viewerOrigin()}/`);
 }
 
 /** Ends the capability of the window of `contents`, if it has one, so that its token gives the photo no more. */
@@ -76,7 +81,7 @@ function revoke(contents: WebContents): void {
 
 /** The URL of the photo of `capability`, which only the viewer's page of its window has. */
 export function photoUrl(capability: Pick<Capability, 'token'>): string {
-  return `${photoScheme}://photo/${capability.token}`;
+  return `${photoOrigin}/${capability.token}`;
 }
 
 /**
@@ -147,11 +152,11 @@ export async function photoFor(sender: WebContents, chosenTransport: Transport =
  * protocol.handle gets no Origin header from Chromium, only the request's mode and referrer. The referrer, which
  * Chromium sets from the page that asks and which a page cannot set to another origin, must be the viewer's. The
  * request must be a CORS one, so that Chromium's own check, which the answer passes for the viewer's origin alone,
- * keeps any other page from reading it.
+ * keeps any other page from reading it. The token is read from the address as a text (pathOfAddress).
  */
 export async function respondToPhotoRequest(request: Request): Promise<Response> {
-  const url = new URL(request.url);
-  const capability = url.host === 'photo' ? capabilitiesByToken.get(url.pathname.slice(1)) : undefined;
+  const token = pathOfAddress(request.url, photoOrigin);
+  const capability = token === undefined ? undefined : capabilitiesByToken.get(token);
   if (!capability)
     return new Response(null, { status: 404 });
   if (request.mode !== 'cors' || !isViewerPage(request.referrer))
