@@ -124,8 +124,9 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
  *   photos. The call also read the canvas back from the GPU, for 0.8 ms a photo on the page's thread. Measured on
  *   macOS, November 2026 (docs/tasks/20261122_exif-thumbnail-orientation-tag/STATUS.md).
  * - Nothing decodes the thumbnail while the folder opens, as the canvas did, so one that the page cannot decode is
- *   found once it is shown: the viewers then show what they show for a photo without one, the photo itself where the
- *   page can show it (UndecodableThumbnailService). The canvas left such a photo without a thumbnail ('rotate-failed').
+ *   found once it is shown: the viewers then show what they show for a photo without one, the thumbnail that the app
+ *   makes of a JPEG or PNG photo (UndecodableThumbnailService). The canvas left such a photo without a thumbnail
+ *   ('rotate-failed').
  */
 async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number, filePath: string): Promise<Thumbnail> {
   const oriented = orientedJpeg(thumbnailBuffer, orientation);

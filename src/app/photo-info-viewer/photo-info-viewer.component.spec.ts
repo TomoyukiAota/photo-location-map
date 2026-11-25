@@ -246,28 +246,72 @@ describe('PhotoInfoViewerComponent', () => {
 
     // Nothing decodes the EXIF thumbnails while a folder opens: the img element finds one that does not decode.
     describe('in the EXIF data, which the page cannot decode', () => {
+      let decoded: (jpeg: Blob) => void;
+
+      beforeEach(() => {
+        decoded = undefined;
+        TestBed.overrideProvider(JpegPngImageSource, {
+          useValue: {
+            canMake: () => true,
+            states: async (photoPaths: string[]) => photoPaths.map((photoPath): ThumbnailState =>
+              ({ attemptFinished: false, cacheAvailable: false, thumbnailFilePath: `/cache${photoPath}.plm.jpg` })),
+            readPhoto: async () => ({ bytes: new Uint8Array([1]), lastModified: '2026-11-23T01:02:03.000Z' }),
+            makeThumbnail: () => new Promise<Blob>(resolve => { decoded = resolve; }),
+            save: async (photoPath: string) => `/cache${photoPath}.plm.jpg`,
+          },
+        });
+      });
+
       /** The img element's error, as when the page could not decode the image that it was to show. */
       async function failToDecode(): Promise<void> {
         thumbnail().dispatchEvent(new Event('error'));
         await fixture.whenStable();
       }
 
-      it('gives way to the photo itself at Fast, in every place that shows the photo, once one place has tried to show it', async () => {
+      /** Lets the app make the thumbnail that it was asked for, and expects the viewer to show it from the cache. */
+      async function expectMade(cacheFilePath: string): Promise<void> {
+        await vi.waitFor(() => expect(decoded).toBeDefined());
+        decoded(new Blob(['jpeg']));
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          expect(thumbnail().getAttribute('src')).toBe(madeAddress(cacheFilePath));
+        });
+      }
+
+      it('gives way to the thumbnail that the app makes of the photo at Fast too, in every place that shows the photo, never to the photo itself', async () => {
         quality.set('fast');
         const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
         const photo = cameraPhoto();
-        const photoItself = `plm-file://local/${encodeURIComponent('/photos/IMG_0001.JPG')}`;
+        await TestBed.inject(JpegPngThumbnailService).prepare([photo]);
         await show(photo, 'dir-tree-view');
         expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
 
+        // The photo itself would be its whole file, which the page would keep for the rest of the session, as it did
+        // for every photo without an EXIF thumbnail (JpegPngThumbnailService).
         await failToDecode();
-        expect(thumbnail().getAttribute('src')).toBe(photoItself);
+        expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
         expect(warn).toHaveBeenCalledOnce();
         expect(String(warn.mock.calls[0][0])).toBe('[Photo Info Viewer] The thumbnail in the EXIF data of '
           + '/photos/IMG_0001.JPG could not be decoded. The photo is shown as one without it.');
-        // Another viewer of the photo, as its popup or its row made again, shows the photo itself at once.
+        await expectMade('/cache/photos/IMG_0001.JPG.plm.jpg');
+        expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+        // Another viewer of the photo, as its popup or its row made again, shows it at once.
         await show(photo, 'leaflet-map-popup');
-        expect(thumbnail().getAttribute('src')).toBe(photoItself);
+        expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0001.JPG.plm.jpg'));
+        warn.mockRestore();
+      });
+
+      it('gives way to the thumbnail that the app makes at High quality of one as large as the size, which needed none made', async () => {
+        const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
+        const photo = photoAt('/photos/IMG_0002.JPG', { thumbnail: new Thumbnail('blob:thumbnail-of-IMG_0002', new Dimensions(512, 384)) });
+        await TestBed.inject(JpegPngThumbnailService).prepare([photo]);
+        await show(photo, 'leaflet-map-popup');
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0002');
+        expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+
+        await failToDecode();
+        expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
+        await expectMade('/cache/photos/IMG_0002.JPG.plm.jpg');
         warn.mockRestore();
       });
 

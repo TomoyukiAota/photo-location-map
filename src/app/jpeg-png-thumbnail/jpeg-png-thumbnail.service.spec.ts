@@ -1,7 +1,9 @@
 import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { PhotoFileForThumbnail, ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
+import { Logger } from '../../../src-shared/log/logger';
 import { ThumbnailQuality } from '../../../src-shared/user-settings/thumbnail-quality';
+import { UndecodableThumbnailService } from '../photo-info-viewer/undecodable-thumbnail.service';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Exif } from '../shared/model/exif.model';
 import { Photo } from '../shared/model/photo.model';
@@ -23,9 +25,12 @@ function photoAt(path: string, exif?: Exif): Photo {
   return Object.assign(new Photo(), { name, path, filenameExtension: name.slice(name.lastIndexOf('.')).toLowerCase(), exif });
 }
 
-/** EXIF data with a thumbnail of `width` x `height`, as a camera writes one of 160 x 120. */
-function exifWithThumbnail(width: number, height: number): Exif {
-  return { thumbnail: new Thumbnail('blob:exif', new Dimensions(width, height)) } as Exif;
+/**
+ * EXIF data with a thumbnail of `width` x `height`, as a camera writes one of 160 x 120, at the object URL given: each
+ * photo's thumbnail has one of its own (UndecodableThumbnailService).
+ */
+function exifWithThumbnail(width: number, height: number, objectUrl = 'blob:exif'): Exif {
+  return { thumbnail: new Thumbnail(objectUrl, new Dimensions(width, height)) } as Exif;
 }
 
 const lastModified = '2026-11-23T01:02:03.000Z';
@@ -35,6 +40,8 @@ describe('JpegPngThumbnailService', () => {
   let service: JpegPngThumbnailService;
   /** What the main process says of each photo's thumbnail in the cache, by the photo's path; none for the others. */
   let cacheStates: Map<string, Partial<ThumbnailState>>;
+  /** What the main process waits for before it answers about the cache; nothing unless a test says otherwise. */
+  let cacheAnswered: Promise<void>;
   /** The order in which the photos are read to be made, and what the reading gives, by the photo's path. */
   let read: string[];
   let reading: Map<string, Promise<PhotoFileForThumbnail | null>>;
@@ -54,6 +61,7 @@ describe('JpegPngThumbnailService', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     cacheStates = new Map();
+    cacheAnswered = Promise.resolve();
     read = [];
     reading = new Map();
     decoding = new Map();
@@ -75,6 +83,7 @@ describe('JpegPngThumbnailService', () => {
           canMake: () => canMake,
           states: async (photoPaths: string[], longerSide: number) => {
             sizesAsked.push(longerSide);
+            await cacheAnswered;
             return photoPaths.map((photoPath): ThumbnailState => ({
               attemptFinished: false, cacheAvailable: false, thumbnailFilePath: cachePathOf(photoPath), ...cacheStates.get(photoPath) }));
           },
@@ -111,20 +120,36 @@ describe('JpegPngThumbnailService', () => {
   const pass = (milliseconds = 0) => vi.advanceTimersByTimeAsync(milliseconds);
 
   it('makes the thumbnails of the JPEG and PNG photos without one in their EXIF data, and at High quality of those whose EXIF thumbnail is smaller than the size', () => {
+    const undecodable = TestBed.inject(UndecodableThumbnailService);
     for (const quality of ['high', 'fast'] as const) {
-      expect(needsMadeThumbnail(photoAt('/photos/a.jpg'), quality, 400)).toBe(true);
-      expect(needsMadeThumbnail(photoAt('/photos/b.PNG'), quality, 400)).toBe(true);
-      expect(needsMadeThumbnail(photoAt('/photos/c.jpeg', {} as Exif), quality, 400)).toBe(true);
-      expect(needsMadeThumbnail(photoAt('/photos/e.heic'), quality, 400)).toBe(false);
-      expect(needsMadeThumbnail(photoAt('/photos/f.tif', exifWithThumbnail(160, 120)), quality, 400)).toBe(false);
+      expect(needsMadeThumbnail(photoAt('/photos/a.jpg'), quality, 400, undecodable)).toBe(true);
+      expect(needsMadeThumbnail(photoAt('/photos/b.PNG'), quality, 400, undecodable)).toBe(true);
+      expect(needsMadeThumbnail(photoAt('/photos/c.jpeg', {} as Exif), quality, 400, undecodable)).toBe(true);
+      expect(needsMadeThumbnail(photoAt('/photos/e.heic'), quality, 400, undecodable)).toBe(false);
+      expect(needsMadeThumbnail(photoAt('/photos/f.tif', exifWithThumbnail(160, 120)), quality, 400, undecodable)).toBe(false);
     }
     // A camera's EXIF thumbnail is smaller than any size, which High quality does not show stretched.
-    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifWithThumbnail(160, 120)), 'high', 400)).toBe(true);
-    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifWithThumbnail(160, 120)), 'fast', 400)).toBe(false);
+    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifWithThumbnail(160, 120)), 'high', 400, undecodable)).toBe(true);
+    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifWithThumbnail(160, 120)), 'fast', 400, undecodable)).toBe(false);
     // One as large as the size, on its longer side, is shown as it is, whichever side that is.
-    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(512, 384)), 'high', 500)).toBe(false);
-    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(384, 512)), 'high', 500)).toBe(false);
-    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(512, 384)), 'high', 600)).toBe(true);
+    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(512, 384)), 'high', 500, undecodable)).toBe(false);
+    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(384, 512)), 'high', 500, undecodable)).toBe(false);
+    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(512, 384)), 'high', 600, undecodable)).toBe(true);
+  });
+
+  it('makes the thumbnail of a JPEG or PNG photo whose EXIF thumbnail the page cannot decode at either quality, as of one without an EXIF thumbnail', () => {
+    const undecodable = TestBed.inject(UndecodableThumbnailService);
+    const camera = photoAt('/photos/d.jpg', exifWithThumbnail(160, 120));
+    const large = photoAt('/photos/g.png', exifWithThumbnail(512, 384));
+    const scan = photoAt('/photos/f.tif', exifWithThumbnail(160, 120));
+    [camera, large, scan].forEach(photo => undecodable.add(photo.exif.thumbnail));
+
+    for (const quality of ['high', 'fast'] as const) {
+      expect(needsMadeThumbnail(camera, quality, 400, undecodable)).toBe(true);
+      expect(needsMadeThumbnail(large, quality, 400, undecodable)).toBe(true);
+      // The page shows no TIFF file, which the app makes no thumbnail of.
+      expect(needsMadeThumbnail(scan, quality, 400, undecodable)).toBe(false);
+    }
   });
 
   it('makes the thumbnail of a JPEG photo whose EXIF thumbnail is smaller than the size, at High quality only', async () => {
@@ -322,6 +347,137 @@ describe('JpegPngThumbnailService', () => {
     expect(service.stateOf('/photos/a.jpg')).toEqual({ kind: 'decoded', url: 'blob:test/1' });
     service.reset();
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:test/1');
+  });
+
+  describe('of a photo that the folder did not take, whose EXIF thumbnail the page then could not decode', () => {
+    let undecodable: UndecodableThumbnailService;
+    /** A camera's JPEG, whose EXIF thumbnail Fast shows as it is: the folder does not take it to make its thumbnail. */
+    const cameraPhoto = (path = '/photos/camera.jpg', objectUrl = `blob:exif-of-${path}`) =>
+      photoAt(path, exifWithThumbnail(160, 120, objectUrl));
+
+    beforeEach(() => {
+      quality.set('fast');
+      undecodable = TestBed.inject(UndecodableThumbnailService);
+    });
+
+    it('is made as a place asks for it, kept in the cache and shown from there, as one without an EXIF thumbnail is', async () => {
+      const photo = cameraPhoto();
+      await service.prepare([photo]);
+      // Not while its EXIF thumbnail is one to show.
+      service.watch(photo.path);
+      service.startFolder();
+      await pass(backgroundStartDelayMs);
+      expect(sizesAsked).toEqual([]);
+      expect(read).toEqual([]);
+
+      undecodable.add(photo.exif.thumbnail);
+      service.watch(photo.path);
+      expect(service.stateOf(photo.path)).toEqual({ kind: 'pending' });
+      await pass();
+
+      expect(sizesAsked).toEqual([400]);
+      expect(read).toEqual([photo.path]);
+      expect(saved).toEqual([[photo.path, lastModified, true]]);
+      expect(service.stateOf(photo.path)).toEqual({ kind: 'cached', filePath: '/cache/photos/camera.jpg.plm.jpg', longerSide: 400 });
+    });
+
+    it('is made at High quality too, where its EXIF thumbnail was as large as the size', async () => {
+      quality.set('high');
+      const photo = photoAt('/photos/large.jpg', exifWithThumbnail(512, 384, 'blob:exif-of-large'));
+      await service.prepare([photo]);
+      undecodable.add(photo.exif.thumbnail);
+      service.watch(photo.path);
+      await pass();
+
+      expect(read).toEqual([photo.path]);
+      expect(service.stateOf(photo.path)).toEqual({ kind: 'cached', filePath: '/cache/photos/large.jpg.plm.jpg', longerSide: 400 });
+    });
+
+    it('shows the thumbnail of the cache, or the photo itself where none can be made, asking the cache once', async () => {
+      const cached = cameraPhoto('/photos/cached.jpg');
+      const refused = cameraPhoto('/photos/refused.jpg');
+      cacheStates.set(cached.path, { attemptFinished: true, cacheAvailable: true });
+      cacheStates.set(refused.path, { attemptFinished: true, cacheAvailable: false });
+      await service.prepare([cached, refused]);
+      for (const photo of [cached, refused]) {
+        undecodable.add(photo.exif.thumbnail);
+        // Asked for by a row and by a popup.
+        service.watch(photo.path);
+        service.watch(photo.path);
+      }
+      await pass();
+
+      expect(sizesAsked).toEqual([400, 400]);
+      expect(service.stateOf(cached.path)).toEqual({ kind: 'cached', filePath: '/cache/photos/cached.jpg.plm.jpg', longerSide: 400 });
+      expect(service.stateOf(refused.path)).toEqual({ kind: 'photoItself' });
+      expect(read).toEqual([]);
+    });
+
+    it('is made before the folder\'s others, which the log alone counts', async () => {
+      const info = vi.spyOn(Logger, 'info');
+      const files = new Map(['/photos/a.jpg', '/photos/b.jpg'].map(path => [path, held<PhotoFileForThumbnail | null>()]));
+      files.forEach((file, path) => reading.set(path, file.promise));
+      const photo = cameraPhoto();
+      await service.prepare([photoAt('/photos/a.jpg'), photoAt('/photos/b.jpg'), photo]);
+      service.startFolder();
+      await pass(backgroundStartDelayMs);
+      expect(read).toEqual(['/photos/a.jpg']);
+
+      undecodable.add(photo.exif.thumbnail);
+      service.watch(photo.path);
+      await pass();
+      expect(read).toEqual(['/photos/a.jpg', photo.path]);
+
+      const madeTheFolder = () => info.mock.calls.filter(([message]) => String(message).includes('Made the thumbnails of the folder'));
+      files.get('/photos/a.jpg').resolve({ bytes: new Uint8Array([1]), lastModified });
+      await pass();
+      expect(read).toEqual(['/photos/a.jpg', photo.path, '/photos/b.jpg']);
+      expect(madeTheFolder()).toEqual([]);
+      files.get('/photos/b.jpg').resolve({ bytes: new Uint8Array([1]), lastModified });
+      await pass();
+      expect(madeTheFolder()).toHaveLength(1);
+    });
+
+    it('is taken by the folder itself once the settings are applied again', async () => {
+      const photo = cameraPhoto();
+      await service.prepare([photo]);
+      undecodable.add(photo.exif.thumbnail);
+
+      await service.applySettings();
+      expect(service.stateOf(photo.path)).toEqual({ kind: 'pending' });
+      await pass(backgroundStartDelayMs);
+      expect(read).toEqual([photo.path]);
+    });
+
+    it('is not taken for a photo of another folder, nor for one whose EXIF thumbnail the page decodes, as that of the folder at the same path', async () => {
+      // Rows of the previous folder, shown until the next one's tree is, one of them of a photo that the next folder has
+      // too, with an EXIF thumbnail of its own, as the folder's EXIF data are read again.
+      const previous = [cameraPhoto('/photos/camera.jpg', 'blob:previous-1'), cameraPhoto('/old/photo.jpg', 'blob:previous-2')];
+      previous.forEach(photo => undecodable.add(photo.exif.thumbnail));
+      await service.prepare([cameraPhoto('/photos/camera.jpg', 'blob:next-1')]);
+      previous.forEach(photo => service.watch(photo.path));
+      await pass();
+
+      expect(sizesAsked).toEqual([]);
+      expect(read).toEqual([]);
+    });
+
+    it('drops the answer of the cache that comes after another folder opens', async () => {
+      const answered = held<void>();
+      const photo = cameraPhoto('/old/camera.jpg');
+      await service.prepare([photo]);
+      cacheAnswered = answered.promise;
+      undecodable.add(photo.exif.thumbnail);
+      service.watch(photo.path);
+
+      service.reset();
+      await service.prepare([cameraPhoto('/new/b.jpg')]);
+      answered.resolve();
+      await pass(backgroundStartDelayMs);
+
+      expect(read).toEqual([]);
+      expect(service.stateOf(photo.path)).toEqual({ kind: 'pending' });
+    });
   });
 
   it('drops what was being made for the previous folder, and changes nothing of the next one with it', async () => {

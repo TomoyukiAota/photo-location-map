@@ -1,9 +1,11 @@
 import { inject, Service, signal, untracked, WritableSignal } from '@angular/core';
+import type { ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
 import { isFilePathTooLongOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { ThumbnailQuality } from '../../../src-shared/user-settings/thumbnail-quality';
+import { UndecodableThumbnailService } from '../photo-info-viewer/undecodable-thumbnail.service';
 import { Photo } from '../shared/model/photo.model';
 import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { JpegPngImageSource } from './jpeg-png-image-source';
@@ -38,18 +40,31 @@ export const backgroundStartDelayMs = 1000;
 const photosPerStateRequest = 1000;
 
 /**
- * Whether the app makes the photo's thumbnail, of `longerSide` pixels at `quality`: a JPEG or PNG file without one in
- * its EXIF data, and at High quality one whose EXIF thumbnail is smaller than that, which a place would show stretched
- * (src-shared/user-settings/thumbnail-quality.ts). A camera's is 160 x 120 in most photos.
+ * Whether the app makes the photo's thumbnail, of `longerSide` pixels at `quality`: a JPEG or PNG file without an
+ * EXIF thumbnail that the page decodes, as far as `undecodable` knows, and at High quality one whose EXIF thumbnail is
+ * smaller than that, which a place would show stretched (src-shared/user-settings/thumbnail-quality.ts). A camera's is
+ * 160 x 120 in most photos.
  */
-export function needsMadeThumbnail(photo: Photo, quality: ThumbnailQuality, longerSide: number): boolean {
+export function needsMadeThumbnail(photo: Photo, quality: ThumbnailQuality, longerSide: number,
+                                   undecodable: UndecodableThumbnailService): boolean {
   if (!FilenameExtension.isDisplayableInBrowser(photo.filenameExtension))
     return false;
   const exifThumbnail = photo.exif?.thumbnail;
-  if (!exifThumbnail)
+  if (!exifThumbnail || undecodable.isUndecodable(exifThumbnail))
     return true;
   const { width, height } = exifThumbnail.dimensions ?? { width: 0, height: 0 };
   return quality === 'high' && Math.max(width, height) < longerSide;
+}
+
+/**
+ * What a photo shows as the cache answered for its thumbnail: the thumbnail of the cache, at `longerSide`, or the photo
+ * itself, where none can be made; null where it is to be made.
+ */
+function shownFromCache({ cacheAvailable, attemptFinished, thumbnailFilePath }: ThumbnailState,
+                        longerSide: number): JpegPngThumbnailState | null {
+  if (isFilePathTooLongOnWindows(thumbnailFilePath) || (!cacheAvailable && attemptFinished))
+    return photoItself;
+  return cacheAvailable ? { kind: 'cached', filePath: thumbnailFilePath, longerSide } : null;
 }
 
 /** Whether the decoder refused the file's data, which would be refused again until the file changes. */
@@ -59,8 +74,9 @@ function isRefusedData(error: unknown): boolean {
 
 /**
  * The thumbnails that the app makes of the opened folder's JPEG and PNG photos (needsMadeThumbnail): of those that have
- * none in their EXIF data, which the page made by showing the whole photo, and at High quality of those whose EXIF
- * thumbnail is smaller than the chosen size; made in the page, kept in the cache, and shown from it.
+ * none in their EXIF data, or none that the page decodes, which the page made by showing the whole photo, and at High
+ * quality of those whose EXIF thumbnail is smaller than the chosen size; made in the page, kept in the cache, and shown
+ * from it.
  * TL;DR: Those that a place shows are made first, the last asked for first; then the folder's others, one at a time,
  * so that the next time it is opened every thumbnail is in the cache. They are made at the size that the settings
  * chose when the folder was opened, or when the settings were saved since (applySettings).
@@ -82,11 +98,16 @@ function isRefusedData(error: unknown): boolean {
  * - A photo whose thumbnail cannot be made shows itself, as before, or its EXIF thumbnail where it has one; the cache
  *   says so for one whose file the decoder refused, so that it is not tried again until the file or the size
  *   changes.
+ * - A photo whose EXIF thumbnail the page turns out not to decode once a place shows it (UndecodableThumbnailService) is
+ *   taken when a place asks for it then. The folder did not take it when it was opened, at Fast, which makes no
+ *   thumbnail of a photo with an EXIF thumbnail, or at High quality where that thumbnail was as large as the size
+ *   (takeLate()).
  */
 @Service()
 export class JpegPngThumbnailService {
   private readonly source = inject(JpegPngImageSource);
   private readonly thumbnailSizeService = inject(ThumbnailSizeService);
+  private readonly undecodable = inject(UndecodableThumbnailService);
 
   private states = new Map<string, WritableSignal<JpegPngThumbnailState>>();
   /**
@@ -94,8 +115,15 @@ export class JpegPngThumbnailService {
    * a photo's state read its new one: each photo's signal is a new one then.
    */
   private readonly epoch = signal(0);
-  /** The folder's photos, which the thumbnails are made of again for new settings. */
-  private photos: readonly Photo[] = [];
+  /** The folder's photos by their paths, which the thumbnails are made of again for new settings. */
+  private photosByPath: ReadonlyMap<string, Photo> = new Map();
+  /**
+   * The photos that the folder makes the thumbnails of, which may be in the cache or be ones that cannot be made: those
+   * that prepare() took, and those taken since, as a place asked for them (takeLate()).
+   */
+  private readonly taken = new Set<string>();
+  /** Those taken since prepare(), which the log does not count among the folder's photos to make. */
+  private readonly takenLate = new Set<string>();
   /** The quality and the size that the folder's thumbnails are made at, which the settings had when they were asked. */
   private madeAt: { readonly quality: ThumbnailQuality, readonly longerSide: number } = { quality: 'high', longerSide: 400 };
   /** The photos whose thumbnails wait to be made. */
@@ -131,11 +159,12 @@ export class JpegPngThumbnailService {
    */
   public async prepare(photos: readonly Photo[]): Promise<void> {
     const generation = this.generation;
-    this.photos = photos;
+    this.photosByPath = new Map(photos.map(photo => [photo.path, photo]));
     const quality = untracked(this.thumbnailSizeService.quality);
     const longerSide = untracked(this.thumbnailSizeService.longerSide);
     this.madeAt = { quality, longerSide };
-    const photoPaths = photos.filter(photo => needsMadeThumbnail(photo, quality, longerSide)).map(photo => photo.path);
+    const photoPaths = untracked(() => photos.filter(photo => this.needsMade(photo))).map(photo => photo.path);
+    photoPaths.forEach(photoPath => this.taken.add(photoPath));
     if (photoPaths.length === 0)
       return;
     if (!this.source.canMake()) {
@@ -160,14 +189,11 @@ export class JpegPngThumbnailService {
     const toMake: string[] = [];
     let cached = 0;
     photoPaths.forEach((photoPath, index) => {
-      const { cacheAvailable, attemptFinished, thumbnailFilePath } = states[index];
-      if (isFilePathTooLongOnWindows(thumbnailFilePath)) {
-        this.set(photoPath, photoItself);
-      } else if (cacheAvailable) {
-        this.set(photoPath, { kind: 'cached', filePath: thumbnailFilePath, longerSide });
-        cached++;
-      } else if (attemptFinished) {
-        this.set(photoPath, photoItself);
+      const shown = shownFromCache(states[index], longerSide);
+      if (shown) {
+        this.set(photoPath, shown);
+        if (shown.kind === 'cached')
+          cached++;
       } else {
         this.waiting.add(photoPath);
         toMake.push(photoPath);
@@ -187,7 +213,7 @@ export class JpegPngThumbnailService {
    * cache at the new size are shown from it, and the others are made, those that a place shows first.
    */
   public async applySettings(): Promise<void> {
-    const photos = this.photos;
+    const photos = [...this.photosByPath.values()];
     this.reset();
     await this.prepare(photos);
     this.startFolder();
@@ -207,11 +233,14 @@ export class JpegPngThumbnailService {
 
   /**
    * Makes the photo's thumbnail before the folder's others, as a place shows it, unless it is made or being made:
-   * before those asked for in the same turn that are farther than `distance` from what is shown, in pixels.
+   * before those asked for in the same turn that are farther than `distance` from what is shown, in pixels. A photo of
+   * the folder that was not taken when it was opened is taken now where its thumbnail is to be made (takeLate()).
    */
   public watch(photoPath: string, distance = 0): void {
-    if (!this.waiting.has(photoPath))
+    if (!this.waiting.has(photoPath)) {
+      this.takeLate(photoPath, distance);
       return;
+    }
     this.askedInThisTurn.push({ photoPath, distance });
     if (this.askedInThisTurn.length === 1)
       queueMicrotask(() => this.takeAskedInThisTurn());
@@ -222,8 +251,10 @@ export class JpegPngThumbnailService {
     this.generation++;
     clearTimeout(this.folderTimer);
     this.states = new Map();
-    this.photos = [];
+    this.photosByPath = new Map();
     this.epoch.update(epoch => epoch + 1);
+    this.taken.clear();
+    this.takenLate.clear();
     this.waiting.clear();
     this.askedInThisTurn.length = 0;
     this.asked.length = 0;
@@ -234,6 +265,60 @@ export class JpegPngThumbnailService {
     for (const url of this.objectUrls)
       URL.revokeObjectURL(url);
     this.objectUrls.clear();
+  }
+
+  /** Whether the app makes the photo's thumbnail at the quality and the size that the folder's are made at. */
+  private needsMade(photo: Photo): boolean {
+    return needsMadeThumbnail(photo, this.madeAt.quality, this.madeAt.longerSide, this.undecodable);
+  }
+
+  /**
+   * Takes a photo of the folder that a place asks for, though prepare() did not take it, where its thumbnail is to be
+   * made now: one whose EXIF thumbnail the page turned out not to decode (UndecodableThumbnailService). Shows its
+   * thumbnail from the cache, or makes it before the folder's others, as prepare() and watch() do; once only.
+   * TL;DR: Otherwise such a photo showed itself, the whole file, at Fast, which makes no thumbnail of a photo with an
+   * EXIF thumbnail, and at High quality where its EXIF thumbnail was as large as the size.
+   * Details: The page finds such a thumbnail only once a place shows it, by its img element's error: nothing decodes
+   * the EXIF thumbnails while a folder opens (createThumbnail() in
+   * src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.ts). A photo of another folder is not taken: the rows
+   * of the previous one are shown until the tree of the next is, and could ask for their photos meanwhile. A photo
+   * whose thumbnail is being made, made or in the cache comes here too whenever a place asks for it, for two look-ups
+   * of its path, as watch() is called in the effect of each viewer of a photo whose thumbnail the app makes.
+   */
+  private takeLate(photoPath: string, distance: number): void {
+    const photo = this.photosByPath.get(photoPath);
+    if (!photo || this.taken.has(photoPath) || !untracked(() => this.needsMade(photo)))
+      return;
+    this.taken.add(photoPath);
+    this.takenLate.add(photoPath);
+    if (this.source.canMake())
+      void this.makeLate(photoPath, distance);
+    else
+      this.set(photoPath, photoItself);
+  }
+
+  /** Shows the thumbnail of a photo taken late from the cache, or makes it where the cache has none. */
+  private async makeLate(photoPath: string, distance: number): Promise<void> {
+    const generation = this.generation;
+    const { longerSide } = this.madeAt;
+    let state: ThumbnailState;
+    try {
+      [state] = await this.source.states([photoPath], longerSide);
+    } catch (error) {
+      logger.error(logged`Failed to check the thumbnail cache for "${photoPath}", which shows itself.`, error);
+      if (generation === this.generation)
+        this.set(photoPath, photoItself);
+      return;
+    }
+    if (generation !== this.generation)
+      return;
+    const shown = shownFromCache(state, longerSide);
+    if (shown) {
+      this.set(photoPath, shown);
+      return;
+    }
+    this.waiting.add(photoPath);
+    this.watch(photoPath, distance);
   }
 
   private signalOf(photoPath: string): WritableSignal<JpegPngThumbnailState> {
@@ -288,11 +373,12 @@ export class JpegPngThumbnailService {
       if (isOfFolder)
         this.busyFolderLanes++;
       const generation = this.generation;
+      const isCounted = !this.takenLate.has(photoPath);
       void this.make(photoPath, generation).finally(() => {
         this.busyLanes--;
         if (isOfFolder)
           this.busyFolderLanes--;
-        if (generation === this.generation && --this.left === 0)
+        if (generation === this.generation && isCounted && --this.left === 0)
           logger.info(`Made the thumbnails of the folder's JPEG and PNG photos in ${Math.round(performance.now() - this.startedAt)} ms.`);
         this.makeNext();
       });
