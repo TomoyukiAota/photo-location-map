@@ -127,6 +127,9 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
  *   found once it is shown: the viewers then show what they show for a photo without one, the thumbnail that the app
  *   makes of a JPEG or PNG photo (UndecodableThumbnailService). The canvas left such a photo without a thumbnail
  *   ('rotate-failed').
+ * - A thumbnail that an app left as it was when it turned the photo's pixels lies on its side against the photo: the
+ *   viewers show a JPEG or PNG photo with such a thumbnail as one without it (isExifThumbnailOnItsSide in
+ *   src/app/shared/exif-thumbnail-on-its-side.ts).
  */
 async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number, filePath: string): Promise<Thumbnail> {
   const oriented = orientedJpeg(thumbnailBuffer, orientation);

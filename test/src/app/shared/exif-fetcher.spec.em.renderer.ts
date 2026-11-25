@@ -6,6 +6,7 @@ import * as path from 'path';
 import { nearlyEqual } from '../../../test-util/number-comparison.js';
 import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher.js';
 import { exifReadFailures } from '../../../../src/app/shared/exif-fetcher/exif-read-failures.js';
+import { isExifThumbnailOnItsSide } from '../../../../src/app/shared/exif-thumbnail-on-its-side.js';
 import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.js';
 import { repositoryPath } from '../../../test-util/repository.js';
 import { jpegWithEmptyGpsValues } from '../../../test-util/jpeg-with-empty-gps-values.mjs';
@@ -107,6 +108,22 @@ describe('ExifFetcher', () => {
       const actual_IMG_5769_longitude = IMG_5769_pathExifPair.exif.gpsInfo.latLng.longitude;
       const expected_IMG_5769_longitude = -122.00566111111111;    // Negative value because GPSLongitudeRef is "W".
       assert(nearlyEqual(actual_IMG_5769_longitude, expected_IMG_5769_longitude, 1.0e-5));
+    });
+
+    // Windows Photo Viewer turned the pixels of the photo in actual-photos/Unga, of which the other file is a copy without
+    // its location, and left its thumbnail as it was. The cameras' portrait photos say so by their orientation, which
+    // turns their thumbnails too.
+    it('should find the EXIF thumbnail on its side only where an app turned the photo\'s pixels without it', () => {
+      const onItsSide = (...segments: string[]) => {
+        const pair = pathExifPairs.find(candidate => candidate.path === path.join(testResourceDirectory, 'actual-photos', ...segments));
+        assert(pair?.exif?.thumbnail && pair.exif.imageDimensions, `${segments.join('/')} has a thumbnail and a size`);
+        return isExifThumbnailOnItsSide(pair.exif);
+      };
+      assert.strictEqual(onItsSide('Unga', 'IMG_2581.JPG'), true);
+      assert.strictEqual(onItsSide('Unga', 'IMG_2581_WithoutGpsInfo.JPG'), true);
+      assert.strictEqual(onItsSide('Kobe', 'IMG_4676.JPG'), false);
+      assert.strictEqual(onItsSide('Apple Park', 'IMG_5769.JPG'), false);
+      assert.strictEqual(onItsSide('Gold Coast', 'IMG_1579.JPG'), false);
     });
 
     it('should return null for unsupported-files/Invalid Photo.JPG', () => {
