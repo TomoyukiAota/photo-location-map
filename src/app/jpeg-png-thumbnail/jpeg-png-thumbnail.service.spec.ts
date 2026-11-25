@@ -10,7 +10,7 @@ import { Photo } from '../shared/model/photo.model';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { JpegPngImageSource } from './jpeg-png-image-source';
-import { backgroundStartDelayMs, JpegPngThumbnailService, needsMadeThumbnail } from './jpeg-png-thumbnail.service';
+import { backgroundStartDelayMs, hasUsableExifThumbnail, JpegPngThumbnailService, needsMadeThumbnail } from './jpeg-png-thumbnail.service';
 
 /** A promise with its resolve, for a step that a test lets finish when it chooses. */
 function held<T>() {
@@ -31,6 +31,15 @@ function photoAt(path: string, exif?: Exif): Photo {
  */
 function exifWithThumbnail(width: number, height: number, objectUrl = 'blob:exif'): Exif {
   return { thumbnail: new Thumbnail(objectUrl, new Dimensions(width, height)) } as Exif;
+}
+
+/**
+ * EXIF data whose thumbnail of `width` x `height` lies on its side against the photo, of 2448 x 3264 (portrait), as
+ * Windows Photo Viewer left test/test-resources/actual-photos/Unga/IMG_2581.JPG when it turned its pixels
+ * (isExifThumbnailOnItsSide).
+ */
+function exifWithThumbnailOnItsSide(width = 160, height = 120): Exif {
+  return { ...exifWithThumbnail(width, height), imageDimensions: new Dimensions(2448, 3264) } as Exif;
 }
 
 const lastModified = '2026-11-23T01:02:03.000Z';
@@ -150,6 +159,40 @@ describe('JpegPngThumbnailService', () => {
       // The page shows no TIFF file, which the app makes no thumbnail of.
       expect(needsMadeThumbnail(scan, quality, 400, undecodable)).toBe(false);
     }
+  });
+
+  it('makes the thumbnail of a JPEG or PNG photo whose EXIF thumbnail lies on its side against the photo at either quality, as of one without an EXIF thumbnail', () => {
+    const undecodable = TestBed.inject(UndecodableThumbnailService);
+    const turned = photoAt('/photos/turned.jpg', exifWithThumbnailOnItsSide());
+    const large = photoAt('/photos/turned.png', exifWithThumbnailOnItsSide(512, 384));
+    const scan = photoAt('/photos/turned.tif', exifWithThumbnailOnItsSide());
+    // A camera's portrait photo, whose orientation turns its thumbnail as it turns the photo.
+    const portrait = photoAt('/photos/portrait.jpg', { ...exifWithThumbnail(120, 160), imageDimensions: new Dimensions(3024, 4032) } as Exif);
+
+    for (const quality of ['high', 'fast'] as const) {
+      expect(needsMadeThumbnail(turned, quality, 400, undecodable)).toBe(true);
+      expect(needsMadeThumbnail(large, quality, 400, undecodable)).toBe(true);
+      // The page shows no TIFF file, which the app makes no thumbnail of: its EXIF thumbnail is shown, even on its side.
+      expect(needsMadeThumbnail(scan, quality, 400, undecodable)).toBe(false);
+    }
+    expect(needsMadeThumbnail(portrait, 'high', 400, undecodable)).toBe(true);
+    expect(needsMadeThumbnail(portrait, 'fast', 400, undecodable)).toBe(false);
+    expect([turned, large, portrait].map(photo => hasUsableExifThumbnail(photo, undecodable))).toEqual([false, false, true]);
+  });
+
+  it('makes the thumbnail of a JPEG photo whose EXIF thumbnail lies on its side at Fast too, at 400 pixels, as one of the folder\'s', async () => {
+    quality.set('fast');
+    const turned = photoAt('/photos/turned.jpg', exifWithThumbnailOnItsSide());
+    const camera = photoAt('/photos/camera.jpg', exifWithThumbnail(160, 120));
+    await service.prepare([turned, camera]);
+    expect(service.stateOf(turned.path)).toEqual({ kind: 'pending' });
+
+    // Made with the folder's other photos, as the folder took it when it was opened, though no place asked for it.
+    service.startFolder();
+    await pass(backgroundStartDelayMs);
+    expect(read).toEqual([turned.path]);
+    expect(sizesMade).toEqual([400]);
+    expect(service.stateOf(turned.path)).toEqual({ kind: 'cached', filePath: '/cache/photos/turned.jpg.plm.jpg', longerSide: 400 });
   });
 
   it('makes the thumbnail of a JPEG photo whose EXIF thumbnail is smaller than the size, at High quality only', async () => {

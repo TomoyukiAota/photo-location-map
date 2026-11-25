@@ -131,6 +131,10 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
  * - A thumbnail cut short is left out, so that the photo is one without a thumbnail of its EXIF data from the start,
  *   and a JPEG or PNG photo gets the thumbnail that the app makes, at Fast too ('thumbnail-cut-short'). The page
  *   decodes such a thumbnail without an error, and shows its first rows only (isCutShort()).
+ * - A thumbnail that an app left as it was when it turned the photo's pixels lies on its side against the photo. It is
+ *   kept, unlike one cut short, as it shows the whole photo: the viewers show a JPEG or PNG photo with such a thumbnail
+ *   as one without it, and a photo that the app makes no thumbnail of, as a TIFF file, with it
+ *   (isExifThumbnailOnItsSide in src/app/shared/exif-thumbnail-on-its-side.ts).
  */
 async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number, filePath: string): Promise<Thumbnail> {
   if (isCutShort(thumbnailBuffer)) {

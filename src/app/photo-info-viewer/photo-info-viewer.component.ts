@@ -12,7 +12,7 @@ import { openWithAssociatedApp } from '../shared/open-with-os';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
-import { JpegPngThumbnailService, needsMadeThumbnail } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
+import { hasUsableExifThumbnail, JpegPngThumbnailService, needsMadeThumbnail } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
 import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { MoreOptionsMenuService } from './more-options-menu/more-options-menu.service';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
@@ -90,7 +90,7 @@ function thumbnailOfExif(photo: Photo, provisional = false): Thumbnail {
 
 /**
  * The photo itself as its thumbnail, which the page can show for a JPEG or PNG file, for one whose thumbnail the page
- * cannot make (JpegPngThumbnailService), and that has no EXIF thumbnail that the page decodes.
+ * cannot make (JpegPngThumbnailService), and that has no EXIF thumbnail that a place may show (hasUsableExifThumbnail).
  */
 function thumbnailOfPhotoItself(photo: Photo): Thumbnail {
   if (!isFilePathTooLongOnWindows(photo.path))
@@ -226,10 +226,11 @@ export class PhotoInfoViewerComponent {
       // A HEIF photo's thumbnail is made once a place shows the photo, and replaced once its high quality is made.
       if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension))
         this.heifThumbnailService.watch(photo.path);
-      // That of a JPEG or PNG photo that the app makes, without one in its EXIF data or, at High quality, with one
-      // smaller than the chosen size, once a row or a tile comes near the view, as its NearViewDirective says, and at
-      // once in a popup, which has none. A row tells how far it was from the window's middle, as the sidebar fills the
-      // window's height; the tiles of a popup are made in their order, whose first are those that the popup shows.
+      // That of a JPEG or PNG photo that the app makes, without one in its EXIF data that a place may show or, at High
+      // quality, with one smaller than the chosen size, once a row or a tile comes near the view, as its
+      // NearViewDirective says, and at once in a popup, which has none. A row tells how far it was from the window's
+      // middle, as the sidebar fills the window's height; the tiles of a popup are made in their order, whose first are
+      // those that the popup shows.
       if (this.needsMadeThumbnail(photo) && (this.nearView?.isNear() ?? true)) {
         const distance = this.place() === 'dir-tree-view' ? this.nearView?.distanceFromMiddleWhenNear ?? 0 : 0;
         this.jpegPngThumbnailService.watch(photo.path, distance);
@@ -258,21 +259,23 @@ export class PhotoInfoViewerComponent {
 
   /**
    * The photo's thumbnail. For a JPEG or PNG photo, the one in its EXIF data, unless the app makes one of it
-   * (needsMadeThumbnail), as it does of one whose EXIF thumbnail the page cannot decode (UndecodableThumbnailService):
-   * then the one that JpegPngThumbnailService makes, with its EXIF thumbnail shown until then, and shown instead where
-   * none can be made, or the photo itself where it has none that the page decodes. For a HEIF photo, the one that
-   * HeifThumbnailService makes: the small thumbnail that the photo holds, shown until the one of the quality that the
-   * settings choose is made. For another photo, the one in its EXIF data where it has one that the page decodes.
+   * (needsMadeThumbnail), as it does of one whose EXIF thumbnail the page cannot decode (UndecodableThumbnailService)
+   * or lies on its side against the photo (isExifThumbnailOnItsSide): then the one that JpegPngThumbnailService makes,
+   * with its EXIF thumbnail shown until then, and shown instead where none can be made, or the photo itself where it has
+   * none that a place may show (hasUsableExifThumbnail). For a HEIF photo, the one that HeifThumbnailService makes: the
+   * small thumbnail that the photo holds, shown until the one of the quality that the settings choose is made. For
+   * another photo, the one in its EXIF data where it has one that the page decodes, even on its side, as the app makes
+   * no other of it.
    */
   protected thumbnail(): Thumbnail {
     const photo = this.photo();
     if (!photo?.path)
       return unavailableThumbnail;
-    const hasExifThumbnail = !!photo.exif?.thumbnail && !this.undecodableThumbnailService.isUndecodable(photo.exif.thumbnail);
     if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
-      // One that needs none made has an EXIF thumbnail that the page decodes, as far as it knows.
+      // One that needs none made has an EXIF thumbnail that a place may show, as far as the page knows.
       if (!this.needsMadeThumbnail(photo))
         return thumbnailOfExif(photo);
+      const hasExifThumbnail = hasUsableExifThumbnail(photo, this.undecodableThumbnailService);
       const jpegPngThumbnail = this.jpegPngThumbnailService.stateOf(photo.path);
       switch (jpegPngThumbnail.kind) {
         case 'cached':
@@ -285,7 +288,7 @@ export class PhotoInfoViewerComponent {
           return hasExifThumbnail ? thumbnailOfExif(photo, true) : generatingThumbnail;
       }
     }
-    if (hasExifThumbnail)
+    if (photo.exif?.thumbnail && !this.undecodableThumbnailService.isUndecodable(photo.exif.thumbnail))
       return thumbnailOfExif(photo);
     if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
       const heifThumbnail = this.heifThumbnailService.stateOf(photo.path);
