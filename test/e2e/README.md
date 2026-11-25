@@ -39,6 +39,13 @@ A case that breaks the policy on purpose takes the lines that it causes with
 page needs something new, allow it in
 `src-main/file-server/content-security-policy.ts`, with why.
 
+Node's inspector runs what a case evaluates in the main process, with
+`app.evaluate()` or a window's `evaluate()`, in the middle of whatever code of
+the main process runs when the evaluation comes in, and Node.js's timers are not
+safe against that. A change of the main window's size, place or full screen,
+which electron-window-state answers by clearing its timer, goes through
+`inTaskOfItsOwn`, which runs it in a task of its own (`regression.spec.mjs`).
+
 On macOS and Windows, the application's windows stay off the screen, as
 Playwright's own browsers do, so that a run does not take over the screen. To
 watch them, add Playwright's `--headed` option:
