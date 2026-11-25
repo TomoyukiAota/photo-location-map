@@ -90,7 +90,7 @@ function thumbnailOfExif(photo: Photo, provisional = false): Thumbnail {
 
 /**
  * The photo itself as its thumbnail, which the page can show for a JPEG or PNG file, for one whose thumbnail the page
- * cannot make (JpegPngThumbnailService).
+ * cannot make (JpegPngThumbnailService), and that has no EXIF thumbnail that the page decodes.
  */
 function thumbnailOfPhotoItself(photo: Photo): Thumbnail {
   if (!isFilePathTooLongOnWindows(photo.path))
@@ -258,11 +258,11 @@ export class PhotoInfoViewerComponent {
 
   /**
    * The photo's thumbnail. For a JPEG or PNG photo, the one in its EXIF data, unless the app makes one of it
-   * (needsMadeThumbnail): then the one that JpegPngThumbnailService makes, with its EXIF thumbnail shown until then,
-   * and shown instead where none can be made, or the photo itself where it has none that the page decodes
-   * (UndecodableThumbnailService). For a HEIF photo, the one that HeifThumbnailService makes: the small thumbnail that
-   * the photo holds, shown until the one of the quality that the settings choose is made. For another photo, the one
-   * in its EXIF data where it has one that the page decodes.
+   * (needsMadeThumbnail), as it does of one whose EXIF thumbnail the page cannot decode (UndecodableThumbnailService):
+   * then the one that JpegPngThumbnailService makes, with its EXIF thumbnail shown until then, and shown instead where
+   * none can be made, or the photo itself where it has none that the page decodes. For a HEIF photo, the one that
+   * HeifThumbnailService makes: the small thumbnail that the photo holds, shown until the one of the quality that the
+   * settings choose is made. For another photo, the one in its EXIF data where it has one that the page decodes.
    */
   protected thumbnail(): Thumbnail {
     const photo = this.photo();
@@ -270,8 +270,9 @@ export class PhotoInfoViewerComponent {
       return unavailableThumbnail;
     const hasExifThumbnail = !!photo.exif?.thumbnail && !this.undecodableThumbnailService.isUndecodable(photo.exif.thumbnail);
     if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
+      // One that needs none made has an EXIF thumbnail that the page decodes, as far as it knows.
       if (!this.needsMadeThumbnail(photo))
-        return hasExifThumbnail ? thumbnailOfExif(photo) : thumbnailOfPhotoItself(photo);
+        return thumbnailOfExif(photo);
       const jpegPngThumbnail = this.jpegPngThumbnailService.stateOf(photo.path);
       switch (jpegPngThumbnail.kind) {
         case 'cached':
@@ -303,7 +304,8 @@ export class PhotoInfoViewerComponent {
 
   /** Whether the app makes the photo's thumbnail at the quality and the size that the settings choose. */
   private needsMadeThumbnail(photo: Photo): boolean {
-    return needsMadeThumbnail(photo, this.thumbnailSizeService.quality(), this.thumbnailSizeService.longerSide());
+    return needsMadeThumbnail(photo, this.thumbnailSizeService.quality(), this.thumbnailSizeService.longerSide(),
+      this.undecodableThumbnailService);
   }
 
   /** The thumbnail as it is turned: by a quarter more for each click, so that it always turns clockwise. */
@@ -340,8 +342,10 @@ export class PhotoInfoViewerComponent {
 
   /**
    * A thumbnail of the EXIF data that the page could not decode: from then on, the viewers show what they show for a
-   * photo without one, the photo itself where the page can show it (UndecodableThumbnailService). An image of another
-   * kind that does not load is left as it is.
+   * photo without one, at either quality (UndecodableThumbnailService): for a JPEG or PNG photo, the thumbnail that the
+   * app makes of it, which the viewer asks for as it does for one without an EXIF thumbnail (JpegPngThumbnailService);
+   * for a HEIF photo, the one that HeifThumbnailService makes; for another photo, the image that says that there is
+   * none. An image of another kind that does not load is left as it is.
    */
   protected onThumbnailError(): void {
     const photo = this.photo();

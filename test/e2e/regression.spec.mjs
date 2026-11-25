@@ -12,6 +12,7 @@ import { jpegWithFaceRegion } from '../test-util/jpeg-with-face-region.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 import { jpegWithLocationAndDate } from '../test-util/jpeg-with-location-and-date.mjs';
 import { jpegWithoutExifThumbnail } from '../test-util/jpeg-without-exif-thumbnail.mjs';
+import { jpegWithUndecodableExifThumbnail } from '../test-util/jpeg-with-undecodable-exif-thumbnail.mjs';
 import { answerDatedLayers } from '../test-util/dated-layer-answers.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
@@ -4844,6 +4845,46 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
   await launch();
   expect(await expectThumbnailsOfCache()).toEqual(files);
   expect(await Promise.all(files.map(async file => (await stat(file)).mtimeMs))).toEqual(madeAt);
+});
+test('Fast shows a thumbnail of 400 pixels that the app makes of a JPEG whose EXIF thumbnail the page cannot decode, never the photo itself', async () => {
+  // Fast shows a photo's EXIF thumbnail as it is, and makes no thumbnail of a photo that has one. The page finds that it
+  // cannot decode one only once a place shows it, by the img element's error: the photo then gets the thumbnail that
+  // the app makes of a photo without one, rather than show itself, its whole file, which the page would keep for the
+  // rest of the session (JpegPngThumbnailService). The photo has Kobe's location, so that its marker's popup shows it.
+  const folder = path.join(profile, 'Undecodable EXIF thumbnail');
+  await mkdir(folder);
+  const kobe = path.join(folder, 'Kobe.JPG');
+  await writeFile(kobe, jpegWithUndecodableExifThumbnail(await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'))));
+  await dismissWelcome();
+  await settings('Thumbnails');
+  await page.locator('app-thumbnail-settings').getByRole('radio', { name: /^Prefer app performance/ }).check();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+
+  const requested = [];
+  page.on('request', request => requested.push(request.url()));
+  await openFolderWithPicker(folder);
+  const inTree = page.locator('mat-tree-node').filter({ hasText: 'Kobe.JPG' }).locator('.photo-info-viewer-thumbnail');
+  const inPopup = page.locator('.leaflet-popup .photo-info-viewer-thumbnail');
+  /** The image that a thumbnail shows, once it has loaded one: not the image that stands in for one being made. */
+  const shown = thumbnail => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+    ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}` } : null);
+  for (const thumbnail of [inTree, inPopup]) {
+    await expect.poll(async () => (await shown(thumbnail))?.size, { timeout: 30000 }).toBe('400x300');
+    expect((await shown(thumbnail)).src).toMatch(/Kobe\.JPG\.plm\.jpg\?size=400$/);
+  }
+  const file = decodeURIComponent((await shown(inTree)).src.slice('plm-file://local/'.length).replace(/\?size=400$/, ''));
+  expect(file.startsWith(path.join(profile, 'thumbnail-cache') + path.sep), file).toBe(true);
+  expect(requested).not.toContain(`plm-file://local/${encodeURIComponent(kobe)}`);
+  // The page tried the photo's EXIF thumbnail first, as the log says: the photo was not taken for one without it.
+  const logFile = await app.evaluate(({ app }) => {
+    const require = globalThis.__plmTestRequire;
+    const configPath = require('node:path').join(app.getAppPath(), 'out/app/src-shared/log/file-config/log-file-config.js');
+    return require(configPath).LogFileConfig.filePath;
+  });
+  expect((await readFile(logFile, 'utf8')).split(/\r?\n/).filter(line => line.includes('could not be decoded'))).toEqual([
+    expect.stringContaining(`The thumbnail in the EXIF data of ${kobe} could not be decoded. The photo is shown as one without it.`),
+  ]);
 });
 test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and on the map, which apply at once, with thumbnails made from the photos at the larger one', async () => {
   // A camera's JPEG holds a thumbnail of 160 x 120, which High quality does not show stretched: the app makes one from
