@@ -105,6 +105,31 @@
 .photo-info-viewer-thumbnail {
   cursor: pointer;
 
+  // TL;DR: Never the element that Chromium keeps in place as the layout of a box that scrolls changes (scroll
+  // anchoring): the image changes its box for a moment when the thumbnail that the app makes replaces the small one
+  // that the photo holds, and the rows below it moved by as much.
+  // Details:
+  // - When the layout of what a box shows changes, Chromium keeps one of its elements where it is on the screen, by
+  //   scrolling the box as much. In the sidebar, it took the image of a row whose checkbox the rows kept at the top hid,
+  //   with the lower part of the image below them.
+  // - When the made thumbnail comes, the image loses the class of the small one at once, which stretches that one over
+  //   the box (below), but shows it until the new one has loaded, at its own size: 160 x 120, 40 pixels lower in a box
+  //   of 200. Chromium does not scroll for that change, of the image's own size, and takes the image there as the
+  //   element to keep in place. Once the new one, of 300 x 400, had loaded, the image's top was back up, and Chromium
+  //   scrolled the sidebar up by 40 pixels with it, which moved every row below down.
+  // - On Windows CI, Reveal in Sidebar left its row 40 pixels below the middle of the sidebar in 15 of 240 runs of its
+  //   case that recorded each frame, each time in the frame after the row above had got its made thumbnail, once the
+  //   scroll had stopped. In a fourth of the other runs, the same scroll of 40 pixels came while the sidebar was still
+  //   scrolling, which follows its row (EasedScroll). The sidebar of 501 pixels there leaves that row as above, and the
+  //   thumbnails were made around the scroll's end. The scroll's frames came at their pace, and no row changed its
+  //   height. At Fast quality, which makes none of them, the scroll of 40 pixels never came in 60 runs, nor with this in
+  //   120, which all passed.
+  // - The e2e case "Reveal in Sidebar reaches a row far down…" takes these steps in the page, with the row as the
+  //   sidebar of Windows CI leaves it: on macOS, the rows moved by 40 pixels each time without this, and not with it.
+  // - Rejected: keeping the small thumbnail stretched until the new one has loaded would give the viewer, which every
+  //   photo of the tree has, more to keep; waiting for the thumbnails in the e2e case would hide what a user sees.
+  overflow-anchor: none;
+
   // The image fits within its container, whatever its own size is.
   width: auto;
   height: auto;
