@@ -17,11 +17,20 @@ export const dequeuedLabel = 'dequeued';
  * Mergify is taken to have missed it: Mergify queues it within a minute or so. */
 export const unqueuedLimitMinutes = 10;
 
+/** How long a required check may have no check run while no other required check is pending, before its workflow is
+ * taken not to have started, as when a workflow file has an error. A part of the tests that is run again takes about 15
+ * minutes, after which the check of its gate comes back. */
+export const missingLimitMinutes = 30;
+
 /** The fields that wait-for-merge.js asks `gh pr view` for. */
 export const viewFields = 'number,state,mergedAt,mergeable,mergeStateStatus,labels,headRefOid,reviews,comments';
 
 /** The fields that wait-for-merge.js asks `gh pr checks --required` for. */
 export const checkFields = 'name,event,bucket,link';
+
+/** Where wait-for-merge.js reads, with `gh api`, the checks that branch protection requires of main, which are those
+ * that Mergify waits for (.mergify.yml): the `context` of each of its `checks` is the name of one. */
+export const requiredChecksPath = 'repos/{owner}/{repo}/branches/main/protection/required_status_checks';
 
 /** Logins of the apps whose comments on a pull request are summaries that they keep editing, CodeRabbit's of its
  * review and Mergify's of its queue: their comments are there from the start. Their reviews count. */
@@ -45,6 +54,19 @@ function failedChecksOf(checks) {
   return checks.filter(check => check.bucket === 'fail' || check.bucket === 'cancel');
 }
 
+/** The buckets of `gh pr checks` of a check that has ended: passed, skipped, failed or canceled. */
+const endedBuckets = new Set(['pass', 'skipping', 'fail', 'cancel']);
+
+/** Those of `requiredNames`, the checks that branch protection requires (none when they could not be read), that have no
+ * check run yet, given the required checks that `gh pr checks --required --json <checkFields>` lists. gh lists a check
+ * only once it has a check run, and a job that needs other jobs has none until they have ended: `test (ubuntu)`, which
+ * reports the two parts of the tests on Ubuntu, has none while they run. Nor has it while one of them is run again: gh
+ * then lists neither its new check run nor its failed one, as for `test (windows-latest)` and `test (macos-arm64)`, then
+ * a gate too, while parts of theirs were run again on #829. */
+function missingNamesOf(checks, requiredNames = []) {
+  return requiredNames.filter(name => !checks.some(check => check.name === name));
+}
+
 /** What is known when the waiting begins, given the pull request and its required checks as `assess` takes them. */
 export function startOf(pullRequest, checks) {
   return {
@@ -53,6 +75,8 @@ export function startOf(pullRequest, checks) {
     conflicting: pullRequest.mergeable === 'CONFLICTING',
     dequeued: hasLabel(pullRequest, dequeuedLabel),
     unqueuedSince: undefined,
+    commit: pullRequest.headRefOid,
+    missingSince: undefined,
   };
 }
 
@@ -63,12 +87,13 @@ function hasLabel(pullRequest, name) {
 
 /**
  * What to do about the pull request, given it from `gh pr view --json <viewFields>`, its required checks from
- * `gh pr checks --required --json <checkFields>`, what was seen before (from `startOf`, then from the last call), and
- * the time in milliseconds.
+ * `gh pr checks --required --json <checkFields>`, what was seen before (from `startOf`, then from the last call), the
+ * time in milliseconds, and the names of the checks that branch protection requires (from `requiredChecksPath`), or
+ * undefined when they could not be read.
  *
  * Returns `{ end: true, merged, message }` to stop waiting, or `{ end: false, status, seen }` to look again later.
  */
-export function assess(pullRequest, checks, seen, now) {
+export function assess(pullRequest, checks, seen, now, requiredNames) {
   const name = `#${pullRequest.number}`;
   const commit = String(pullRequest.headRefOid).slice(0, 8);
   const end = (merged, message) => ({ end: true, merged, message });
@@ -113,10 +138,27 @@ export function assess(pullRequest, checks, seen, now) {
       '"merge queue: …", and classify the failure (AGENTS.md, "Classify a CI failure before rerunning it").');
   }
 
-  // Mergify did not queue a pull request that can be: it may have taken it out of the queue without the label.
+  // A required check that has had no check run for long, while no other is pending, may never get one: its workflow
+  // may not have started. A new commit, of which gh lists no check at first, starts the time again.
+  const missing = missingNamesOf(checks, requiredNames);
+  const missingAlone = missing.length > 0 && checks.every(check => endedBuckets.has(check.bucket));
+  const missingBefore = seen.commit === pullRequest.headRefOid ? seen.missingSince : undefined;
+  const missingSince = missingAlone ? (missingBefore ?? now) : undefined;
+  if (missingAlone && now - missingSince >= missingLimitMinutes * 60_000) {
+    const [what, workflow] = missing.length === 1
+      ? [`the required check ${missing[0]} has`, 'its workflow']
+      : [`the required checks ${missing.join(', ')} have`, 'their workflows'];
+    news.push(`On ${commit} of ${name}, ${what} had no check run for ${missingLimitMinutes} minutes, and no other ` +
+      `required check is pending: ${workflow} may not have started, as when a workflow file has an error. Look at ` +
+      `the runs of ${commit} in the Actions tab.`);
+  }
+
+  // Mergify did not queue a pull request that can be: it may have taken it out of the queue without the label. A
+  // required check that has no check run yet is pending.
   const labeled = hasLabel(pullRequest, label);
   const queued = hasLabel(pullRequest, queuedLabel);
-  const checksPassed = checks.length > 0 && checks.every(check => check.bucket === 'pass' || check.bucket === 'skipping');
+  const required = [...checks, ...missing.map(each => ({ name: each, bucket: 'pending' }))];
+  const checksPassed = required.length > 0 && required.every(check => check.bucket === 'pass' || check.bucket === 'skipping');
   const unqueued = labeled && checksPassed && !queued && !conflicting;
   const unqueuedSince = unqueued ? (seen.unqueuedSince ?? now) : undefined;
   if (unqueued && now - unqueuedSince >= unqueuedLimitMinutes * 60_000) {
@@ -128,13 +170,15 @@ export function assess(pullRequest, checks, seen, now) {
 
   return {
     end: false,
-    status: statusOf(pullRequest, checks, { labeled, queued, conflicting }),
+    status: statusOf(pullRequest, required, { labeled, queued, conflicting }),
     seen: {
       feedback: feedback.map(item => item.id),
       failedChecks: [...seen.failedChecks, ...newlyFailed.map(check => check.link)],
       conflicting,
       dequeued,
       unqueuedSince,
+      commit: pullRequest.headRefOid,
+      missingSince,
     },
   };
 }

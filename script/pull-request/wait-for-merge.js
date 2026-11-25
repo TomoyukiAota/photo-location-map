@@ -1,7 +1,7 @@
 import { spawnSync } from 'child_process';
 import { setTimeout as sleep } from 'timers/promises';
 import logger from '../util/logger.js';
-import { assess, checkFields, startOf, viewFields } from './merge-wait.js';
+import { assess, checkFields, requiredChecksPath, startOf, viewFields } from './merge-wait.js';
 
 // TL;DR: Waits until a pull request is merged, or until it needs the agent that opened it, and says which.
 // Details: Mergify's merge queue merges a pull request with the label automerge, or takes it out of the queue, by itself
@@ -35,6 +35,27 @@ function gh(args, { noneWhen } = {}) {
   throw new Error(`gh ${args.join(' ')} failed with ${result.status}: ${result.stderr?.trim()}`);
 }
 
+/** The names of the checks that branch protection requires of main, or undefined, with a warning, when they cannot be
+ * read. gh pr checks lists a required check only once it has a check run, so merge-wait.js counts one of these that
+ * gh does not list as pending. They are read once, when the waiting begins. */
+function readRequiredNames() {
+  try {
+    const result = spawnSync('gh', ['api', requiredChecksPath], { encoding: 'utf8' });
+    if (result.error) throw result.error;
+    // gh api writes the body of an error response too, as when the branch is not protected, so its exit code tells.
+    if (result.status !== 0) {
+      throw new Error(`gh api ${requiredChecksPath} failed with ${result.status}: ${result.stderr?.trim()}`);
+    }
+    const names = JSON.parse(result.stdout).checks?.map(check => check.context);
+    if (!names?.every(name => typeof name === 'string')) throw new Error(`gh api ${requiredChecksPath} gave no checks`);
+    return names;
+  } catch (error) {
+    logger.warn('Could not read the checks that branch protection requires of main, so only the required checks that ' +
+      `have a check run are counted: ${error.message}`);
+    return undefined;
+  }
+}
+
 /** The pull request and its required checks, as merge-wait.js takes them, or undefined to look again later. */
 function look() {
   const pullRequest = gh(['pr', 'view', number, '--json', viewFields]);
@@ -46,6 +67,7 @@ function look() {
   return headRefOid === pullRequest.headRefOid ? { pullRequest, checks } : undefined;
 }
 
+const requiredNames = readRequiredNames();
 const startedAt = Date.now();
 let seen;
 let status;
@@ -63,7 +85,7 @@ for (;;) {
 
   if (looked) {
     seen ??= startOf(looked.pullRequest, looked.checks);
-    const result = assess(looked.pullRequest, looked.checks, seen, Date.now());
+    const result = assess(looked.pullRequest, looked.checks, seen, Date.now(), requiredNames);
     if (result.end) {
       logger.info(result.message);
       process.exit(result.merged ? 0 : 1);

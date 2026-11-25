@@ -398,6 +398,9 @@ changed since it began. Do what it says:
 - **Merged**: go on with the next step of the work, without waiting to be asked.
 - **A required check failed or was canceled**: classify the failure (see the
   next section).
+- **A required check has had no check run for 30 minutes, while no other is
+  pending**: its workflow may not have started, as when a workflow file has an
+  error. Look at the commit's runs in the Actions tab, and fix what stopped it.
 - **Taken out of the merge queue** (label `dequeued`): its test on top of `main`
   failed, in a draft pull request `merge queue: …` of a branch
   `mergify/merge-queue/…`. Read Mergify's comment, and the log of that draft's
