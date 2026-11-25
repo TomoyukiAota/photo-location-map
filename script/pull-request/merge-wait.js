@@ -23,6 +23,10 @@ export const viewFields = 'number,state,mergedAt,mergeable,mergeStateStatus,labe
 /** The fields that wait-for-merge.js asks `gh pr checks --required` for. */
 export const checkFields = 'name,event,bucket,link';
 
+/** Where wait-for-merge.js reads, with `gh api`, the checks that branch protection requires of main, which are those
+ * that Mergify waits for (.mergify.yml): the `context` of each of its `checks` is the name of one. */
+export const requiredChecksPath = 'repos/{owner}/{repo}/branches/main/protection/required_status_checks';
+
 /** Logins of the apps whose comments on a pull request are summaries that they keep editing, CodeRabbit's of its
  * review and Mergify's of its queue: their comments are there from the start. Their reviews count. */
 const summaryCommenters = new Set(['coderabbitai', 'mergify']);
@@ -45,6 +49,16 @@ function failedChecksOf(checks) {
   return checks.filter(check => check.bucket === 'fail' || check.bucket === 'cancel');
 }
 
+/** The required checks, given those that `gh pr checks --required --json <checkFields>` lists and the names of those
+ * that branch protection requires, with a pending one for each of these that has no check run yet. gh lists a check
+ * only once it has a check run, and a job that needs other jobs has none until they have ended: `test (ubuntu)`, which
+ * reports the two parts of the tests on Ubuntu, has none while they run. Without the names, as when they could not be
+ * read, they are the checks that gh lists. */
+function requiredChecksOf(checks, requiredNames = []) {
+  const missing = requiredNames.filter(name => !checks.some(check => check.name === name));
+  return [...checks, ...missing.map(name => ({ name, bucket: 'pending' }))];
+}
+
 /** What is known when the waiting begins, given the pull request and its required checks as `assess` takes them. */
 export function startOf(pullRequest, checks) {
   return {
@@ -63,12 +77,13 @@ function hasLabel(pullRequest, name) {
 
 /**
  * What to do about the pull request, given it from `gh pr view --json <viewFields>`, its required checks from
- * `gh pr checks --required --json <checkFields>`, what was seen before (from `startOf`, then from the last call), and
- * the time in milliseconds.
+ * `gh pr checks --required --json <checkFields>`, what was seen before (from `startOf`, then from the last call), the
+ * time in milliseconds, and the names of the checks that branch protection requires (from `requiredChecksPath`), or
+ * undefined when they could not be read.
  *
  * Returns `{ end: true, merged, message }` to stop waiting, or `{ end: false, status, seen }` to look again later.
  */
-export function assess(pullRequest, checks, seen, now) {
+export function assess(pullRequest, checks, seen, now, requiredNames) {
   const name = `#${pullRequest.number}`;
   const commit = String(pullRequest.headRefOid).slice(0, 8);
   const end = (merged, message) => ({ end: true, merged, message });
@@ -116,7 +131,8 @@ export function assess(pullRequest, checks, seen, now) {
   // Mergify did not queue a pull request that can be: it may have taken it out of the queue without the label.
   const labeled = hasLabel(pullRequest, label);
   const queued = hasLabel(pullRequest, queuedLabel);
-  const checksPassed = checks.length > 0 && checks.every(check => check.bucket === 'pass' || check.bucket === 'skipping');
+  const required = requiredChecksOf(checks, requiredNames);
+  const checksPassed = required.length > 0 && required.every(check => check.bucket === 'pass' || check.bucket === 'skipping');
   const unqueued = labeled && checksPassed && !queued && !conflicting;
   const unqueuedSince = unqueued ? (seen.unqueuedSince ?? now) : undefined;
   if (unqueued && now - unqueuedSince >= unqueuedLimitMinutes * 60_000) {
@@ -128,7 +144,7 @@ export function assess(pullRequest, checks, seen, now) {
 
   return {
     end: false,
-    status: statusOf(pullRequest, checks, { labeled, queued, conflicting }),
+    status: statusOf(pullRequest, required, { labeled, queued, conflicting }),
     seen: {
       feedback: feedback.map(item => item.id),
       failedChecks: [...seen.failedChecks, ...newlyFailed.map(check => check.link)],

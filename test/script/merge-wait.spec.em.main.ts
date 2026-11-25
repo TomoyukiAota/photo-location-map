@@ -7,10 +7,14 @@ const pullRequestWith = (fields: object = {}) => ({
   labels: [{ name: 'automerge' }], headRefOid: '0123456789abcdef', reviews: [], comments: [], ...fields,
 });
 
-// The required checks as `gh pr checks --required --json <checkFields>` gives them: the push run's alone, as a pull
-// request runs no workflow with jobs of their names (AGENTS.md, "CI tests each commit once, on push").
-const checksWith = (bucket: string, { failing = '', link = 'job-2' } = {}) => ['ubuntu', 'windows-latest', 'macos-arm64']
-  .map(os => ({ name: `test (${os})`, event: 'push', link: `${os}-push-1`, bucket }))
+// The names of the checks that branch protection requires of main, as wait-for-merge.js reads them when it begins.
+const requiredNames = ['test (ubuntu)', 'test (windows-latest)', 'test (macos-arm64)', 'e2e against the development build (ubuntu)'];
+
+// The required checks as `gh pr checks --required --json <checkFields>` gives them once each has a check run: the push
+// run's alone, as a pull request runs no workflow with jobs of their names (AGENTS.md, "CI tests each commit once, on
+// push").
+const checksWith = (bucket: string, { failing = '', link = 'job-2' } = {}) => requiredNames
+  .map(name => ({ name, event: 'push', link: `${name}-push-1`, bucket }))
   .map(check => check.name === failing ? { ...check, bucket: 'fail', link } : check);
 
 const minute = 60_000;
@@ -19,7 +23,7 @@ const start = Date.UTC(2026, 10, 18, 9, 0, 0);
 // From the start of the waiting on `before`, what `after` makes it do.
 const waitThrough = (before: object, after: object, { checksBefore = checksWith('pending'), checksAfter = checksBefore } = {}) => {
   const seen = startOf(pullRequestWith(before), checksBefore);
-  return assess(pullRequestWith(after), checksAfter, seen, start + minute);
+  return assess(pullRequestWith(after), checksAfter, seen, start + minute, requiredNames);
 };
 
 describe('merge-wait (script/pull-request/)', () => {
@@ -77,7 +81,7 @@ describe('merge-wait (script/pull-request/)', () => {
   it('goes on while the checks run or pass, and says how far they are', () => {
     const result = waitThrough({}, {}, { checksAfter: checksWith('pass').map((check, index) => index < 2 ? { ...check, bucket: 'pending' } : check) });
     assert.strictEqual(result.end, false);
-    assert.strictEqual(result.status, '01234567: not in the merge queue, 1 of 3 required checks passed, 2 pending, 0 failed');
+    assert.strictEqual(result.status, '01234567: not in the merge queue, 2 of 4 required checks passed, 2 pending, 0 failed');
   });
 
   it('ends on a new review or comment, but not on the summaries that CodeRabbit and Mergify post as comments', () => {
@@ -136,28 +140,64 @@ describe('merge-wait (script/pull-request/)', () => {
 
   it('says when the pull request is in the merge queue', () => {
     const result = waitThrough({}, { labels: [{ name: 'automerge' }, { name: queuedLabel }] }, { checksAfter: checksWith('pass') });
-    assert.strictEqual(result.status, '01234567: in the merge queue, 3 of 3 required checks passed, 0 pending, 0 failed');
+    assert.strictEqual(result.status, '01234567: in the merge queue, 4 of 4 required checks passed, 0 pending, 0 failed');
   });
 
   it('waits some minutes for Mergify to queue a pull request with the label whose required checks passed, then ends', () => {
     const passed = checksWith('pass');
     const waiting = pullRequestWith();
-    let result = assess(waiting, passed, startOf(waiting, passed), start);
+    let result = assess(waiting, passed, startOf(waiting, passed), start, requiredNames);
     assert.strictEqual(result.end, false);
-    result = assess(waiting, passed, result.seen, start + unqueuedLimitMinutes * minute - 1);
+    result = assess(waiting, passed, result.seen, start + unqueuedLimitMinutes * minute - 1, requiredNames);
     assert.strictEqual(result.end, false);
     // Queued meanwhile, the waiting starts over.
     const queued = pullRequestWith({ labels: [{ name: 'automerge' }, { name: queuedLabel }] });
-    assert.strictEqual(assess(queued, passed, result.seen, start + minute).seen.unqueuedSince, undefined);
-    result = assess(waiting, passed, result.seen, start + unqueuedLimitMinutes * minute);
+    assert.strictEqual(assess(queued, passed, result.seen, start + minute, requiredNames).seen.unqueuedSince, undefined);
+    result = assess(waiting, passed, result.seen, start + unqueuedLimitMinutes * minute, requiredNames);
     assert.strictEqual(result.end, true);
     assert.match(result.message, /passed its required checks for 10 minutes, but is not in the merge queue: read its check "Mergify Merge Queue"/);
     // Until its checks have passed, or without the label, the waiting goes on.
     const pending = checksWith('pending');
-    result = assess(waiting, pending, startOf(waiting, pending), start + 60 * minute);
+    result = assess(waiting, pending, startOf(waiting, pending), start, requiredNames);
+    result = assess(waiting, pending, result.seen, start + 60 * minute, requiredNames);
     assert.strictEqual(result.end, false);
     const unlabeled = pullRequestWith({ labels: [] });
-    result = assess(unlabeled, passed, startOf(unlabeled, passed), start + 60 * minute);
+    result = assess(unlabeled, passed, startOf(unlabeled, passed), start, requiredNames);
+    result = assess(unlabeled, passed, result.seen, start + 60 * minute, requiredNames);
     assert.deepStrictEqual([result.end, result.status], [false, 'waits for the label automerge']);
+  });
+
+  it('counts as pending a required check that has no check run yet, which holds back the end on a pull request out of the queue', () => {
+    // Before the checks of a new commit are reported, gh lists none.
+    assert.strictEqual(waitThrough({}, {}, { checksAfter: [] }).status,
+      '01234567: not in the merge queue, 0 of 4 required checks passed, 4 pending, 0 failed');
+
+    // test (ubuntu) has no check run until both parts of the tests on Ubuntu have ended, and gh lists the others alone.
+    const waiting = pullRequestWith();
+    const ubuntuMissing = checksWith('pass').filter(check => check.name !== 'test (ubuntu)');
+    let result = assess(waiting, ubuntuMissing, startOf(waiting, ubuntuMissing), start, requiredNames);
+    result = assess(waiting, ubuntuMissing, result.seen, start + 60 * minute, requiredNames);
+    assert.strictEqual(result.end, false, result.message);
+    assert.strictEqual(result.status, '01234567: not in the merge queue, 3 of 4 required checks passed, 1 pending, 0 failed');
+    assert.strictEqual(result.seen.unqueuedSince, undefined);
+
+    // Once it has passed too, Mergify has the minutes to queue the pull request from then on.
+    const passed = checksWith('pass');
+    const passedAt = start + 61 * minute;
+    result = assess(waiting, passed, result.seen, passedAt, requiredNames);
+    result = assess(waiting, passed, result.seen, passedAt + unqueuedLimitMinutes * minute - 1, requiredNames);
+    assert.strictEqual(result.end, false, result.message);
+    result = assess(waiting, passed, result.seen, passedAt + unqueuedLimitMinutes * minute, requiredNames);
+    assert.strictEqual(result.end, true);
+    assert.match(result.message, /passed its required checks for 10 minutes, but is not in the merge queue/);
+  });
+
+  it('counts the checks that gh lists alone, as before, when those that branch protection requires could not be read', () => {
+    const waiting = pullRequestWith();
+    const ubuntuMissing = checksWith('pass').filter(check => check.name !== 'test (ubuntu)');
+    let result = assess(waiting, ubuntuMissing, startOf(waiting, ubuntuMissing), start, undefined);
+    assert.strictEqual(result.status, '01234567: not in the merge queue, 3 of 3 required checks passed, 0 pending, 0 failed');
+    result = assess(waiting, ubuntuMissing, result.seen, start + unqueuedLimitMinutes * minute, undefined);
+    assert.strictEqual(result.end, true);
   });
 });
