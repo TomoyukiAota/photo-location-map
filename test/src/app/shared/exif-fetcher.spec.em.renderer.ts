@@ -11,6 +11,7 @@ import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/usi
 import { repositoryPath } from '../../../test-util/repository.js';
 import { jpegWithCutShortExifThumbnail } from '../../../test-util/jpeg-with-cut-short-exif-thumbnail.mjs';
 import { jpegWithEmptyGpsValues } from '../../../test-util/jpeg-with-empty-gps-values.mjs';
+import { jpegWithSwappedExifSize } from '../../../test-util/jpeg-with-swapped-exif-size.mjs';
 
 const testResourceDirectory = repositoryPath('test', 'test-resources');
 
@@ -34,6 +35,19 @@ describe('fetchExifUsingExifr', () => {
     const exif = await fetchExifUsingExifr(filePath);
     assert(exif !== null);
     assert.strictEqual(exif.gpsInfo, undefined);
+  });
+
+  // An app turned the pixels of Unga's photo by a quarter, and left its thumbnail as it was; in the copy here, it left
+  // the size in its EXIF data as it was too, which Windows Photo Viewer wrote anew. The frame says how the pixels stand.
+  it('should find the EXIF thumbnail on its side by the size of the frame, where the EXIF data give the size of before', async () => {
+    const filePath = path.join(directory, 'turned.JPG');
+    const source = fs.readFileSync(path.join(testResourceDirectory, 'actual-photos', 'Unga', 'IMG_2581.JPG'));
+    fs.writeFileSync(filePath, jpegWithSwappedExifSize(source));
+
+    const exif = await fetchExifUsingExifr(filePath);
+    assert.deepStrictEqual({ ...exif.imageDimensions }, { width: 2448, height: 3264 });
+    assert.deepStrictEqual({ ...exif.thumbnail.dimensions }, { width: 160, height: 120 });
+    assert.strictEqual(isExifThumbnailOnItsSide(exif), true);
   });
 
   // The page would show the rows of the thumbnail that it could decode, and the others empty, without an error.

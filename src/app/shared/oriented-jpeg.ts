@@ -1,3 +1,4 @@
+import { isFrameHeader, standsAlone } from '../../../src-shared/jpeg/jpeg-segments.js';
 import { getRotatedSize } from './image-rotation.js';
 import { Dimensions } from './model/dimensions.model.js';
 
@@ -13,16 +14,6 @@ export interface OrientedJpeg {
  * The others are of arithmetic coding, lossless or hierarchical.
  */
 const decodedFrameMarkers: ReadonlySet<number> = new Set([0xc0, 0xc1, 0xc2]);
-
-/** Whether a marker starts a frame header: 0xC0 to 0xCF, but DHT (0xC4), JPG (0xC8) and DAC (0xCC). */
-function isFrameHeader(marker: number): boolean {
-  return marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc;
-}
-
-/** Whether a marker stands alone, without a segment: TEM, RST0 to RST7, SOI and EOI. */
-function standsAlone(marker: number): boolean {
-  return marker === 0x01 || (marker >= 0xd0 && marker <= 0xd9);
-}
 
 /** "Exif" and two zeros, with which the content of an APP1 segment of EXIF starts. */
 const exifIdentifier = [0x45, 0x78, 0x69, 0x66, 0x00, 0x00];

@@ -28,12 +28,13 @@ function lieOf({ width, height }: Dimensions): number {
  * thumbnail is still the landscape one of before. Nothing says which way such a thumbnail is to be turned, so it is not
  * shown, rather than turned.
  * Details:
- * - The photo's shape is the size in its EXIF data, PixelXDimension and PixelYDimension, turned as the photo is
- *   (exif.imageDimensions), which Windows Photo Viewer wrote anew for the pixels that it turned. The thumbnail's is the
- *   size that it is shown at, turned so too (createThumbnail() in exif-fetcher/using-exifr/fetch-exif-using-exifr.ts).
- *   A photo whose EXIF data have no size keeps its thumbnail, as before, and so does one whose app turned its pixels
- *   without writing that size anew: only the photo's frame, past the EXIF data that the main process reads while a
- *   folder opens, has the size of the pixels for certain.
+ * - The photo's shape is that of its pixels, turned as the photo is (exif.imageDimensions): for a JPEG, the size in
+ *   its frame header, which the main process reads with its EXIF data (jpegFrameSize in
+ *   src-shared/jpeg/jpeg-segments.ts); for another photo, the size in its EXIF data, PixelXDimension and
+ *   PixelYDimension. An app that turns the pixels may leave that size as it was: Windows Photo Viewer wrote it anew,
+ *   but a JPEG whose app did not is found by its frame. The thumbnail's shape is the size that it is shown at, turned
+ *   so too (createThumbnail() in exif-fetcher/using-exifr/fetch-exif-using-exifr.ts). A photo of which neither size is
+ *   known keeps its thumbnail, as before.
  * - A shape is landscape or portrait only where its longer side is at least 1.1 times as long as its shorter one. A
  *   square shape, or one nearly square, as a square photo's thumbnail can be a pixel off, says nothing of how the other
  *   is turned. Photos that are not square are 7:6 (1.17) or longer, as 5:4, 4:3, 3:2 and 16:9 are.

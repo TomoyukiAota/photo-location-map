@@ -14,6 +14,7 @@ import { jpegWithLocationAndDate } from '../test-util/jpeg-with-location-and-dat
 import { jpegWithoutExifThumbnail } from '../test-util/jpeg-without-exif-thumbnail.mjs';
 import { jpegWithUndecodableExifThumbnail } from '../test-util/jpeg-with-undecodable-exif-thumbnail.mjs';
 import { jpegWithCutShortExifThumbnail } from '../test-util/jpeg-with-cut-short-exif-thumbnail.mjs';
+import { jpegWithSwappedExifSize } from '../test-util/jpeg-with-swapped-exif-size.mjs';
 import { answerDatedLayers } from '../test-util/dated-layer-answers.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
@@ -5006,11 +5007,15 @@ test('a JPEG whose EXIF thumbnail lies on its side against the photo shows the t
   // one of 400 pixels is made, and Fast makes such a thumbnail too, as of a file that holds none
   // (isExifThumbnailOnItsSide in src/app/shared/exif-thumbnail-on-its-side.ts). The photo has a location, so that its
   // marker's popup shows it. A folder for each quality, so that Fast makes a thumbnail of its own, and a name for each
-  // copy, as the rows and the popup of the folder opened first are shown until those of the next one replace them.
+  // copy, as the rows and the popup of the folder opened first are shown until those of the next one replace them. The
+  // copy at Fast has the size in its EXIF data of before the pixels were turned, as an app that does not write it anew
+  // leaves it: only the size in the photo's frame tells how the pixels stand (jpegFrameSize in
+  // src-shared/jpeg/jpeg-segments.ts).
   const photos = { high: path.join(profile, 'Thumbnail on its side', 'Unga.JPG'), fast: path.join(profile, 'Thumbnail on its side at Fast', 'Unga at Fast.JPG') };
-  for (const photo of Object.values(photos)) {
+  const unga = await readFile(path.join(photoFolder, 'Unga/IMG_2581.JPG'));
+  for (const [photo, bytes] of [[photos.high, unga], [photos.fast, jpegWithSwappedExifSize(unga)]]) {
     await mkdir(path.dirname(photo));
-    await copyFile(path.join(photoFolder, 'Unga/IMG_2581.JPG'), photo);
+    await writeFile(photo, bytes);
   }
   await dismissWelcome();
   // Every image that a thumbnail loads, in the tree and on the map, from before the folder opens: High quality shows a
