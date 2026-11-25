@@ -11,7 +11,7 @@ const exitIconPath = 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm
 
 /**
  * The button that puts the map in full screen, and takes it out (MapFullScreenService). The map makes this component
- * for its control at the top left (map-full-screen-control.ts), which Leaflet makes the element of.
+ * for its control right above the zoom buttons (map-full-screen-control.ts), which Leaflet makes the element of.
  */
 @Component({
   selector: 'app-leaflet-map-full-screen-button',
