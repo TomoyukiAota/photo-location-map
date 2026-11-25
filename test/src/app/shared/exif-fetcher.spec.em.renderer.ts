@@ -8,6 +8,7 @@ import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetch
 import { exifReadFailures } from '../../../../src/app/shared/exif-fetcher/exif-read-failures.js';
 import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.js';
 import { repositoryPath } from '../../../test-util/repository.js';
+import { jpegWithCutShortExifThumbnail } from '../../../test-util/jpeg-with-cut-short-exif-thumbnail.mjs';
 import { jpegWithEmptyGpsValues } from '../../../test-util/jpeg-with-empty-gps-values.mjs';
 
 const testResourceDirectory = repositoryPath('test', 'test-resources');
@@ -32,6 +33,26 @@ describe('fetchExifUsingExifr', () => {
     const exif = await fetchExifUsingExifr(filePath);
     assert(exif !== null);
     assert.strictEqual(exif.gpsInfo, undefined);
+  });
+
+  // The page would show the rows of the thumbnail that it could decode, and the others empty, without an error.
+  it('should give no thumbnail for a photo whose EXIF thumbnail is cut short, and the rest of its EXIF data, counted by why', async () => {
+    const filePath = path.join(directory, 'Trip to Kyoto 0002.JPG');
+    const source = fs.readFileSync(path.join(testResourceDirectory, 'actual-photos', 'Kobe', 'IMG_4676.JPG'));
+    fs.writeFileSync(filePath, jpegWithCutShortExifThumbnail(source));
+    exifReadFailures.clear();
+
+    const exif = await fetchExifUsingExifr(filePath);
+    assert(exif !== null);
+    assert.strictEqual(exif.thumbnail, null);
+    assert(nearlyEqual(exif.gpsInfo.latLng.latitude, 34.688075, 1.0e-5));
+    assert(exif.dateTimeOriginal);
+    assert.deepStrictEqual(exifReadFailures.reasons, [{ reason: 'thumbnail-cut-short', files: 1 }]);
+    // The photo as it was has its thumbnail, whole.
+    exifReadFailures.clear();
+    fs.writeFileSync(filePath, source);
+    assert.deepStrictEqual({ ...(await fetchExifUsingExifr(filePath)).thumbnail.dimensions }, { width: 160, height: 120 });
+    assert.deepStrictEqual(exifReadFailures.reasons, []);
   });
 
   it('should count a file that cannot be read by why, without its name', async () => {
