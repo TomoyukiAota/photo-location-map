@@ -83,8 +83,8 @@ cost little. A folder of them, as one camera or app would leave, cost at Fast wh
   `UndecodableThumbnailService`: a JPEG or PNG photo whose EXIF thumbnail the page could not decode needs a made
   thumbnail at either quality, as one without an EXIF thumbnail does. Fast so shows a thumbnail of 400 pixels, as its
   description in the settings says for a file that holds none (`settings.thumbnails.fastDescription` in
-  `src-shared/i18n/locales/en.json`), rather than the photo itself, which is what the owner was asked about, or the
-  image that says that there is no thumbnail.
+  `src-shared/i18n/locales/en.json`). The owner chose that on 2026-11-25, over the photo itself, as Fast showed
+  before, and over the image that says that there is no thumbnail.
 - `JpegPngThumbnailService.watch()` takes a photo of the folder that `prepare()` did not take, where its thumbnail is
   to be made now (`takeLate()`): it asks the cache about it, and makes it, before the folder's others, where the cache
   has none. Once only; not for a photo of another folder; the cache's answer is dropped if another folder opens
