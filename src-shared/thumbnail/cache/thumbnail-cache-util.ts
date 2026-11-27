@@ -9,6 +9,33 @@ export const plmThumbnailCacheDir = process.env.PLM_TEST_ROOT
   ? pathModule.resolve(process.env.PLM_TEST_ROOT, 'thumbnail-cache')
   : pathModule.join(os.homedir(), '.PlmCache');
 
+/** The combined byte size of the cache's regular files, including generation logs. */
+export function thumbnailCacheSize(cacheDir = plmThumbnailCacheDir): Promise<number> {
+  return sizeOfCacheEntry(cacheDir, true);
+}
+
+async function sizeOfCacheEntry(entryPath: string, isCacheRoot = false): Promise<number> {
+  try {
+    // The cache itself may be moved via a link. Skip links within it so they cannot count other files or cause cycles.
+    const stats = await (isCacheRoot ? fs.promises.stat(entryPath) : fs.promises.lstat(entryPath));
+    if (stats.isFile())
+      return stats.size;
+    if (!stats.isDirectory())
+      return 0;
+
+    // Read metadata one file at a time so a large cache does not queue thousands of filesystem requests at once.
+    let size = 0;
+    for (const name of await fs.promises.readdir(entryPath))
+      size += await sizeOfCacheEntry(pathModule.join(entryPath, name));
+    return size;
+  } catch (error) {
+    // The cache may not exist yet, or cleanup may remove an entry while the size is being calculated.
+    if (error?.code === 'ENOENT' || error?.code === 'ENOTDIR')
+      return 0;
+    throw error;
+  }
+}
+
 function getThumbnailIntermediateDirOnWindows(originalFilePath: string) {
   let intermediateDir: string;
 

@@ -965,6 +965,7 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await expect(page.locator('app-thumbnail-settings')).toBeVisible();
+  await expect(page.locator('app-cache-settings .cache-size-value')).toHaveText('0 MB');
   // The tab scrolls between the header and the footer where it is higher than the dialog leaves it, as it is in every
   // language with a slider for the sidebar's size and one for the map's, rather than the dialog as a whole: Cancel
   // stays in view, at the tab's top and once the cache's Delete button is scrolled to.
@@ -2648,7 +2649,7 @@ test('Select Only This from a marker popup selects that photo in the tree and on
   for (const [name, folder] of Object.entries(folders))
     await expect(treeCheckbox(folder)).toBeChecked({ checked: name === photoName });
 });
-test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, and ends inside the map, as they take the room that the map leaves', async () => {
+test('a photo\'s popup holds its thumbnail of 2,000 pixels and its long name, and ends inside the map, as they take the room that the map leaves', async () => {
   // Leaflet's popup was 300 pixels wide at most, which left a box of 500 pixels outside it, and taller than the map,
   // which cut its buttons off. The popup's content takes the room that the map leaves (photo-info-viewer.component.scss):
   // its thumbnail, and its name, which takes more lines, though it has no spaces. The map centers the popup below its
@@ -2667,13 +2668,13 @@ test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, an
   const dialog = page.locator('app-settings-dialog');
   await settings('Thumbnails');
   // The map's size: the app makes the thumbnails at the larger of the sidebar's and the map's.
-  await dialog.getByRole('slider', { name: 'Thumbnail size Map', exact: true }).fill('1000');
+  await dialog.getByRole('slider', { name: 'Thumbnail size Map', exact: true }).fill('2000');
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await openFolderWithPicker(folder(0));
   // The map opens the popup of the one photo that it shows.
   await expect.poll(() => page.locator('.leaflet-popup .photo-info-viewer-thumbnail').getAttribute('src'), { timeout: 30000 })
-    .toMatch(/Kobe\.JPG\.plm\.jpg\?size=1000$/);
+    .toMatch(/Kobe\.JPG\.plm\.jpg\?size=2000$/);
   /** The map, the popup, its white box, the thumbnail's box and the photo's name, in pixels of the page. */
   const places = () => page.evaluate(() => Object.fromEntries(Object.entries({
     map: '.leaflet-container', popup: '.leaflet-popup', wrapper: '.leaflet-popup-content-wrapper',
@@ -2697,7 +2698,7 @@ test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, an
   const fitting = { boxInPopup: true, nameInPopup: true, popupInMap: true, popupFitsMap: true };
   await expect.poll(fits).toEqual(fitting);
   const box = (await places()).box.height;
-  expect(box).toBeLessThanOrEqual(500);
+  expect(box).toBeLessThanOrEqual(1000);
 
   // A smaller window, with a smaller map, by as much as the map has room to lose: the thumbnail of the popup, which
   // stays open, is smaller too, and the popup still fits the map. Where it is in the map is the user's: the map does not
@@ -5300,22 +5301,28 @@ test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and 
   const mapSlider = tab.getByRole('slider', { name: 'Thumbnail size Map', exact: true });
   for (const slider of [sidebarSlider, mapSlider]) {
     await expect(slider).toBeEnabled();
+    await expect(slider).toHaveAttribute('max', '2000');
     await expect(slider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
   }
   // The sizes under each slider, each centered under its mark, from the first to the last. Angular Material draws the
   // marks once it has measured the slider, a moment after the tab is shown.
-  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(14);
+  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(34);
   for (const place of ['sidebar', 'map']) {
     const ticks = await tab.locator(`.thumbnail-size-scale[data-size-place="${place}"]`).evaluate(scale => {
       const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
       const range = document.createRange();
+      const slider = scale.querySelector('mat-slider').getBoundingClientRect();
+      const marks = scale.querySelectorAll('.mdc-slider__tick-marks > *');
       return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
         range.selectNodeContents(tick);
-        return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
+        const markCenter = center(marks[index * 2]);
+        return { text: tick.textContent, offset: Math.abs(center(range) - markCenter), position: Math.round(markCenter - slider.left) };
       });
     });
-    expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px']);
+    expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px', '1200 px', '1400 px', '1600 px', '1800 px', '2000 px']);
     expect(ticks.every(tick => tick.offset < 1)).toBe(true);
+    // The old 240 px slider's marks ran from 3 to 237. The extension keeps every one of those marks in place.
+    expect(ticks.slice(0, 4).map(tick => tick.position)).toEqual([3, 81, 159, 237]);
   }
   // The sliders start together, past the longer of the places' names.
   const sliderStarts = await Promise.all([sidebarSlider, mapSlider].map(slider =>
@@ -5365,8 +5372,48 @@ test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and 
   expect((await shown(inTree)).box).toBe(400);
   await expect.poll(() => savedSetting(userData, ['UserSettings', 'MapThumbnailSize'])).toBe('600');
 
+  // Both sliders reach 2,000 with the keyboard. A single new cached thumbnail serves the two places.
+  await settings('Thumbnails');
+  for (const slider of [sidebarSlider, mapSlider]) {
+    await slider.press('End');
+    await expect(slider).toHaveAttribute('aria-valuetext', '2000 pixels on the longer side');
+  }
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  for (const thumbnail of [inTree, inPopup]) {
+    await expect.poll(() => shown(thumbnail), { timeout: 30000 }).toEqual(expect.objectContaining({
+      src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=2000$/), size: '2000x1500',
+    }));
+  }
+  expect((await shown(inTree)).box).toBe(1000);
+  for (const place of ['SidebarThumbnailSize', 'MapThumbnailSize'])
+    await expect.poll(() => savedSetting(userData, ['UserSettings', place])).toBe('2000');
+  await expect.poll(async () => (await logOfCache()).LongerSide).toBe(2000);
+
   // Fast: the photo's own thumbnail, in the box of 200 in either place, and both sliders disabled.
   await settings('Thumbnails');
+  for (const slider of [sidebarSlider, mapSlider])
+    await expect(slider).toHaveAttribute('aria-valuetext', '2000 pixels on the longer side');
+
+  // A narrow tab scrolls each scale to its new end and leaves the rest of the settings in place.
+  const settingsWindow = await app.browserWindow(page);
+  const contentSize = await settingsWindow.evaluate(window => window.getContentSize());
+  await inTaskOfItsOwn(settingsWindow, window => window.setContentSize(800, 600));
+  await page.waitForFunction(() => innerWidth === 800);
+  for (const scroll of await tab.locator('.thumbnail-size-scroll').all()) {
+    expect(await scroll.evaluate(element => {
+      element.scrollLeft = element.scrollWidth;
+      const panel = element.closest('.settings-content').getBoundingClientRect();
+      const viewport = element.getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(element.querySelector('.thumbnail-size-tick:last-child'));
+      const end = range.getBoundingClientRect();
+      return element.scrollLeft > 0 && viewport.left >= panel.left && viewport.right <= panel.right
+        && end.left >= viewport.left && end.right <= viewport.right;
+    })).toBe(true);
+  }
+  await inTaskOfItsOwn(settingsWindow, (window, [width, height]) => window.setContentSize(width, height), contentSize);
+  await page.waitForFunction(width => innerWidth === width, contentSize[0]);
   await tab.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await expect(sidebarSlider).toBeDisabled();
   await expect(mapSlider).toBeDisabled();
@@ -5590,7 +5637,10 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   const cacheFolder = (await page.locator('app-cache-settings .location-value').textContent()).trim();
   await mkdir(path.join(cacheFolder, 'some', 'folder'), { recursive: true });
-  await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), 'thumbnail');
+  await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), Buffer.alloc(1_250_000));
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
+  await expect(page.locator('app-cache-settings .cache-size-value')).toHaveText('1.25 MB');
   const pid = await mainProcessId();
   const exited = new Promise(resolve => app.process().once('exit', resolve));
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();

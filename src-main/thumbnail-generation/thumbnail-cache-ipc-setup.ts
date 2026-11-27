@@ -3,12 +3,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { Logger } from '../../src-shared/log/logger.js';
-import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { plmThumbnailCacheDir, thumbnailCacheSize } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { assertFromMainWindow } from '../ipc/ipc-sender.js';
 import { relaunchAndQuit } from '../process/relaunch-and-quit.js';
 import { openWithAssociatedApp } from '../shell/open-with-os.js';
 
 // The cache on the Thumbnails tab of the settings dialog (src/app/settings-dialog/cache-settings/).
+
+ipcMain.handle(IpcConstants.ThumbnailCache.Size, event => {
+  assertFromMainWindow(event, 'Measuring the thumbnail cache');
+  return thumbnailCacheSize();
+});
 
 ipcMain.handle(IpcConstants.ThumbnailCache.Open, async event => {
   assertFromMainWindow(event, 'Opening the thumbnail cache');

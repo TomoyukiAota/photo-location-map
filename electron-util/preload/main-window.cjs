@@ -28,6 +28,7 @@ const channels = {
   heifWholeImage: 'ipc-constants-heif-whole-image',
   jpegPngThumbnailReadPhoto: 'ipc-constants-jpeg-png-thumbnail-read-photo',
   jpegPngThumbnailSave: 'ipc-constants-jpeg-png-thumbnail-save',
+  thumbnailCacheSize: 'ipc-constants-thumbnail-cache-size',
   thumbnailCacheOpen: 'ipc-constants-open-thumbnail-cache',
   thumbnailCacheDeleteAndRestart: 'ipc-constants-delete-thumbnail-cache-and-restart',
   openExternal: 'ipc-constants-open-external-url',
@@ -143,6 +144,7 @@ const plm = {
     save: (filePath, lastModified, jpeg, longerSide) => ipcRenderer.invoke(channels.jpegPngThumbnailSave, filePath, lastModified, jpeg, longerSide),
   },
   thumbnailCache: {
+    size: () => ipcRenderer.invoke(channels.thumbnailCacheSize),
     open: () => ipcRenderer.invoke(channels.thumbnailCacheOpen),
     deleteAndRestart: () => ipcRenderer.invoke(channels.thumbnailCacheDeleteAndRestart),
   },
