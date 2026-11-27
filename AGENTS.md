@@ -53,6 +53,26 @@ rename one, keep the prefix.
 **Why:** the app's sidebar lists the sessions of the owner's other projects
 too, and the owner asked for the prefix on 2026-11-25.
 
+## An improvement loop keeps its log in docs/tasks/improvement-loop/
+
+An improvement loop is a run of rounds over this repository, each of which
+looks at it from another angle and fixes or proposes what it finds. Keep the
+log of each run in `docs/tasks/improvement-loop/<YYYYMMDD>_improvement-loop/log.md`,
+dated by the day that the run starts. The log has:
+
+- what the run covers, and when it stops;
+- each round's angle, and what it found;
+- the pull requests that it opened;
+- what it left for later, with what that needs.
+
+Merge the log with a pull request of its own at the end of the run, or as the
+rounds go when the run takes days. It is a document, so CI skips the tests for
+it. It is public, as everything in this repository is, so nothing private goes
+in it.
+
+**Why:** the owner asked on 2026-11-27 to keep these logs with the records of
+the other tasks, rather than in a file that stays in one worktree.
+
 ## Keep CONTRIBUTING.md short
 
 [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) is the introduction that a human
