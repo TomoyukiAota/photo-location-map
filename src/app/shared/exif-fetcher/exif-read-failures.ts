@@ -6,8 +6,8 @@ import { FailureReasons } from '../../../../src-shared/analytics/failure-reasons
  * only counted as one without EXIF data. The statuses:
  * - read-failed: exifr could not parse the file in the main process, or the main process was not asked;
  * - extract-failed: exifr could not extract the embedded thumbnail, so the photo has no thumbnail of its EXIF data, and
- *   has the rest of them (createExifFromExifrParseOutput() in using-exifr/fetch-exif-using-exifr.ts). Until it, the
- *   photo had no EXIF data at all then, which was recorded as thumbnail-failed;
+ *   has the rest of them (createExifFromExifrParseOutput() in using-exifr/fetch-exif-using-exifr.ts). Before this
+ *   status, such a photo had no EXIF data at all, and was recorded as thumbnail-failed;
  * - exif-failed: the app could not make its model of what was read;
  * - rotate-failed: the embedded thumbnail could not be turned on a canvas, so the photo has no thumbnail of its EXIF
  *   data. Only a thumbnail that is not a JPEG of a frame that the page decodes is turned so; the page finds that
