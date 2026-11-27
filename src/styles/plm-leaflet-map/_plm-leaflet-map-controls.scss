@@ -1,0 +1,135 @@
+// Leaflet's usual stack stays in place until it no longer fits below the layer button (map-control-layout.ts).
+.plm-leaflet-map-controls-two-columns .leaflet-bottom.leaflet-right {
+  // The flexible column takes the remaining width. Scale and attribution end at the map's right edge, independently
+  // of how wide they are or how wide the two columns of buttons are.
+  inset-inline-start: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) [navigation] max-content [geoman] max-content;
+  grid-template-rows: [full-screen] 1fr [zoom] auto [scale] auto [attribution] auto;
+  column-gap: 10px;
+  justify-items: end;
+  align-items: end;
+
+  > .leaflet-pm-toolbar {
+    grid-column: geoman;
+    grid-row: full-screen / scale;
+  }
+
+  > .plm-leaflet-map-full-screen,
+  > .leaflet-control-zoom {
+    grid-column: navigation;
+    margin-inline-end: 0;
+  }
+
+  > .plm-leaflet-map-full-screen {
+    grid-row: full-screen;
+  }
+
+  > .leaflet-control-zoom {
+    grid-row: zoom;
+  }
+
+  > .leaflet-control-scale,
+  > .leaflet-control-attribution {
+    grid-column: 1 / -1;
+  }
+
+  > .leaflet-control-scale {
+    grid-row: scale;
+  }
+
+  > .leaflet-control-attribution {
+    grid-row: attribution;
+  }
+}
+
+.plm-leaflet-map-controls-horizontal .leaflet-bottom.leaflet-right {
+  > .plm-leaflet-map-full-screen,
+  > .leaflet-control-zoom {
+    margin-inline-end: var(--plm-leaflet-map-navigation-right, 10px);
+  }
+
+  > .leaflet-control-scale {
+    anchor-name: --plm-leaflet-map-scale;
+  }
+
+  > .leaflet-pm-toolbar {
+    // The scale remains in Leaflet's stack. Geoman sits beside it and its actions open above the toolbar.
+    position: absolute;
+    position-anchor: --plm-leaflet-map-scale;
+    right: anchor(left);
+    // Keep Leaflet's 10px bottom margin measurable for the vertical layouts.
+    bottom: calc(anchor(bottom) - 10px);
+    display: flex;
+    white-space: nowrap;
+
+    > .button-container {
+      // Anchor the actions to the toolbar, so a long label fits even when the leftmost button is next to the map edge.
+      position: static;
+      min-inline-size: 0;
+    }
+
+    > .button-container > .leaflet-buttons-control-button {
+      max-inline-size: 100%;
+      border-radius: 0;
+      border-bottom: 0;
+      border-inline-end: 1px solid #ccc;
+    }
+
+    > .button-container:first-child > .leaflet-buttons-control-button {
+      border-start-start-radius: 2px;
+      border-end-start-radius: 2px;
+    }
+
+    > .button-container:last-child > .leaflet-buttons-control-button {
+      border-inline-end: 0;
+      border-start-end-radius: 2px;
+      border-end-end-radius: 2px;
+    }
+
+    > .button-container .leaflet-pm-actions-container {
+      top: auto;
+      bottom: 100%;
+      right: 0;
+      left: auto;
+      inline-size: max-content;
+      max-inline-size: 100%;
+      white-space: normal;
+
+      > .leaflet-pm-action {
+        box-sizing: border-box;
+        max-inline-size: 100%;
+        height: auto;
+        min-height: 29px;
+        text-wrap: balance;
+      }
+    }
+  }
+}
+
+.plm-leaflet-map-controls-horizontal .plm-leaflet-map-region-info {
+  margin-bottom: var(--plm-leaflet-map-region-info-bottom);
+}
+
+// At the smallest widths the toolbar cannot share a row with the scale. Keep all tools accessible on their own row.
+.plm-leaflet-map-controls-above-scale .leaflet-bottom.leaflet-right {
+  inset-inline-start: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  > .leaflet-pm-toolbar {
+    position: relative;
+    inset: auto;
+    max-inline-size: calc(100% - 20px);
+    order: 1;
+  }
+
+  > .leaflet-control-scale {
+    order: 2;
+  }
+
+  > .leaflet-control-attribution {
+    order: 3;
+  }
+}

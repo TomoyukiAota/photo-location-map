@@ -13,8 +13,8 @@ declare let L: any;
  *   zoom buttons, then this, then Leaflet-Geoman's toolbar, from the bottom up.
  * - A bar of its own rather than a button in the zoom buttons' bar: zooming in and out step the map's zoom, one
  *   operation of two buttons, while full screen is another (docs/tasks/20261125_map-full-screen/STATUS.md).
- * - Right above the zoom buttons, which stay where they were before it, as the corner grows upward. In a map too short
- *   for that, at the left of the zoom out button instead (src/styles/plm-leaflet-map/_plm-leaflet-map-full-screen.scss).
+ * - In a short map, the full-screen bar and zoom buttons move together beside Geoman's toolbar
+ *   (src/styles/plm-leaflet-map/_plm-leaflet-map-controls.scss).
  */
 export function addMapFullScreenControl(map: any, contents: LeafletContentService): void {
   const button: HTMLElement = contents.create(MapFullScreenButtonComponent, {}).location.nativeElement;

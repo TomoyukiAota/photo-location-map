@@ -1,1 +1,7 @@
-<div id="plm-leaflet-map" #mapContainer></div>
+<div id="plm-leaflet-map" #mapContainer
+  [class.plm-leaflet-map-controls-two-columns]="controlLayout().placement === 'two-columns'"
+  [class.plm-leaflet-map-controls-horizontal]="controlLayout().regionInfoBottom !== undefined"
+  [class.plm-leaflet-map-controls-above-scale]="controlLayout().placement === 'above-scale'"
+  [style.--plm-leaflet-map-region-info-bottom.px]="controlLayout().regionInfoBottom"
+  [style.--plm-leaflet-map-navigation-right.px]="controlLayout().navigationRight">
+</div>

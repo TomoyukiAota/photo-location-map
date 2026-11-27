@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, Type, effect, untracked, viewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, Type, effect, untracked, viewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, LeafletMouseEvent, Map as LeafletMap, Marker, Popup, PopupEvent } from 'leaflet';
@@ -23,6 +23,7 @@ import { createDivIconHtml } from './div-icon';
 import { addMapFullScreenControl } from './full-screen/map-full-screen-control';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
+import { MapControlLayout, observeMapControlLayout } from './map-control-layout';
 import { PhotosOfOpenPopup } from './photos-of-open-popup';
 import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
@@ -66,6 +67,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
   // Tells Leaflet of each change of the map's size (watchSize()).
   private resizeObserver: ResizeObserver | null = null;
+  private controlLayoutObserver: ResizeObserver | null = null;
+  protected readonly controlLayout = signal<MapControlLayout>({ placement: 'single-column' }, {
+    equal: (a, b) => a.placement === b.placement && a.regionInfoBottom === b.regionInfoBottom && a.navigationRight === b.navigationRight,
+  });
   // Makes the map, a moment after the home view is shown (makeMapLater()).
   private makeMapTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -243,6 +248,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private removeMap(): void {
+    this.controlLayoutObserver?.disconnect();
+    this.controlLayoutObserver = null;
     this.datedLayers?.destroy();
     this.datedLayers = null;
     if (this.map) {
@@ -276,6 +283,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     // After the base layer, up to whose last zoom level Leaflet.markercluster makes the clusters of its group.
     this.photosOfOpenPopup = new PhotosOfOpenPopup(this.map);
     this.configureRegionSelector();
+    this.controlLayoutObserver = observeMapControlLayout(this.map.getContainer(), layout => this.controlLayout.set(layout));
     this.layOutPopupAtEachSize();
   }
 
