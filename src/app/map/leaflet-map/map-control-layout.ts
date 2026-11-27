@@ -1,6 +1,7 @@
 export interface MapControlLayout {
   placement: 'single-column' | 'two-columns' | 'beside-scale' | 'above-scale';
   regionInfoBottom?: number;
+  regionInfoMaxWidth?: number;
   navigationRight?: number;
   fullScreenBesideZoom?: boolean;
 }
@@ -78,20 +79,18 @@ export function observeMapControlLayout(map: HTMLElement, setLayout: (layout: Ma
     // The navigation can use the space at the left of the layers button in a very short map.
     const navigationRight = available < navigationHeight + toolbarStackHeight ? layersLeftInset + layerButtonClearance : undefined;
 
-    // Leave region information above the toolbar and, when their widths reach each other, above navigation as well.
+    // Leave region information above the toolbar and room for navigation beside it.
     const fullScreenWidth = fullScreen.getBoundingClientRect().width;
     const zoomWidth = zoom.getBoundingClientRect().width;
     const navigationWidth = fullScreenBesideZoom ? fullScreenWidth + zoomWidth + toolbarSideGap : Math.max(fullScreenWidth, zoomWidth);
     const navigationLeft = mapBox.right - (navigationRight ?? toolbarSideGap) - navigationWidth;
     const regionInfoBox = regionInfo.getBoundingClientRect();
-    const aboveNavigation = lowerStackHeight + navigationHeight + toolbarSideGap;
     const belowToolbar = besideScale ? parseFloat(getComputedStyle(scale).marginBottom) : scaleHeight + toolbarMargins;
     const aboveToolbar = attributionHeight + belowToolbar + toolbarRowHeight + toolbarSideGap;
-    const regionFitsAboveNavigation = regionInfoBox.right + toolbarSideGap > navigationLeft
-      && regionInfoBox.height + aboveNavigation <= mapBox.height;
     setLayout({
       placement: besideScale ? 'beside-scale' : 'above-scale',
-      regionInfoBottom: regionFitsAboveNavigation ? aboveNavigation : aboveToolbar,
+      regionInfoBottom: Math.max(0, Math.min(aboveToolbar, mapBox.height - regionInfoBox.height)),
+      regionInfoMaxWidth: Math.max(0, navigationLeft - regionInfoBox.left - toolbarSideGap),
       navigationRight,
       fullScreenBesideZoom,
     });

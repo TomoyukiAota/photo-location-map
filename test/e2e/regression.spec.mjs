@@ -4526,14 +4526,14 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
     return Math.round(tools.y - (info.y + info.height));
   }).toBe(10);
 
-  // The region panel reaches the navigation at this width, with enough room to place it above both zoom buttons.
+  // The region panel can wrap at this width to leave room for the navigation beside it.
   await mapPane.evaluate(map => { map.style.width = '350px'; });
   await setMapHeight(270);
   await expect(mapPane).toHaveClass(horizontal);
   await expect(mapPane).not.toHaveClass(aboveScale);
   await expect.poll(async () => {
-    const [info, { zoom }] = await Promise.all([regionInfo.boundingBox(), layout()]);
-    return info.y + info.height <= zoom.top;
+    const [info, { full, zoom }] = await Promise.all([regionInfo.boundingBox(), layout()]);
+    return info.x + info.width <= Math.min(full.left, zoom.left) - 9;
   }).toBe(true);
   await regionInfo.click({ trial: true });
   await mapPane.locator('.leaflet-control-zoom-in').click({ trial: true });

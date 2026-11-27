@@ -1,3 +1,5 @@
+@use "../balanced-lines" as *;
+
 // Leaflet's usual stack stays in place until it no longer fits below the layer button (map-control-layout.ts).
 .plm-leaflet-map-controls-two-columns .leaflet-bottom.leaflet-right {
   // The flexible column takes the remaining width. Scale and attribution end at the map's right edge, independently
@@ -97,18 +99,21 @@
       white-space: normal;
 
       > .leaflet-pm-action {
+        @include balanced-lines;
         box-sizing: border-box;
         max-inline-size: 100%;
         height: auto;
         min-height: 29px;
-        text-wrap: balance;
       }
     }
   }
 }
 
 .plm-leaflet-map-controls-horizontal .plm-leaflet-map-region-info {
+  box-sizing: border-box;
   margin-bottom: var(--plm-leaflet-map-region-info-bottom);
+  max-inline-size: var(--plm-leaflet-map-region-info-max-width);
+  min-inline-size: min-content;
 }
 
 // At the smallest widths the toolbar cannot share a row with the scale. Keep all tools accessible on their own row.

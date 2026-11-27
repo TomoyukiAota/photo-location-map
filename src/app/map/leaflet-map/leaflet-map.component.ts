@@ -70,6 +70,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private controlLayoutObserver: ResizeObserver | null = null;
   protected readonly controlLayout = signal<MapControlLayout>({ placement: 'single-column' }, {
     equal: (a, b) => a.placement === b.placement && a.regionInfoBottom === b.regionInfoBottom
+      && a.regionInfoMaxWidth === b.regionInfoMaxWidth
       && a.navigationRight === b.navigationRight && a.fullScreenBesideZoom === b.fullScreenBesideZoom,
   });
   // Makes the map, a moment after the home view is shown (makeMapLater()).
