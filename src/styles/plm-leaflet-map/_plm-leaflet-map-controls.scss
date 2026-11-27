@@ -133,3 +133,18 @@
     order: 3;
   }
 }
+
+// Very little height can remain when the chart is dragged upward. Keep full screen accessible beside zoom.
+.plm-leaflet-map-full-screen-beside-zoom .leaflet-bottom.leaflet-right {
+  > .leaflet-control-zoom {
+    anchor-name: --plm-leaflet-map-zoom;
+  }
+
+  > .plm-leaflet-map-full-screen {
+    position: absolute;
+    position-anchor: --plm-leaflet-map-zoom;
+    right: anchor(left);
+    bottom: calc(anchor(bottom) - 10px);
+    margin-inline-end: 10px;
+  }
+}

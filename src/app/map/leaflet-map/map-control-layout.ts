@@ -2,6 +2,7 @@ export interface MapControlLayout {
   placement: 'single-column' | 'two-columns' | 'beside-scale' | 'above-scale';
   regionInfoBottom?: number;
   navigationRight?: number;
+  fullScreenBesideZoom?: boolean;
 }
 
 // Keep the same clearance as Leaflet's gap between the controls at the bottom right.
@@ -29,6 +30,7 @@ export function observeMapControlLayout(map: HTMLElement, setLayout: (layout: Ma
   const zoom = corner.querySelector<HTMLElement>('.leaflet-control-zoom');
   const scale = corner.querySelector<HTMLElement>('.leaflet-control-scale');
   const attribution = corner.querySelector<HTMLElement>('.leaflet-control-attribution');
+  const regionInfo = map.querySelector<HTMLElement>('.plm-leaflet-map-region-info');
 
   let layersBottom = 0;
   let layersLeftInset = 0;
@@ -47,7 +49,9 @@ export function observeMapControlLayout(map: HTMLElement, setLayout: (layout: Ma
     const toolHeights = tools.map(outerHeight);
     const toolbarMargins = verticalMargins(toolbarStyle);
     const toolbarInColumn = toolHeights.reduce((sum, height) => sum + height, 0) + toolbarFrameHeight + toolbarMargins;
-    const navigation = outerHeight(fullScreen) + outerHeight(zoom);
+    const fullScreenHeight = outerHeight(fullScreen);
+    const zoomHeight = outerHeight(zoom);
+    const navigation = fullScreenHeight + zoomHeight;
     const attributionHeight = outerHeight(attribution);
     const scaleHeight = outerHeight(scale);
     const available = mapBox.height - layersBottom - layerButtonClearance - scaleHeight - attributionHeight;
@@ -67,19 +71,34 @@ export function observeMapControlLayout(map: HTMLElement, setLayout: (layout: Ma
     const scaleWidth = scale.getBoundingClientRect().width + parseFloat(getComputedStyle(scale).marginRight);
     const besideScale = toolbarRowWidth + scaleWidth + 2 * toolbarSideGap <= mapBox.width;
     const toolbarRowHeight = Math.max(...toolHeights) + toolbarFrameHeight;
-    // Leave the region information above the row, independently of the width of its translated text.
     const toolbarStackHeight = besideScale ? 0 : toolbarRowHeight + toolbarMargins;
+    const lowerStackHeight = attributionHeight + scaleHeight + toolbarStackHeight;
+    const fullScreenBesideZoom = mapBox.height < lowerStackHeight + navigation;
+    const navigationHeight = fullScreenBesideZoom ? Math.max(zoomHeight, fullScreenHeight) : navigation;
+    // The navigation can use the space at the left of the layers button in a very short map.
+    const navigationRight = available < navigationHeight + toolbarStackHeight ? layersLeftInset + layerButtonClearance : undefined;
+
+    // Leave region information above the toolbar and, when their widths reach each other, above navigation as well.
+    const fullScreenWidth = fullScreen.getBoundingClientRect().width;
+    const zoomWidth = zoom.getBoundingClientRect().width;
+    const navigationWidth = fullScreenBesideZoom ? fullScreenWidth + zoomWidth + toolbarSideGap : Math.max(fullScreenWidth, zoomWidth);
+    const navigationLeft = mapBox.right - (navigationRight ?? toolbarSideGap) - navigationWidth;
+    const regionInfoBox = regionInfo.getBoundingClientRect();
+    const aboveNavigation = lowerStackHeight + navigationHeight + toolbarSideGap;
     const belowToolbar = besideScale ? parseFloat(getComputedStyle(scale).marginBottom) : scaleHeight + toolbarMargins;
+    const aboveToolbar = attributionHeight + belowToolbar + toolbarRowHeight + toolbarSideGap;
+    const regionFitsAboveNavigation = regionInfoBox.right + toolbarSideGap > navigationLeft
+      && regionInfoBox.height + aboveNavigation <= mapBox.height;
     setLayout({
       placement: besideScale ? 'beside-scale' : 'above-scale',
-      regionInfoBottom: attributionHeight + belowToolbar + toolbarRowHeight + toolbarSideGap,
-      // The navigation can use the space at the left of the layers button in a very short map.
-      navigationRight: available < navigation + toolbarStackHeight ? layersLeftInset + layerButtonClearance : undefined,
+      regionInfoBottom: regionFitsAboveNavigation ? aboveNavigation : aboveToolbar,
+      navigationRight,
+      fullScreenBesideZoom,
     });
   };
 
   const observer = new ResizeObserver(update);
-  for (const element of [map, layersButton, toolbar, ...tools, fullScreen, zoom, scale, attribution])
+  for (const element of [map, layersButton, toolbar, ...tools, fullScreen, zoom, scale, attribution, regionInfo])
     observer.observe(element, { box: 'border-box' });
   update();
   return observer;

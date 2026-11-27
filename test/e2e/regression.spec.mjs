@@ -4526,6 +4526,19 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
     return Math.round(tools.y - (info.y + info.height));
   }).toBe(10);
 
+  // The region panel reaches the navigation at this width, with enough room to place it above both zoom buttons.
+  await mapPane.evaluate(map => { map.style.width = '350px'; });
+  await setMapHeight(270);
+  await expect(mapPane).toHaveClass(horizontal);
+  await expect(mapPane).not.toHaveClass(aboveScale);
+  await expect.poll(async () => {
+    const [info, { zoom }] = await Promise.all([regionInfo.boundingBox(), layout()]);
+    return info.y + info.height <= zoom.top;
+  }).toBe(true);
+  await regionInfo.click({ trial: true });
+  await mapPane.locator('.leaflet-control-zoom-in').click({ trial: true });
+  await mapPane.locator('.leaflet-control-zoom-out').click({ trial: true });
+
   // A narrow map cannot fit the toolbar beside the scale. It gets its own row, with working actions.
   await mapPane.evaluate(map => { map.style.width = '200px'; });
   await setMapHeight(280);
@@ -4557,6 +4570,17 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
     return full.right <= layers.left - 9;
   }).toBe(true);
   await mapPane.locator('.plm-leaflet-map-full-screen-button').click({ trial: true });
+
+  // There is room to put fullscreen beside zoom when the map cannot fit them in a column.
+  await mapPane.evaluate(map => { map.style.width = '500px'; });
+  await setMapHeight(120);
+  await expect(mapPane).not.toHaveClass(aboveScale);
+  await expect.poll(async () => {
+    const { full, zoom } = await layout();
+    return full.right <= zoom.left - 9 && Math.abs(full.bottom - zoom.bottom) <= 1;
+  }).toBe(true);
+  await mapPane.locator('.plm-leaflet-map-full-screen-button').click({ trial: true });
+  await mapPane.locator('.leaflet-control-zoom-out').click({ trial: true });
 
   await mapPane.evaluate(map => { map.style.removeProperty('width'); });
   await expect(mapPane).not.toHaveClass(aboveScale);
