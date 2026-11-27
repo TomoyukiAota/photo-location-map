@@ -1,5 +1,14 @@
 @use "../balanced-lines" as *;
 
+.plm-leaflet-map-geoman-toggle {
+  display: none;
+}
+
+.plm-leaflet-map-controls-horizontal:not(.plm-leaflet-map-geoman-expanded) .leaflet-pm-toolbar {
+  // Keep the tool dimensions available for choosing a layout, even when the toolbar is collapsed.
+  visibility: hidden;
+}
+
 // Leaflet's usual stack stays in place until it no longer fits below the layer button (map-control-layout.ts).
 .plm-leaflet-map-controls-two-columns .leaflet-bottom.leaflet-right {
   // The flexible column takes the remaining width. Scale and attribution end at the map's right edge, independently
@@ -45,33 +54,62 @@
   }
 }
 
+.plm-leaflet-map-controls-horizontal {
+  anchor-name: --plm-leaflet-map-menu-bounds;
+
+  .leaflet-control-layers-toggle {
+    anchor-name: --plm-leaflet-map-menu-layers;
+  }
+
+  .plm-leaflet-map-region-info:not(.plm-leaflet-map-region-info-hidden) {
+    anchor-name: --plm-leaflet-map-menu-region;
+  }
+}
+
 .plm-leaflet-map-controls-horizontal .leaflet-bottom.leaflet-right {
   > .plm-leaflet-map-full-screen,
   > .leaflet-control-zoom {
     margin-inline-end: var(--plm-leaflet-map-navigation-right, 10px);
   }
 
+  > .plm-leaflet-map-full-screen {
+    anchor-name: --plm-leaflet-map-menu-full-screen;
+  }
+
+  > .leaflet-control-zoom {
+    anchor-name: --plm-leaflet-map-zoom;
+  }
+
   > .leaflet-control-scale {
     anchor-name: --plm-leaflet-map-scale;
   }
 
-  > .leaflet-pm-toolbar {
-    // The scale remains in Leaflet's stack. Geoman sits beside it and its actions open above the toolbar.
+  > .plm-leaflet-map-geoman-toggle {
+    display: block;
+    anchor-name: --plm-leaflet-map-geoman-toggle;
     position: absolute;
     position-anchor: --plm-leaflet-map-scale;
     right: anchor(left);
-    // Keep Leaflet's 10px bottom margin measurable for the vertical layouts.
     bottom: calc(anchor(bottom) - 10px);
+  }
+
+  > .leaflet-pm-toolbar {
+    // Align the tools with the toggle in both horizontal placements. Keep Leaflet's normal bottom margin measurable.
+    position: absolute;
+    position-anchor: --plm-leaflet-map-geoman-toggle;
+    right: anchor(left);
+    bottom: calc(anchor(bottom) - 10px);
+    margin-inline-end: 0;
     display: flex;
     white-space: nowrap;
 
     > .button-container {
-      // Anchor the actions to the toolbar, so a long label fits even when the leftmost button is next to the map edge.
-      position: static;
+      anchor-scope: --plm-leaflet-map-geoman-button;
       min-inline-size: 0;
     }
 
     > .button-container > .leaflet-buttons-control-button {
+      anchor-name: --plm-leaflet-map-geoman-button;
       max-inline-size: 100%;
       border-radius: 0;
       border-bottom: 0;
@@ -90,12 +128,28 @@
     }
 
     > .button-container .leaflet-pm-actions-container {
-      top: auto;
-      bottom: 100%;
-      right: 0;
-      left: auto;
+      // Fixed positioning lets the menu use the map's width instead of the toolbar's. Anchor-center shifts it just
+      // far enough to fit between region information and the controls on the right.
+      position: fixed;
+      position-anchor: --plm-leaflet-map-geoman-button;
+      top: anchor(--plm-leaflet-map-menu-bounds top);
+      bottom: anchor(top);
+      left: max(anchor(--plm-leaflet-map-menu-bounds left), anchor(--plm-leaflet-map-menu-region right, 0px));
+      right: max(
+        anchor(--plm-leaflet-map-menu-bounds right),
+        anchor(--plm-leaflet-map-menu-layers left, 0px),
+        anchor(--plm-leaflet-map-menu-full-screen left, 0px),
+        anchor(--plm-leaflet-map-zoom left, 0px)
+      );
+      position-try-fallbacks: --plm-leaflet-map-menu-over-region, --plm-leaflet-map-menu-whole-width;
+      justify-self: anchor-center;
+      align-self: end;
       inline-size: max-content;
-      max-inline-size: 100%;
+      min-inline-size: min-content;
+      max-inline-size: stretch;
+      max-block-size: stretch;
+      margin-inline: 4px;
+      overflow: auto;
       white-space: normal;
 
       > .leaflet-pm-action {
@@ -107,6 +161,16 @@
       }
     }
   }
+}
+
+// When that space is narrower than a word, let the menu cover first the region information, then the other controls.
+@position-try --plm-leaflet-map-menu-over-region {
+  left: anchor(--plm-leaflet-map-menu-bounds left);
+}
+
+@position-try --plm-leaflet-map-menu-whole-width {
+  left: anchor(--plm-leaflet-map-menu-bounds left);
+  right: anchor(--plm-leaflet-map-menu-bounds right);
 }
 
 .plm-leaflet-map-controls-horizontal .plm-leaflet-map-region-info {
@@ -124,9 +188,12 @@
   align-items: flex-end;
 
   > .leaflet-pm-toolbar {
+    max-inline-size: calc(100% - 20px - anchor-size(width));
+  }
+
+  > .plm-leaflet-map-geoman-toggle {
     position: relative;
     inset: auto;
-    max-inline-size: calc(100% - 20px);
     order: 1;
   }
 
@@ -141,10 +208,6 @@
 
 // Very little height can remain when the chart is dragged upward. Keep full screen accessible beside zoom.
 .plm-leaflet-map-full-screen-beside-zoom .leaflet-bottom.leaflet-right {
-  > .leaflet-control-zoom {
-    anchor-name: --plm-leaflet-map-zoom;
-  }
-
   > .plm-leaflet-map-full-screen {
     position: absolute;
     position-anchor: --plm-leaflet-map-zoom;

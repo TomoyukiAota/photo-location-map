@@ -4435,6 +4435,7 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
   await dismissWelcome();
   const mapPane = page.locator('#plm-leaflet-map');
   const toolbar = mapPane.locator('.leaflet-pm-toolbar');
+  const toggle = mapPane.locator('.plm-leaflet-map-geoman-toggle-button');
   const modes = /plm-leaflet-map-controls-(two-columns|horizontal)/;
   const twoColumns = /plm-leaflet-map-controls-two-columns/;
   const horizontal = /plm-leaflet-map-controls-horizontal/;
@@ -4451,6 +4452,7 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
       height: map.getBoundingClientRect().height,
       layers: box('.leaflet-control-layers-toggle'),
       geoman: box('.leaflet-pm-toolbar'),
+      geomanToggle: box('.plm-leaflet-map-geoman-toggle'),
       full: box('.plm-leaflet-map-full-screen'),
       zoom: box('.leaflet-control-zoom'),
       scale: box('.leaflet-control-scale'),
@@ -4459,6 +4461,7 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
 
   await setMapHeight(500);
   await expect(mapPane).not.toHaveClass(modes);
+  await expect(toggle).toBeHidden();
   const normal = await layout();
   expect(normal.geoman.right).toBeCloseTo(normal.zoom.right, 0);
   expect(normal.full.top - normal.geoman.bottom).toBeCloseTo(10, 0);
@@ -4469,6 +4472,7 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
   await expect(mapPane).not.toHaveClass(modes);
   await setMapHeight(Math.floor(oneColumnHeight) - 2);
   await expect(mapPane).toHaveClass(twoColumns);
+  await expect(toggle).toBeHidden();
   const split = await layout();
   expect(split.geoman.left - split.zoom.right).toBeCloseTo(10, 0);
   expect(split.zoom.bottom).toBeCloseTo(split.geoman.bottom, 0);
@@ -4496,8 +4500,18 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
   await expect(mapPane).toHaveClass(twoColumns);
   await setMapHeight(Math.floor(twoColumnHeight) - 2);
   await expect(mapPane).toHaveClass(horizontal);
+  await expect(toggle).toHaveAccessibleName('More Options');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toolbar).toBeHidden();
+  const collapsed = await layout();
+  expect(collapsed.scale.left - collapsed.geomanToggle.right).toBeCloseTo(10, 0);
+  await toggle.focus();
+  await toggle.press('Enter');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(toolbar).toBeVisible();
   const row = await layout();
-  expect(row.scale.left - row.geoman.right).toBeCloseTo(10, 0);
+  expect(row.geomanToggle).toEqual(collapsed.geomanToggle);
+  expect(row.geomanToggle.left).toBeCloseTo(row.geoman.right, 0);
   expect(row.geoman.bottom).toBeCloseTo(row.scale.bottom, 0);
   expect(row.zoom.top - row.full.bottom).toBeCloseTo(10, 0);
   const buttons = toolbar.locator('.leaflet-buttons-control-button');
@@ -4505,15 +4519,35 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
   const lastButton = await buttons.last().boundingBox();
   expect(firstButton.y).toBeCloseTo(lastButton.y, 0);
   expect(firstButton.x + firstButton.width).toBeLessThan(lastButton.x);
-  await remove.locator('.leaflet-buttons-control-button').click();
-  await expect(finish).toBeVisible();
-  const action = await finish.boundingBox();
-  expect(action.y + action.height).toBeLessThanOrEqual(lastButton.y + 1);
-  await finish.click();
-  await expect(finish).toBeHidden();
+  const rect = toolbar.getByTitle('Set Region by Rectangle', { exact: true });
+  for (const tool of [rect, remove]) {
+    const button = tool.locator('.leaflet-buttons-control-button');
+    const menu = tool.locator('.leaflet-pm-actions-container');
+    await button.click();
+    await expect(menu).toBeVisible();
+    await expect.poll(async () => {
+      const [control, actions] = await Promise.all([button.boundingBox(), menu.boundingBox()]);
+      const centerOffset = actions.x + actions.width / 2 - (control.x + control.width / 2);
+      const gap = control.y - (actions.y + actions.height);
+      return Math.abs(centerOffset) <= 1 && gap >= -1 && gap <= 2;
+    }).toBe(true);
+    await menu.locator('.leaflet-pm-action').click();
+    await expect(menu).toBeHidden();
+  }
+
+  // Collapsing the toolbar hides the actions too. Opening it again reveals the active tool.
+  const rectangleMenu = rect.locator('.leaflet-pm-actions-container');
+  await rect.locator('.leaflet-buttons-control-button').click();
+  await expect(rectangleMenu).toBeVisible();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toolbar).toBeHidden();
+  await expect(rectangleMenu).toBeHidden();
+  await toggle.click();
+  await expect(rectangleMenu).toBeVisible();
+  await rectangleMenu.locator('.leaflet-pm-action').click();
 
   // Region information goes above the toolbar when a drawn region would otherwise put it in the toolbar's row.
-  const rect = toolbar.getByTitle('Set Region by Rectangle', { exact: true });
   await rect.locator('.leaflet-buttons-control-button').click();
   const mapBox = await mapPane.boundingBox();
   await page.mouse.click(mapBox.x + mapBox.width / 3, mapBox.y + mapBox.height / 3);
@@ -4547,6 +4581,7 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
   const narrow = await layout();
   expect(narrow.scale.top - narrow.geoman.bottom).toBeCloseTo(10, 0);
   expect(narrow.geoman.top - narrow.zoom.bottom).toBeCloseTo(10, 0);
+  expect(narrow.geomanToggle.left).toBeCloseTo(narrow.geoman.right, 0);
   const narrowMap = await mapPane.boundingBox();
   const narrowRowTop = (await buttons.first().boundingBox()).y;
   for (const button of await buttons.all()) {
@@ -4555,12 +4590,35 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
     expect(x + width).toBeLessThanOrEqual(narrowMap.x + narrowMap.width);
     expect(y).toBeCloseTo(narrowRowTop, 0);
   }
+  // Keep the polygon's longer menu inside the map and directly above its button, even when the map is this narrow.
+  const polygon = toolbar.getByTitle('Set Region by Vertex', { exact: true });
+  const polygonButton = polygon.locator('.leaflet-buttons-control-button');
+  const polygonMenu = polygon.locator('.leaflet-pm-actions-container');
+  await polygonButton.click();
+  await expect(polygonMenu).toBeVisible();
+  await expect.poll(async () => {
+    const [button, menu] = await Promise.all([polygonButton.boundingBox(), polygonMenu.boundingBox()]);
+    const center = button.x + button.width / 2;
+    return menu.x >= narrowMap.x - 1 && menu.x + menu.width <= narrowMap.x + narrowMap.width + 1
+      && menu.y >= narrowMap.y - 1 && Math.abs(menu.y + menu.height - button.y) <= 2
+      && menu.x <= center && center <= menu.x + menu.width;
+  }).toBe(true);
+  const polygonActions = polygonMenu.locator('.leaflet-pm-action');
+  await expect(polygonActions).toHaveCount(3);
+  for (const action of await polygonActions.all())
+    await action.click({ trial: true });
+  await polygonMenu.getByText('Cancel', { exact: true }).click();
+  await expect(polygonMenu).toBeHidden();
+
+  // The last tool's menu leaves room for navigation when its button is close to the map edge.
   await remove.locator('.leaflet-buttons-control-button').click();
   await expect(finish).toBeVisible();
-  const narrowAction = await finish.boundingBox();
-  expect(narrowAction.x).toBeGreaterThanOrEqual(narrow.geoman.left);
-  expect(narrowAction.x + narrowAction.width).toBeLessThanOrEqual(narrow.geoman.right);
-  expect(narrowAction.y + narrowAction.height).toBeLessThanOrEqual(narrowRowTop + 1);
+  await expect.poll(async () => {
+    const menu = await finish.boundingBox();
+    const { full, zoom, layers } = await layout();
+    return [full, zoom, layers].every(control => menu.x + menu.width <= control.left + 1 || menu.x >= control.right - 1
+      || menu.y + menu.height <= control.top + 1 || menu.y >= control.bottom - 1);
+  }).toBe(true);
   await finish.click();
 
   // There is enough room beside the layers button when there is no longer enough underneath it.
@@ -4586,6 +4644,11 @@ test('map controls use two columns and then a horizontal Geoman toolbar only as 
   await expect(mapPane).not.toHaveClass(aboveScale);
   await setMapHeight(Math.ceil(twoColumnHeight) + 2);
   await expect(mapPane).toHaveClass(twoColumns);
+  await expect(toggle).toBeHidden();
+  await expect(toolbar).toBeVisible();
+  await setMapHeight(Math.floor(twoColumnHeight) - 2);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toolbar).toBeHidden();
   await setMapHeight(Math.ceil(oneColumnHeight) + 2);
   await expect(mapPane).not.toHaveClass(modes);
 });

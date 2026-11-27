@@ -1,0 +1,19 @@
+@use "../map-control-button" as *;
+
+:host {
+  display: block;
+}
+
+.plm-leaflet-map-geoman-toggle-button {
+  @include map-control-button;
+
+  &[aria-expanded="true"] {
+    background-color: #f4f4f4;
+  }
+
+  > svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+}

@@ -21,6 +21,7 @@ import { DatedLayers } from './dated-layers/dated-layers';
 import { MapDateService } from './dated-layers/map-date.service';
 import { createDivIconHtml } from './div-icon';
 import { addMapFullScreenControl } from './full-screen/map-full-screen-control';
+import { addGeomanToggleControl } from './geoman/geoman-toggle-control';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { MapControlLayout, observeMapControlLayout } from './map-control-layout';
@@ -68,6 +69,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   // Tells Leaflet of each change of the map's size (watchSize()).
   private resizeObserver: ResizeObserver | null = null;
   private controlLayoutObserver: ResizeObserver | null = null;
+  protected readonly geomanExpanded = signal(false);
   protected readonly controlLayout = signal<MapControlLayout>({ placement: 'single-column' }, {
     equal: (a, b) => a.placement === b.placement && a.regionInfoBottom === b.regionInfoBottom
       && a.regionInfoMaxWidth === b.regionInfoMaxWidth
@@ -285,7 +287,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     // After the base layer, up to whose last zoom level Leaflet.markercluster makes the clusters of its group.
     this.photosOfOpenPopup = new PhotosOfOpenPopup(this.map);
     this.configureRegionSelector();
-    this.controlLayoutObserver = observeMapControlLayout(this.map.getContainer(), layout => this.controlLayout.set(layout));
+    addGeomanToggleControl(this.map, this.leafletContentService, this.geomanExpanded);
+    this.controlLayoutObserver = observeMapControlLayout(this.map.getContainer(), layout => {
+      this.controlLayout.set(layout);
+      if (layout.placement === 'single-column' || layout.placement === 'two-columns')
+        this.geomanExpanded.set(false);
+    });
     this.layOutPopupAtEachSize();
   }
 
@@ -422,11 +429,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private hideRegionInfo() {
-    this.regionInfo.getContainer().style.visibility = 'hidden';
+    this.regionInfo.getContainer().classList.add('plm-leaflet-map-region-info-hidden');
   }
 
   private showRegionInfo() {
-    this.regionInfo.getContainer().style.visibility = 'visible';
+    this.regionInfo.getContainer().classList.remove('plm-leaflet-map-region-info-hidden');
   }
 
   private selectPhotosWithinRegion(): void {

@@ -70,8 +70,10 @@ export function observeMapControlLayout(map: HTMLElement, setLayout: (layout: Ma
       + parseFloat(toolbarStyle.borderLeftWidth) + parseFloat(toolbarStyle.borderRightWidth)
       + parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
     const scaleWidth = scale.getBoundingClientRect().width + parseFloat(getComputedStyle(scale).marginRight);
-    const besideScale = toolbarRowWidth + scaleWidth + 2 * toolbarSideGap <= mapBox.width;
-    const toolbarRowHeight = Math.max(...toolHeights) + toolbarFrameHeight;
+    // The toggle has the same button and bar dimensions as the full-screen control, even when the toggle is hidden.
+    const fullScreenBox = fullScreen.getBoundingClientRect();
+    const besideScale = toolbarRowWidth + fullScreenBox.width + scaleWidth + 2 * toolbarSideGap <= mapBox.width;
+    const toolbarRowHeight = Math.max(Math.max(...toolHeights) + toolbarFrameHeight, fullScreenBox.height);
     const toolbarStackHeight = besideScale ? 0 : toolbarRowHeight + toolbarMargins;
     const lowerStackHeight = attributionHeight + scaleHeight + toolbarStackHeight;
     const fullScreenBesideZoom = mapBox.height < lowerStackHeight + navigation;
@@ -80,7 +82,7 @@ export function observeMapControlLayout(map: HTMLElement, setLayout: (layout: Ma
     const navigationRight = available < navigationHeight + toolbarStackHeight ? layersLeftInset + layerButtonClearance : undefined;
 
     // Leave region information above the toolbar and room for navigation beside it.
-    const fullScreenWidth = fullScreen.getBoundingClientRect().width;
+    const fullScreenWidth = fullScreenBox.width;
     const zoomWidth = zoom.getBoundingClientRect().width;
     const navigationWidth = fullScreenBesideZoom ? fullScreenWidth + zoomWidth + toolbarSideGap : Math.max(fullScreenWidth, zoomWidth);
     const navigationLeft = mapBox.right - (navigationRight ?? toolbarSideGap) - navigationWidth;

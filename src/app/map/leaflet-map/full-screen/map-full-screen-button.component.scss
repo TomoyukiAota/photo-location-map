@@ -1,28 +1,11 @@
-// The box that this is in, Leaflet's bar (map-full-screen-control.ts), has the bar's border. The button is drawn as
-// Leaflet draws the zoom buttons in that bar (.leaflet-bar a in leaflet.css): 30 pixels, black on white, a lighter
-// grey under the pointer.
+@use "../map-control-button" as *;
 
 :host {
   display: block;
 }
 
 .plm-leaflet-map-full-screen-button {
-  display: grid;
-  place-items: center;
-  box-sizing: border-box;
-  width: 30px;
-  height: 30px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 2px;
-  color: #000000;
-  background-color: #ffffff;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f4f4f4;
-  }
+  @include map-control-button;
 
   > svg {
     width: 22px;

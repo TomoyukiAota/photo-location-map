@@ -4,6 +4,10 @@
   background: #ffffff;
   padding: 5px 10px;
 
+  &.plm-leaflet-map-region-info-hidden {
+    visibility: hidden;
+  }
+
   &.leaflet-control {
     margin-bottom: 20px;  // Override .leaflet-control's margin-bottom so that region info does not cover attribution.
     margin-left: 20px;    // To align with margin-bottom above.
