@@ -21,17 +21,22 @@
   }
 }
 
-.location-table {
+.cache-details {
   margin-top: 30px;
   font-size: 14px;
   display: grid;
-  grid: "location-label location-value" auto
-        /auto           1fr;
-  grid-column-gap: 30px;
-  grid-row-gap: 10px;
+  grid: "size-label     size-value" auto
+        "location-label location-value" auto
+        /auto           minmax(0, 1fr);
+  gap: 10px 30px;
 
+  .cache-size-label { grid-area: size-label; }
+  .cache-size-value { grid-area: size-value; }
   .location-label { grid-area: location-label; }
-  .location-value { grid-area: location-value; }
+  .location-value {
+    grid-area: location-value;
+    overflow-wrap: anywhere;
+  }
 }
 
 .anchor-tag-like-text {

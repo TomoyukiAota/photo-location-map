@@ -121,6 +121,7 @@ export namespace IpcConstants {
   export namespace ThumbnailCache {
     /** Whether each file's thumbnail was attempted and is in the cache, and where it is. */
     export const State = 'ipc-constants-thumbnail-state';
+    export const Size = 'ipc-constants-thumbnail-cache-size';
     export const Open = 'ipc-constants-open-thumbnail-cache';
     export const DeleteAndRestart = 'ipc-constants-delete-thumbnail-cache-and-restart';
   }

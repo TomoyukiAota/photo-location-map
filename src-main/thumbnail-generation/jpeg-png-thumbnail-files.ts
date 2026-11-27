@@ -20,9 +20,6 @@ import { oneWriteAtATime } from './one-write-at-a-time.js';
 
 const logger = createPrependedLogger('[JPEG/PNG Thumbnail]');
 
-/** The largest thumbnail that the page may keep: one of 400 pixels is 50 to 100 KB, one of 1,000 about 300 to 500 KB. */
-export const maxThumbnailBytes = 2 * 1024 * 1024;
-
 /** The photo's file, and the time that it was last modified, as it is now; null when it cannot be read. */
 export async function readPhotoForThumbnail(filePath: string): Promise<PhotoFileForThumbnail | null> {
   let file: fs.promises.FileHandle | undefined;
@@ -72,7 +69,10 @@ export function isLastModified(value: unknown): value is string {
 }
 
 /** Whether `value` is a thumbnail that the page may keep: a JPEG, as its first bytes say, of a sensible size. */
-export function isThumbnailJpeg(value: unknown): value is Uint8Array {
+export function isThumbnailJpeg(value: unknown, longerSide: number): value is Uint8Array {
+  // The page's encoder produces a 3.34 MiB JPEG for a 2,000-pixel square of RGB noise. Allow that and leave room
+  // for larger outputs while retaining the original limit for thumbnails up to 1,000 pixels.
+  const maxThumbnailBytes = (longerSide <= 1000 ? 2 : 5) * 1024 * 1024;
   return value instanceof Uint8Array && value.length >= 3 && value.length <= maxThumbnailBytes
     && value[0] === 0xff && value[1] === 0xd8 && value[2] === 0xff;
 }

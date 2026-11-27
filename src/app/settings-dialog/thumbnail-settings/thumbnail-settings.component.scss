@@ -1,4 +1,5 @@
 @use "../settings-styles" as *;
+@use "../../../styles/scrollbar" as *;
 
 .setting-title {
   font-size: $setting-title-font-size;
@@ -29,7 +30,7 @@
 
   .thumbnail-quality-label {
     display: block;
-    font-weight: 500;
+    font-weight: 700;
   }
 
   .thumbnail-quality-description {
@@ -43,6 +44,11 @@
 // The heading over a row for each place, in a column as wide as the rows, or as the room where there is less. The rows
 // are a little apart, so that the name of a row on two lines is nearer its own slider than the sizes above it.
 .thumbnail-size {
+  --thumbnail-size-step-width: 39px;
+  --thumbnail-size-track-inset: 3px;
+  --thumbnail-size-label-room: 25px;
+  --thumbnail-size-track-width: calc(var(--thumbnail-size-intervals) * var(--thumbnail-size-step-width)
+    + 2 * var(--thumbnail-size-track-inset));
   display: grid;
   grid-template-columns: fit-content(100%);
   row-gap: 8px;
@@ -59,6 +65,7 @@
   align-items: center;
   justify-content: space-between;
   column-gap: 12px;
+  min-inline-size: 0;
 }
 
 // A place: its name, and its slider beside it, or under it where they do not fit side by side.
@@ -67,6 +74,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   column-gap: 12px;
+  min-inline-size: 0;
 }
 
 // TL;DR: The name of a place, in a cell as wide as the longest name, so that the sliders start together.
@@ -77,6 +85,10 @@
 .thumbnail-size-place-cell {
   display: grid;
   margin-top: 14px;
+  // The scrolling track can pass under the end of the place's name.
+  position: relative;
+  z-index: 1;
+  background: var(--mat-dialog-container-color);
 
   > * {
     grid-area: 1 / 1;
@@ -87,21 +99,39 @@
   visibility: hidden;
 }
 
-// TL;DR: The slider, with some of the sizes under its marks, and room past its end for the last of them, which reaches
-// past the slider's end, by up to 24 pixels in Arabic.
-// Details: The sizes are below the thumb, in the margin under the slider rather than in a row of their own, so that
-// the name stays level with the slider's track. They are out of the layout, as each is centered under its mark: the
-// room is a margin, outside the box that they are placed in.
+// The old 240px slider and the 24px after it still decide when the row wraps. Give the extension the remaining space
+// on that line and scroll only the scale when it does not fit.
 .thumbnail-size-scale {
-  position: relative;
-  margin-bottom: 6px;
-  margin-inline-end: 24px;
+  flex: 1 1 264px;
+  min-inline-size: 0;
+  max-inline-size: calc(var(--thumbnail-size-track-width) + var(--thumbnail-size-label-room));
+  // The 48px control and 6px below the labels keep their positions. The scrollbar takes the 8px gap after the row.
+  block-size: 54px;
 }
 
-// As wide as seven sizes need to be told apart by a pointer: the slider has no text of its own.
+// Start the scrolling area before the slider to keep the first label centered under its mark. The padding on the
+// track also leaves room for either end's label and thumb.
+.thumbnail-size-scroll {
+  @include scrollbar-in-view(8px);
+  margin-inline-start: calc(-1 * var(--thumbnail-size-label-room));
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+}
+
+.thumbnail-size-track {
+  position: relative;
+  inline-size: max-content;
+  padding-inline: var(--thumbnail-size-label-room);
+  padding-block-end: 6px;
+}
+
 .thumbnail-size-slider {
   display: block;
-  width: 240px;
+  inline-size: var(--thumbnail-size-track-width);
   margin: 0;
 }
 
@@ -110,7 +140,7 @@
 // margins, and the thumb reaches 10 pixels below the middle of the slider's 48.
 .thumbnail-size-ticks {
   position: absolute;
-  inset-inline: 3px;
+  inset-inline: calc(var(--thumbnail-size-label-room) + var(--thumbnail-size-track-inset));
   top: 36px;
   font-size: 12px;
   line-height: 16px;

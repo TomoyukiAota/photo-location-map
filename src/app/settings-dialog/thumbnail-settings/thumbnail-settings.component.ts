@@ -1,5 +1,5 @@
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, createCloseScrollStrategy } from '@angular/cdk/overlay';
-import { Component, inject, Injector } from '@angular/core';
+import { Component, inject, Injector, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -72,6 +72,9 @@ const sizeNotePositions: ConnectedPosition[] = [
 export class ThumbnailSettingsComponent {
   private readonly settingsChangedService = inject(SettingsChangedService);
 
+  // Measure the cache when the tab is shown. The sliders keep any unsaved settings when the user switches tabs.
+  public readonly showCacheDetails = input(true);
+
   protected readonly choices = thumbnailQualities.map(quality => ({ quality, ...choiceTexts[quality] }));
   protected selectedQuality: ThumbnailQuality = currentUserSettings.thumbnailQuality;
   protected readonly selectedSizes: Record<ThumbnailSizePlace, number> = {
@@ -84,6 +87,7 @@ export class ThumbnailSettingsComponent {
   protected readonly minSize = minThumbnailSize;
   protected readonly maxSize = maxThumbnailSize;
   protected readonly sizeStep = thumbnailSizeStep;
+  protected readonly sizeIntervals = thumbnailSizes.length - 1;
 
   /** The sizes written under the slider, each where its mark is: a percentage of the way from the first to the last. */
   protected readonly sizeTicks = thumbnailSizes

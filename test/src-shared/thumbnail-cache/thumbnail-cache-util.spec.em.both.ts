@@ -1,13 +1,39 @@
 import assert from 'assert';
+import * as fs from 'fs';
 import * as os from 'os';
+import * as path from 'path';
 import {
   getOriginalFilePath,
   getThumbnailFilePath,
   getThumbnailLogFilePath,
-  plmThumbnailCacheDir
+  plmThumbnailCacheDir,
+  thumbnailCacheSize,
 } from '../../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 
 describe('ThumbnailCacheUtil', () => {
+  it('counts the files and logs inside the thumbnail cache and skips links to other folders', async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-thumbnail-cache-size-'));
+    const cache = path.join(root, 'thumbnail-cache');
+    try {
+      assert.strictEqual(await thumbnailCacheSize(cache), 0);
+      fs.mkdirSync(path.join(cache, 'photos'), { recursive: true });
+      fs.writeFileSync(path.join(cache, 'photos', 'photo.jpg.plm.jpg'), Buffer.alloc(128));
+      fs.writeFileSync(path.join(cache, 'photos', 'photo.jpg.log.json'), Buffer.alloc(48));
+      const outside = path.join(root, 'outside');
+      fs.mkdirSync(outside);
+      fs.writeFileSync(path.join(outside, 'other.jpg'), Buffer.alloc(256));
+      const linkType = process.platform === 'win32' ? 'junction' : 'dir';
+      fs.symlinkSync(outside, path.join(cache, 'link'), linkType);
+
+      assert.strictEqual(await thumbnailCacheSize(cache), 176);
+      const relocatedCache = path.join(root, 'linked-cache');
+      fs.symlinkSync(cache, relocatedCache, linkType);
+      assert.strictEqual(await thumbnailCacheSize(relocatedCache), 176);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   describe('getThumbnailFilePath should return the thumbnail file path from the original file path', () => {
     function runTest(originalFilePath: string, expectedThumbnailFileDir: string, expectedThumbnailFilePath: string) {
       const {

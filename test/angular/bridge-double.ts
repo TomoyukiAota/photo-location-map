@@ -47,7 +47,7 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
       readPhoto: async () => null,
       save: async filePath => path.join(thumbnailCacheDir, `${path.basename(filePath)}.plm.jpg`),
     },
-    thumbnailCache: { open: async () => {}, deleteAndRestart: async () => {} },
+    thumbnailCache: { size: async () => 0, open: async () => {}, deleteAndRestart: async () => {} },
     shell: { openExternal: async () => {}, openWithAssociatedApp: async () => {}, openContainingFolder: async () => {} },
     app: { restart: () => {} },
     commandLine: { openTarget: async () => ({ kind: 'none' }) },

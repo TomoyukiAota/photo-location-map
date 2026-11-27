@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
@@ -40,7 +40,9 @@ class DummyDateTimeSettingsComponent {}
 class DummyOsSettingsComponent {}
 
 @Component({ selector: 'app-thumbnail-settings', template: '' })
-class DummyThumbnailSettingsComponent {}
+class DummyThumbnailSettingsComponent {
+  public readonly showCacheDetails = input(true);
+}
 
 @Component({ selector: 'app-cache-tab', template: '' })
 class DummyCacheTabComponent {

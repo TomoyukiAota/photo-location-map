@@ -120,6 +120,8 @@ export interface PlmBridge {
     save(filePath: string, lastModified: string, jpeg: Uint8Array | null, longerSide: number): Promise<string>;
   };
   readonly thumbnailCache: {
+    /** Combined size in bytes of the files in the thumbnail cache. */
+    size(): Promise<number>;
     open(): Promise<void>;
     /** Empties the cache, then restarts the app; the restart ends the page. */
     deleteAndRestart(): Promise<void>;

@@ -3,7 +3,7 @@ import type { ThumbnailQuality } from './thumbnail-quality.js';
 /**
  * The sizes of the thumbnails at High quality, which the sliders of the Thumbnails tab of the Settings dialog choose,
  * one for the folder tree of the sidebar and one for the popups of the map: the longer side of a thumbnail, in pixels,
- * from 400 to 1,000 in steps of 100.
+ * from 400 to 2,000 in steps of 100.
  * TL;DR: 400 by default, as the app made them before it had a choice. A place shows a thumbnail at half its size in CSS
  * pixels (thumbnailBoxOf), which a screen of 2 device pixels per CSS pixel shows sharp; a larger size is larger on the
  * screen, and slower to make, as the owner chose (docs/tasks/20261123_thumbnail-size/STATUS.md). The app makes one
@@ -14,7 +14,7 @@ import type { ThumbnailQuality } from './thumbnail-quality.js';
  * 400 in both places. A thumbnail made of each photo at each size would take twice the time and the cache.
  */
 export const minThumbnailSize = 400;
-export const maxThumbnailSize = 1000;
+export const maxThumbnailSize = 2000;
 export const thumbnailSizeStep = 100;
 export const defaultThumbnailSize = minThumbnailSize;
 

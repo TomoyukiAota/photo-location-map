@@ -18,7 +18,9 @@
           disabled while Fast is chosen. A heading, with the button of the note at its end, over the sliders' end, then
           a row for each place: its name, and its slider with some of the sizes under it, beside the name or under it.
         -->
-        <div class="thumbnail-size" [class.thumbnail-size-disabled]="selectedQuality !== 'high'">
+        <div class="thumbnail-size"
+             [class.thumbnail-size-disabled]="selectedQuality !== 'high'"
+             [style.--thumbnail-size-intervals]="sizeIntervals">
           <div class="thumbnail-size-heading">
             <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
             <!-- What the sizes cost, in a note that the button opens and closes. -->
@@ -52,25 +54,28 @@
                 }
               </span>
               <div class="thumbnail-size-scale" [attr.data-size-place]="sizePlace.place">
-                <!-- displayWith: the size that a screen reader says on the thumb, which the sizes under the marks show. -->
-                <mat-slider class="thumbnail-size-slider"
-                            showTickMarks
-                            [min]="minSize"
-                            [max]="maxSize"
-                            [step]="sizeStep"
-                            [disabled]="selectedQuality !== 'high'"
-                            [displayWith]="sizeText">
-                  <input matSliderThumb
-                         [attr.aria-labelledby]="'thumbnail-size-label thumbnail-size-' + sizePlace.place"
-                         [ngModel]="selectedSizes[sizePlace.place]"
-                         (ngModelChange)="handleSizeChanged(sizePlace.place, $event)">
-                </mat-slider>
-                <!-- Some of the sizes, each under its mark. A screen reader has the size from the slider's own value. -->
-                <div class="thumbnail-size-ticks" aria-hidden="true">
-                  @for (tick of sizeTicks; track tick.size) {
-                    <span class="thumbnail-size-tick"
-                          [style.inset-inline-start.%]="tick.position">{{ 'settings.thumbnails.sizeTick' | t: { size: tick.size } }}</span>
-                  }
+                <div class="thumbnail-size-scroll">
+                  <div class="thumbnail-size-track">
+                    <!-- displayWith supplies the thumb's value to a screen reader. -->
+                    <mat-slider class="thumbnail-size-slider"
+                                showTickMarks
+                                [min]="minSize"
+                                [max]="maxSize"
+                                [step]="sizeStep"
+                                [disabled]="selectedQuality !== 'high'"
+                                [displayWith]="sizeText">
+                      <input matSliderThumb
+                             [attr.aria-labelledby]="'thumbnail-size-label thumbnail-size-' + sizePlace.place"
+                             [ngModel]="selectedSizes[sizePlace.place]"
+                             (ngModelChange)="handleSizeChanged(sizePlace.place, $event)">
+                    </mat-slider>
+                    <div class="thumbnail-size-ticks" aria-hidden="true">
+                      @for (tick of sizeTicks; track tick.size) {
+                        <span class="thumbnail-size-tick"
+                              [style.inset-inline-start.%]="tick.position">{{ 'settings.thumbnails.sizeTick' | t: { size: tick.size } }}</span>
+                      }
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -91,4 +96,6 @@
   </mat-radio-group>
 </div>
 <!-- The cache of the thumbnails that are made, where it is and how it is deleted, under their quality. -->
-<app-cache-settings class="thumbnail-cache"></app-cache-settings>
+@if (showCacheDetails()) {
+  <app-cache-settings class="thumbnail-cache"></app-cache-settings>
+}

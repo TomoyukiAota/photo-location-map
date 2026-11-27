@@ -6,7 +6,9 @@
     <p>{{ 'settings.cache.thereforeCached' | t }}</p>
     <p>{{ 'settings.cache.usedNextTime' | t }}</p>
   </div>
-  <div class="location-table">
+  <div class="cache-details">
+    <div class="cache-size-label">{{ 'settings.cache.size' | t }}</div>
+    <div class="cache-size-value" aria-live="polite"><bdi>{{ thumbnailCacheSize() }}</bdi></div>
     <div class="location-label">{{ 'settings.cache.location' | t }}</div>
     <div class="location-value anchor-tag-like-text" (click)="openThumbnailCacheLocation()"><bdi>{{ thumbnailCacheLocation }}</bdi></div>
   </div>

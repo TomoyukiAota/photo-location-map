@@ -6,7 +6,6 @@ import { setTimeout as delay } from 'timers/promises';
 import {
   isLastModified,
   isThumbnailJpeg,
-  maxThumbnailBytes,
   readPhotoForThumbnail,
   saveJpegPngThumbnail,
 } from '../../../src-main/thumbnail-generation/jpeg-png-thumbnail-files.js';
@@ -133,10 +132,15 @@ describe('The files of the thumbnails that the page makes of JPEG and PNG photos
     for (const value of ['2026-11-23T01:02:03Z', '2026-11-23', 'yesterday', 1, null, undefined])
       assert.strictEqual(isLastModified(value), false, String(value));
 
-    assert.strictEqual(isThumbnailJpeg(jpeg), true);
-    const tooLarge = new Uint8Array(maxThumbnailBytes + 1);
-    tooLarge.set([0xff, 0xd8, 0xff]);
-    for (const value of [new Uint8Array([0x89, 0x50, 0x4e, 0x47]), new Uint8Array([0xff, 0xd8]), tooLarge, 'a JPEG', null])
-      assert.strictEqual(isThumbnailJpeg(value), false);
+    assert.strictEqual(isThumbnailJpeg(jpeg, 400), true);
+    for (const value of [new Uint8Array([0x89, 0x50, 0x4e, 0x47]), new Uint8Array([0xff, 0xd8]), 'a JPEG', null])
+      assert.strictEqual(isThumbnailJpeg(value, 2000), false);
+
+    const largeJpeg = new Uint8Array(5 * 1024 * 1024 + 1);
+    largeJpeg.set(jpeg);
+    assert.strictEqual(isThumbnailJpeg(largeJpeg.subarray(0, 2 * 1024 * 1024), 1000), true);
+    assert.strictEqual(isThumbnailJpeg(largeJpeg.subarray(0, 2 * 1024 * 1024 + 1), 1000), false);
+    assert.strictEqual(isThumbnailJpeg(largeJpeg.subarray(0, 5 * 1024 * 1024), 2000), true);
+    assert.strictEqual(isThumbnailJpeg(largeJpeg, 2000), false);
   });
 });

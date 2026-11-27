@@ -1,6 +1,6 @@
 // TL;DR: Makes the thumbnail of a JPEG or PNG photo in the page from the bytes of its file: WebCodecs' ImageDecoder
 // decodes them, Chromium's own decoder, to a smaller size where it can, and the page encodes a JPEG of the size that
-// the settings choose, 400 to 1,000 pixels (src-shared/user-settings/thumbnail-size.ts).
+// the settings choose, 400 to 2,000 pixels (src-shared/user-settings/thumbnail-size.ts).
 // Details:
 // - From the bytes, not from an img element or a Blob of the file. An image that the page loads stays in its memory
 //   cache for the rest of the session, as an img element's did, which made the page hold 8.7 GB of 2,000 photos, and

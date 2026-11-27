@@ -63,7 +63,7 @@ ipcMain.handle(IpcConstants.JpegPngThumbnail.Save, (event, filePath: unknown, la
   assertThumbnailSize(longerSide, 'Keeping the thumbnail of a photo');
   if (!isLastModified(lastModified))
     throw new Error('Keeping the thumbnail of a photo needs the time that the photo had when it was read.');
-  if (jpeg !== null && !isThumbnailJpeg(jpeg))
+  if (jpeg !== null && !isThumbnailJpeg(jpeg, longerSide))
     throw new Error('Keeping the thumbnail of a photo needs a JPEG of a thumbnail, or null.');
   // The first thumbnail of the launch, which the page made, has the thumbnails of photos no longer there removed.
   void removeInvalidThumbnailCacheOncePerLaunch();

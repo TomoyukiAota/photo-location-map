@@ -62,7 +62,7 @@ describe('ThumbnailSettingsComponent', () => {
     expect(currentUserSettings.thumbnailQuality).toBe('high');
   });
 
-  it('has a slider for the sidebar\'s size and one for the map\'s right under High quality, from 400 to 1,000 pixels in steps of 100, at the sizes in use', async () => {
+  it('has a slider for the sidebar\'s size and one for the map\'s right under High quality, from 400 to 2,000 pixels in steps of 100, at the sizes in use', async () => {
     Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 500, mapThumbnailSize: 700 });
     await create();
 
@@ -81,7 +81,7 @@ describe('ThumbnailSettingsComponent', () => {
     const harnesses = await sliders();
     expect(harnesses.length).toBe(2);
     for (const harness of harnesses) {
-      expect([await harness.getMinValue(), await harness.getMaxValue(), await harness.getStep()]).toEqual([400, 1000, 100]);
+      expect([await harness.getMinValue(), await harness.getMaxValue(), await harness.getStep()]).toEqual([400, 2000, 100]);
       expect(await harness.isDisabled()).toBe(false);
     }
     expect(await Promise.all(harnesses.map(async harness => (await harness.getEndThumb()).getValue()))).toEqual([500, 700]);
@@ -91,7 +91,7 @@ describe('ThumbnailSettingsComponent', () => {
     await create();
     for (const place of thumbnailSizePlaces) {
       const ticks = Array.from(scale(place).querySelectorAll('.thumbnail-size-tick'), tick => tick.textContent);
-      expect(ticks).toEqual(['400 px', '600 px', '800 px', '1000 px']);
+      expect(ticks).toEqual(['400 px', '600 px', '800 px', '1000 px', '1200 px', '1400 px', '1600 px', '1800 px', '2000 px']);
       expect(scale(place).querySelector('.thumbnail-size-ticks').getAttribute('aria-hidden')).toBe('true');
     }
   });
@@ -146,15 +146,15 @@ describe('ThumbnailSettingsComponent', () => {
     const changes = changesTold();
     const [sidebar, map] = await sliders();
 
-    await (await sidebar.getEndThumb()).setValue(600);
+    await (await sidebar.getEndThumb()).setValue(2000);
     await fixture.whenStable();
-    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 600, mapThumbnailSize: 400 });
+    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 2000, mapThumbnailSize: 400 });
 
     await (await map.getEndThumb()).setValue(900);
     await fixture.whenStable();
-    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 600, mapThumbnailSize: 900 });
+    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 2000, mapThumbnailSize: 900 });
 
-    expect(scale('sidebar').querySelector('input').getAttribute('aria-valuetext')).toBe('600 pixels on the longer side');
+    expect(scale('sidebar').querySelector('input').getAttribute('aria-valuetext')).toBe('2000 pixels on the longer side');
     expect(scale('map').querySelector('input').getAttribute('aria-valuetext')).toBe('900 pixels on the longer side');
     expect([currentUserSettings.sidebarThumbnailSize, currentUserSettings.mapThumbnailSize]).toEqual([400, 400]);
   });
