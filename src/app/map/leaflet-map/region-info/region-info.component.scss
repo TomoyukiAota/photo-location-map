@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "../../../../styles/balanced-lines" as *;
 
 // The box that this is in, Leaflet's control, is styled with the map (src/styles/plm-leaflet-map/).
 
@@ -41,5 +42,23 @@
       background-color: color.adjust($enabled-button-background-color, $lightness: -10%, $space: hsl);
     }
     transition: background-color 0.2s ease;
+  }
+}
+
+:host-context(.plm-leaflet-map-controls-horizontal) {
+  min-inline-size: 0;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .plm-leaflet-map-region-info-text {
+    line-height: 1.3;
+  }
+
+  .plm-leaflet-map-region-info-select-photos-button {
+    @include balanced-lines;
+    min-block-size: 30px;
+    padding-block: 5px;
+    line-height: 1.25;
+    white-space: normal;
   }
 }

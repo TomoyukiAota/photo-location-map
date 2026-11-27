@@ -4334,28 +4334,17 @@ test('the map in full screen has the window alone, in full screen, with its cont
   const roundedBox = async element => Object.values(await element.boundingBox()).map(Math.round);
   const boxes = async () => ({ sidebar: await roundedBox(sidebar), chart: await roundedBox(chart), map: await roundedBox(mapPane) });
   const boxesBefore = await boxes();
-  // The button is in a bar of its own right above the zoom buttons, and below Leaflet-Geoman's toolbar, at the map's
-  // bottom right. In a map shorter than 460 pixels, the bar is at the left of the zoom out button instead
-  // (_plm-leaflet-map-full-screen.scss): in a window of 960 x 600 (PLM_E2E_COMPACT), and at the end of this case.
+  const twoColumns = /plm-leaflet-map-controls-two-columns/;
   const button = page.locator('.leaflet-bottom.leaflet-right .plm-leaflet-map-full-screen-button');
   await expect(button).toHaveAttribute('title', 'Full Screen');
-  expect(await button.evaluate(element => {
-    const bar = element.closest('.leaflet-control');
-    return [bar.previousElementSibling?.classList.contains('leaflet-pm-toolbar'), bar.nextElementSibling?.classList.contains('leaflet-control-zoom')];
-  })).toEqual([true, true]);
   const buttonBar = page.locator('.plm-leaflet-map-full-screen');
   const zoomBar = page.locator('.leaflet-control-zoom');
-  // Each gives the gaps that its place has, 10 pixels and none, from the zoom buttons' bar.
+  // The full-screen button stays above the zoom buttons as that column moves.
   const aboveZoom = async () => {
     const [bar, zoom] = [await buttonBar.boundingBox(), await zoomBar.boundingBox()];
     return [Math.round(zoom.y - (bar.y + bar.height)), Math.round(zoom.x + zoom.width - (bar.x + bar.width))];
   };
-  const besideZoomOut = async () => {
-    const [bar, zoom] = [await buttonBar.boundingBox(), await zoomBar.boundingBox()];
-    return [Math.round(zoom.x - (bar.x + bar.width)), Math.round(bar.y + bar.height - (zoom.y + zoom.height))];
-  };
-  const inItsPlace = async () => (await mapPane.boundingBox()).height < 460 ? besideZoomOut() : aboveZoom();
-  expect(await inItsPlace()).toEqual([10, 0]);
+  await expect.poll(aboveZoom).toEqual([10, 0]);
 
   // The map takes the window, but for the status bars at its bottom, and Leaflet fits it.
   await button.click();
@@ -4430,23 +4419,175 @@ test('the map in full screen has the window alone, in full screen, with its cont
   await expect(button).toHaveAttribute('title', 'Full Screen');
   expect(await viewMenuItemChecked()).toBe(false);
 
-  // In a map too short for the bar above the zoom buttons, the bar is at the left of the zoom out button, and the layers
-  // button at the top right leaves Leaflet-Geoman's first button free. In full screen, the map is tall enough again.
-  expect(await inItsPlace()).toEqual([10, 0]);
-  await app.evaluate(({ BrowserWindow }) => {
-    const window = BrowserWindow.getAllWindows()[0];
-    window.setContentSize(window.getContentSize()[0], 600);
-  });
-  await expect.poll(async () => (await mapPane.boundingBox()).height).toBeLessThan(460);
-  await expect.poll(besideZoomOut).toEqual([10, 0]);
+  // The chart leaves the map room for two columns in this window. In full screen, the controls fit in one again.
+  await inTaskOfItsOwn(await app.browserWindow(page), window => window.setContentSize(window.getContentSize()[0], 600));
+  await expect(mapPane).toHaveClass(twoColumns);
   await page.getByTitle('Set Region by Rectangle', { exact: true }).click({ trial: true });
   await button.click();
   await expect(sidebar).toBeHidden();
-  await expect.poll(async () => (await mapPane.boundingBox()).height).toBeGreaterThanOrEqual(460);
+  await expect(mapPane).not.toHaveClass(/plm-leaflet-map-controls-(two-columns|horizontal)/);
   await expect.poll(aboveZoom).toEqual([10, 0]);
   await page.keyboard.press('Escape');
   await expect(sidebar).toBeVisible();
-  await expect.poll(besideZoomOut).toEqual([10, 0]);
+  await expect(mapPane).toHaveClass(twoColumns);
+});
+test('map controls use two columns and then a horizontal Geoman toolbar only as their height runs out', async () => {
+  await dismissWelcome();
+  const mapPane = page.locator('#plm-leaflet-map');
+  const toolbar = mapPane.locator('.leaflet-pm-toolbar');
+  const modes = /plm-leaflet-map-controls-(two-columns|horizontal)/;
+  const twoColumns = /plm-leaflet-map-controls-two-columns/;
+  const horizontal = /plm-leaflet-map-controls-horizontal/;
+  const aboveScale = /plm-leaflet-map-controls-above-scale/;
+  await expect(toolbar).toBeVisible();
+  // Size the map alone so the test can approach both boundaries a few pixels at a time on each platform.
+  const setMapHeight = height => mapPane.evaluate((map, height) => { map.style.height = `${height}px`; }, height);
+  const layout = () => mapPane.evaluate(map => {
+    const box = selector => {
+      const { left, right, top, bottom } = map.querySelector(selector).getBoundingClientRect();
+      return { left, right, top, bottom };
+    };
+    return {
+      height: map.getBoundingClientRect().height,
+      layers: box('.leaflet-control-layers-toggle'),
+      geoman: box('.leaflet-pm-toolbar'),
+      full: box('.plm-leaflet-map-full-screen'),
+      zoom: box('.leaflet-control-zoom'),
+      scale: box('.leaflet-control-scale'),
+    };
+  });
+
+  await setMapHeight(500);
+  await expect(mapPane).not.toHaveClass(modes);
+  const normal = await layout();
+  expect(normal.geoman.right).toBeCloseTo(normal.zoom.right, 0);
+  expect(normal.full.top - normal.geoman.bottom).toBeCloseTo(10, 0);
+  expect(normal.zoom.top - normal.full.bottom).toBeCloseTo(10, 0);
+  const oneColumnHeight = normal.height + normal.layers.bottom - normal.geoman.top + 10;
+
+  await setMapHeight(Math.ceil(oneColumnHeight) + 2);
+  await expect(mapPane).not.toHaveClass(modes);
+  await setMapHeight(Math.floor(oneColumnHeight) - 2);
+  await expect(mapPane).toHaveClass(twoColumns);
+  const split = await layout();
+  expect(split.geoman.left - split.zoom.right).toBeCloseTo(10, 0);
+  expect(split.zoom.bottom).toBeCloseTo(split.geoman.bottom, 0);
+  expect(split.zoom.top - split.full.bottom).toBeCloseTo(10, 0);
+  const twoColumnHeight = split.height + split.layers.bottom - Math.min(split.geoman.top, split.full.top) + 10;
+
+  // Remove Region's action covers the left column where it overlaps the zoom-out button.
+  const remove = toolbar.getByTitle('Remove Region', { exact: true });
+  await remove.locator('.leaflet-buttons-control-button').click();
+  const finish = remove.locator('.leaflet-pm-action');
+  await expect(finish).toBeVisible();
+  expect(await finish.evaluate(action => {
+    const zoomOut = document.querySelector('.leaflet-control-zoom-out').getBoundingClientRect();
+    const rect = action.getBoundingClientRect();
+    const left = Math.max(rect.left, zoomOut.left), right = Math.min(rect.right, zoomOut.right);
+    const top = Math.max(rect.top, zoomOut.top), bottom = Math.min(rect.bottom, zoomOut.bottom);
+    return left < right && top < bottom &&
+      action.contains(document.elementFromPoint((left + right) / 2, (top + bottom) / 2));
+  })).toBe(true);
+  await finish.click();
+  await expect(finish).toBeHidden();
+  await mapPane.locator('.leaflet-control-zoom-out').click({ trial: true });
+
+  await setMapHeight(Math.ceil(twoColumnHeight) + 2);
+  await expect(mapPane).toHaveClass(twoColumns);
+  await setMapHeight(Math.floor(twoColumnHeight) - 2);
+  await expect(mapPane).toHaveClass(horizontal);
+  const row = await layout();
+  expect(row.scale.left - row.geoman.right).toBeCloseTo(10, 0);
+  expect(row.geoman.bottom).toBeCloseTo(row.scale.bottom, 0);
+  expect(row.zoom.top - row.full.bottom).toBeCloseTo(10, 0);
+  const buttons = toolbar.locator('.leaflet-buttons-control-button');
+  const firstButton = await buttons.first().boundingBox();
+  const lastButton = await buttons.last().boundingBox();
+  expect(firstButton.y).toBeCloseTo(lastButton.y, 0);
+  expect(firstButton.x + firstButton.width).toBeLessThan(lastButton.x);
+  await remove.locator('.leaflet-buttons-control-button').click();
+  await expect(finish).toBeVisible();
+  const action = await finish.boundingBox();
+  expect(action.y + action.height).toBeLessThanOrEqual(lastButton.y + 1);
+  await finish.click();
+  await expect(finish).toBeHidden();
+
+  // Region information goes above the toolbar when a drawn region would otherwise put it in the toolbar's row.
+  const rect = toolbar.getByTitle('Set Region by Rectangle', { exact: true });
+  await rect.locator('.leaflet-buttons-control-button').click();
+  const mapBox = await mapPane.boundingBox();
+  await page.mouse.click(mapBox.x + mapBox.width / 3, mapBox.y + mapBox.height / 3);
+  await page.mouse.move(mapBox.x + mapBox.width / 2, mapBox.y + mapBox.height / 2);
+  await page.mouse.click(mapBox.x + mapBox.width / 2, mapBox.y + mapBox.height / 2);
+  const regionInfo = mapPane.locator('.plm-leaflet-map-region-info');
+  await expect(regionInfo).toBeVisible();
+  await expect.poll(async () => {
+    const [info, tools] = await Promise.all([regionInfo.boundingBox(), toolbar.boundingBox()]);
+    return Math.round(tools.y - (info.y + info.height));
+  }).toBe(10);
+
+  // The region panel can wrap at this width to leave room for the navigation beside it.
+  await mapPane.evaluate(map => { map.style.width = '350px'; });
+  await setMapHeight(270);
+  await expect(mapPane).toHaveClass(horizontal);
+  await expect(mapPane).not.toHaveClass(aboveScale);
+  await expect.poll(async () => {
+    const [info, { full, zoom }] = await Promise.all([regionInfo.boundingBox(), layout()]);
+    return info.x + info.width <= Math.min(full.left, zoom.left) - 9;
+  }).toBe(true);
+  await regionInfo.click({ trial: true });
+  await mapPane.locator('.leaflet-control-zoom-in').click({ trial: true });
+  await mapPane.locator('.leaflet-control-zoom-out').click({ trial: true });
+
+  // A narrow map cannot fit the toolbar beside the scale. It gets its own row, with working actions.
+  await mapPane.evaluate(map => { map.style.width = '200px'; });
+  await setMapHeight(280);
+  await expect(mapPane).toHaveClass(aboveScale);
+  await expect(mapPane).toHaveClass(horizontal);
+  const narrow = await layout();
+  expect(narrow.scale.top - narrow.geoman.bottom).toBeCloseTo(10, 0);
+  expect(narrow.geoman.top - narrow.zoom.bottom).toBeCloseTo(10, 0);
+  const narrowMap = await mapPane.boundingBox();
+  const narrowRowTop = (await buttons.first().boundingBox()).y;
+  for (const button of await buttons.all()) {
+    const { x, y, width } = await button.boundingBox();
+    expect(x).toBeGreaterThanOrEqual(narrowMap.x);
+    expect(x + width).toBeLessThanOrEqual(narrowMap.x + narrowMap.width);
+    expect(y).toBeCloseTo(narrowRowTop, 0);
+  }
+  await remove.locator('.leaflet-buttons-control-button').click();
+  await expect(finish).toBeVisible();
+  const narrowAction = await finish.boundingBox();
+  expect(narrowAction.x).toBeGreaterThanOrEqual(narrow.geoman.left);
+  expect(narrowAction.x + narrowAction.width).toBeLessThanOrEqual(narrow.geoman.right);
+  expect(narrowAction.y + narrowAction.height).toBeLessThanOrEqual(narrowRowTop + 1);
+  await finish.click();
+
+  // There is enough room beside the layers button when there is no longer enough underneath it.
+  await setMapHeight(250);
+  await expect.poll(async () => {
+    const { full, layers } = await layout();
+    return full.right <= layers.left - 9;
+  }).toBe(true);
+  await mapPane.locator('.plm-leaflet-map-full-screen-button').click({ trial: true });
+
+  // There is room to put fullscreen beside zoom when the map cannot fit them in a column.
+  await mapPane.evaluate(map => { map.style.width = '500px'; });
+  await setMapHeight(120);
+  await expect(mapPane).not.toHaveClass(aboveScale);
+  await expect.poll(async () => {
+    const { full, zoom } = await layout();
+    return full.right <= zoom.left - 9 && Math.abs(full.bottom - zoom.bottom) <= 1;
+  }).toBe(true);
+  await mapPane.locator('.plm-leaflet-map-full-screen-button').click({ trial: true });
+  await mapPane.locator('.leaflet-control-zoom-out').click({ trial: true });
+
+  await mapPane.evaluate(map => { map.style.removeProperty('width'); });
+  await expect(mapPane).not.toHaveClass(aboveScale);
+  await setMapHeight(Math.ceil(twoColumnHeight) + 2);
+  await expect(mapPane).toHaveClass(twoColumns);
+  await setMapHeight(Math.ceil(oneColumnHeight) + 2);
+  await expect(mapPane).not.toHaveClass(modes);
 });
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
