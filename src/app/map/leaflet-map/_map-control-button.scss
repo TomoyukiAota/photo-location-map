@@ -1,0 +1,19 @@
+// Match Leaflet's zoom buttons and use a native button for actions implemented by the app.
+@mixin map-control-button {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  color: #000000;
+  background-color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f4f4f4;
+  }
+}
