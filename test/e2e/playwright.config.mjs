@@ -15,6 +15,10 @@ const [shardCurrent, shardTotal] = (process.env.PLM_E2E_SHARD ?? '').split('/').
 export default defineConfig({
   testDir: '.', testMatch: '*.spec.mjs', workers: 1, fullyParallel: true, timeout: 60000,
   shard: shardTotal ? { current: shardCurrent, total: shardTotal } : null,
+  // In CI, which sets CI, a test.only left in the suite fails the run, rather than running that case alone and passing.
+  // Vitest and Electron-Mocha fail on .only in CI too (MOCHA_OPTIONS in .github/workflows/ci-on-*.yml). Locally,
+  // test.only works.
+  forbidOnly: !!process.env.CI,
   outputDir: '../../.upgrade-artifacts/e2e-results',
   snapshotPathTemplate: '{testDir}/snapshots/{arg}{ext}',
   updateSnapshots: 'none',

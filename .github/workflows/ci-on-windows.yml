@@ -20,6 +20,12 @@ concurrency:
   group: ${{ github.ref == 'refs/heads/main' && github.run_id || format('CI on Windows {0} {1}', github.event_name, github.event.pull_request.number || github.ref_name) }}
   cancel-in-progress: true
 
+# A .only left in an Electron-Mocha test fails the run, rather than running that test alone and passing. Vitest fails
+# on one by itself when CI is set, and Playwright with forbidOnly (test/e2e/playwright.config.mjs). Mocha takes the
+# option from MOCHA_OPTIONS ("Environment Variables" in its documentation, "Configuring Mocha"). Locally, .only works.
+env:
+  MOCHA_OPTIONS: --forbid-only
+
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
