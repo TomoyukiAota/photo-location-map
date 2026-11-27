@@ -16,10 +16,11 @@ export interface ExifReadOutput {
 
 /**
  * What the main process read from one photo. A failure is described in `error`, as an IPC rejection would keep only
- * its message anyway, and the renderer handles each failure as it did when it called exifr itself:
+ * its message anyway, and the renderer handles each failure as it did when it called exifr itself, but the thumbnail's:
  * - 'failed': parsing threw; the photo has no Exif.
  * - 'empty': the photo has no EXIF; it has no Exif.
- * - 'ok': parsed. The embedded thumbnail was then extracted, or `thumbnailError` says why it could not be. `frame` is
+ * - 'ok': parsed. The embedded thumbnail was then extracted, or `thumbnailError` says why it could not be, and the
+ *   photo has the rest of its Exif without it (createExifFromExifrParseOutput in fetch-exif-using-exifr.ts). `frame` is
  *   the size of a JPEG's frame, its pixels as they are stored, before the orientation turns them, which the EXIF data
  *   may not give as it is (jpegFrameSize in src-shared/jpeg/jpeg-segments.ts); null for another file, or one whose
  *   frame header was not found.

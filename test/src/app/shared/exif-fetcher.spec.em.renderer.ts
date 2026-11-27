@@ -12,6 +12,8 @@ import { repositoryPath } from '../../../test-util/repository.js';
 import { jpegWithCutShortExifThumbnail } from '../../../test-util/jpeg-with-cut-short-exif-thumbnail.mjs';
 import { jpegWithEmptyGpsValues } from '../../../test-util/jpeg-with-empty-gps-values.mjs';
 import { jpegWithSwappedExifSize } from '../../../test-util/jpeg-with-swapped-exif-size.mjs';
+import { jpegWithThumbnailLinkPastExif } from '../../../test-util/jpeg-with-thumbnail-link-past-exif.mjs';
+import { tiffWithDirectoriesAfterPixels } from '../../../test-util/tiff-with-directories-after-pixels.mjs';
 
 const testResourceDirectory = repositoryPath('test', 'test-resources');
 
@@ -68,6 +70,41 @@ describe('fetchExifUsingExifr', () => {
     fs.writeFileSync(filePath, source);
     assert.deepStrictEqual({ ...(await fetchExifUsingExifr(filePath)).thumbnail.dimensions }, { width: 160, height: 120 });
     assert.deepStrictEqual(exifReadFailures.reasons, []);
+  });
+
+  // exifr reads the directories of a TIFF file where they are when it parses the EXIF data, but looks for them in the
+  // first 64 KB of the file when it extracts the thumbnail, and throws for a file whose directories lie past them, as
+  // libtiff writes a file, after its pixels. The photo has its location and its date all the same.
+  it('should give the EXIF data of a TIFF file whose directories lie past its first 64 KB, without a thumbnail, counted by why', async () => {
+    const filePath = path.join(directory, 'Trip to Kyoto 0004.tif');
+    fs.writeFileSync(filePath, tiffWithDirectoriesAfterPixels(34.688075, 135.195861, '2024:04:01 09:30:00'));
+    exifReadFailures.clear();
+
+    const exif = await fetchExifUsingExifr(filePath);
+    assert(exif !== null);
+    assert(nearlyEqual(exif.gpsInfo.latLng.latitude, 34.688075, 1.0e-5));
+    assert(nearlyEqual(exif.gpsInfo.latLng.longitude, 135.195861, 1.0e-5));
+    assert(exif.dateTimeOriginal);
+    assert.strictEqual(exif.thumbnail, undefined);
+    assert.deepStrictEqual(exifReadFailures.reasons,
+      [{ reason: 'extract-failed: RangeError: Offset is outside the bounds of the DataView', files: 1 }]);
+  });
+
+  // exifr throws so too for a JPEG whose EXIF data link to the thumbnail's IFD past their end.
+  it('should give the EXIF data of a JPEG whose EXIF data link to the thumbnail past their end, without a thumbnail, counted by why', async () => {
+    const filePath = path.join(directory, 'Trip to Kyoto 0003.JPG');
+    const source = fs.readFileSync(path.join(testResourceDirectory, 'actual-photos', 'Kobe', 'IMG_4676.JPG'));
+    fs.writeFileSync(filePath, jpegWithThumbnailLinkPastExif(source));
+    exifReadFailures.clear();
+
+    const exif = await fetchExifUsingExifr(filePath);
+    assert(exif !== null);
+    assert(nearlyEqual(exif.gpsInfo.latLng.latitude, 34.688075, 1.0e-5));
+    assert(exif.dateTimeOriginal);
+    assert.strictEqual(exif.cameraMake, 'Apple');
+    assert.strictEqual(exif.thumbnail, undefined);
+    assert.deepStrictEqual(exifReadFailures.reasons,
+      [{ reason: 'extract-failed: RangeError: Offset is outside the bounds of the DataView', files: 1 }]);
   });
 
   it('should count a file that cannot be read by why, without its name', async () => {

@@ -4,7 +4,7 @@
 import { withExifReplaced } from './jpeg-with-empty-gps-values.mjs';
 
 /** Writes a coordinate as the three RATIONALs of EXIF: degrees, minutes and seconds (to 1/100). */
-function writeDegreesMinutesSeconds(tiff, offset, coordinate) {
+export function writeDegreesMinutesSeconds(tiff, offset, coordinate) {
   const degrees = Math.floor(coordinate);
   const minutes = Math.floor((coordinate - degrees) * 60);
   const hundredthsOfSeconds = Math.round(((coordinate - degrees) * 60 - minutes) * 60 * 100);

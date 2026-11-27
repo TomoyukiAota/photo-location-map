@@ -73,7 +73,7 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrRead | null
 
 /**
  * The app's Exif of what the main process read with exifr: the date, the size as shown, the location, the camera's make
- * and the thumbnail. Null when nothing was read; throws when the thumbnail could not be extracted.
+ * and the thumbnail. Null when nothing was read.
  */
 async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: string): Promise<Exif> {
   if (!read)
@@ -105,9 +105,21 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
     exif.cameraMake = exifrParseOutput.Make.trim();
   }
 
-  // Extracting the thumbnail failed: the photo has no Exif, as when the renderer extracted it and exifr threw.
-  if (read.thumbnailError)
-    throw new ExifReadError('thumbnail-failed', read.thumbnailError);
+  // TL;DR: A thumbnail that exifr could not extract leaves the photo without a thumbnail of its EXIF data, as a photo
+  // whose EXIF data have none, and with the rest of them, its date and its location among them.
+  // Details:
+  // - The photo had no Exif at all, as when the renderer extracted the thumbnail and exifr threw, so a photo with a
+  //   location was not on the map, though exifr had read the location.
+  // - exifr 7.1.3 throws "RangeError: Offset is outside the bounds of the DataView" for the thumbnail of a TIFF file
+  //   whose directories lie past its first 64 KB, as libtiff writes them, after the pixels: it reads the directories
+  //   where they are when it parses the file, but looks for them in the first 64 KB when it extracts the thumbnail. It
+  //   throws so too for a JPEG whose EXIF data link to the thumbnail past their end.
+  if (read.thumbnailError) {
+    Logger.info(`[using exifr] The thumbnail of "${filePath}" could not be extracted, so the photo is shown as one without it.`,
+      read.thumbnailError);
+    exifReadFailures.add('extract-failed', read.thumbnailError);
+    return exif;
+  }
 
   const thumbnailBuffer = read.thumbnail;
   if (thumbnailBuffer) {

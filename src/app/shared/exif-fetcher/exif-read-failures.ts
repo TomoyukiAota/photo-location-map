@@ -5,7 +5,9 @@ import { FailureReasons } from '../../../../src-shared/analytics/failure-reasons
  * "Opened Folder: EXIF Read Failed", one event per reason with how many files failed for it. Until then, such a photo
  * only counted as one without EXIF data. The statuses:
  * - read-failed: exifr could not parse the file in the main process, or the main process was not asked;
- * - thumbnail-failed: exifr could not extract the embedded thumbnail, so the photo has no EXIF data;
+ * - extract-failed: exifr could not extract the embedded thumbnail, so the photo has no thumbnail of its EXIF data, and
+ *   has the rest of them (createExifFromExifrParseOutput() in using-exifr/fetch-exif-using-exifr.ts). Before this
+ *   status, such a photo had no EXIF data at all, and was recorded as thumbnail-failed;
  * - exif-failed: the app could not make its model of what was read;
  * - rotate-failed: the embedded thumbnail could not be turned on a canvas, so the photo has no thumbnail of its EXIF
  *   data. Only a thumbnail that is not a JPEG of a frame that the page decodes is turned so; the page finds that
@@ -17,7 +19,7 @@ export const exifReadFailures = new FailureReasons('Opened Folder Info', 'Opened
 
 /** What failed while a photo's EXIF data was read, with the status of exifReadFailures and what the main process said. */
 export class ExifReadError extends Error {
-  constructor(public readonly status: 'read-failed' | 'thumbnail-failed', public readonly description: string) {
+  constructor(public readonly status: 'read-failed', public readonly description: string) {
     super(description);
     this.name = 'ExifReadError';
   }
