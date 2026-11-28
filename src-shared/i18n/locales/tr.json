@@ -120,6 +120,7 @@
     "showMorePhotos": "Daha fazla fotoğraf göster",
     "fullScreen": "Tam ekran",
     "exitFullScreen": "Tam ekrandan çık",
+    "photoRoute": "Rota",
     "photosInRegions": "Bölgelerdeki fotoğraflar: {{count}}",
     "selectPhotos": "Fotoğrafları seç",
     "setRegionByRectangle": "Dikdörtgenle bölge belirle",

@@ -120,6 +120,7 @@
     "showMorePhotos": "Tunjukkan lebih banyak foto",
     "fullScreen": "Skrin penuh",
     "exitFullScreen": "Keluar dari skrin penuh",
+    "photoRoute": "Laluan",
     "photosInRegions": "Foto dalam kawasan: {{count}}",
     "selectPhotos": "Pilih foto",
     "setRegionByRectangle": "Tetapkan kawasan dengan segi empat tepat",

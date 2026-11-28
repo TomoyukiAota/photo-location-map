@@ -120,6 +120,7 @@
     "showMorePhotos": "Erakutsi argazki gehiago",
     "fullScreen": "Pantaila osoa",
     "exitFullScreen": "Irten pantaila osotik",
+    "photoRoute": "Ibilbidea",
     "photosInRegions": "Eskualdeetako argazkiak: {{count}}",
     "selectPhotos": "Hautatu argazkiak",
     "setRegionByRectangle": "Zehaztu eskualdea laukizuzen batekin",

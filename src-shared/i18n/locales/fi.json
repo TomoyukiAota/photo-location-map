@@ -120,6 +120,7 @@
     "showMorePhotos": "Näytä lisää kuvia",
     "fullScreen": "Koko näyttö",
     "exitFullScreen": "Poistu koko näytön tilasta",
+    "photoRoute": "Reitti",
     "photosInRegions": "Kuvia alueilla: {{count}}",
     "selectPhotos": "Valitse kuvat",
     "setRegionByRectangle": "Määritä alue suorakulmiolla",

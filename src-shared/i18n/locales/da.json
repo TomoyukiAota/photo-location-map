@@ -120,6 +120,7 @@
     "showMorePhotos": "Vis flere fotos",
     "fullScreen": "Fuld skærm",
     "exitFullScreen": "Afslut fuld skærm",
+    "photoRoute": "Rute",
     "photosInRegions": "Billeder i områderne: {{count}}",
     "selectPhotos": "Vælg billeder",
     "setRegionByRectangle": "Angiv et område med et rektangel",

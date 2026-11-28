@@ -120,6 +120,7 @@
     "showMorePhotos": "Pokaż więcej zdjęć",
     "fullScreen": "Pełny ekran",
     "exitFullScreen": "Zamknij pełny ekran",
+    "photoRoute": "Trasa",
     "photosInRegions": "Zdjęcia w obszarach: {{count}}",
     "selectPhotos": "Zaznacz zdjęcia",
     "setRegionByRectangle": "Wyznacz obszar prostokątem",

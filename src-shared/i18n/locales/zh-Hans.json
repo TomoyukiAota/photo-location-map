@@ -120,6 +120,7 @@
     "showMorePhotos": "显示更多照片",
     "fullScreen": "全屏",
     "exitFullScreen": "退出全屏",
+    "photoRoute": "路线",
     "photosInRegions": "区域内的照片：{{count}} 张",
     "selectPhotos": "选择照片",
     "setRegionByRectangle": "用矩形设置区域",

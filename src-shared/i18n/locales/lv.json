@@ -120,6 +120,7 @@
     "showMorePhotos": "Rādīt vairāk fotoattēlu",
     "fullScreen": "Pilnekrāna režīms",
     "exitFullScreen": "Iziet no pilnekrāna režīma",
+    "photoRoute": "Maršruts",
     "photosInRegions": "Fotoattēli apgabalos: {{count}}",
     "selectPhotos": "Atlasīt fotoattēlus",
     "setRegionByRectangle": "Iestatīt apgabalu ar taisnstūri",

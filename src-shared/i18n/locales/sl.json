@@ -120,6 +120,7 @@
     "showMorePhotos": "Prikaži več fotografij",
     "fullScreen": "Celozaslonski način",
     "exitFullScreen": "Izhod iz celozaslonskega načina",
+    "photoRoute": "Pot",
     "photosInRegions": "Fotografije na območjih: {{count}}",
     "selectPhotos": "Izberi fotografije",
     "setRegionByRectangle": "Določi območje s pravokotnikom",

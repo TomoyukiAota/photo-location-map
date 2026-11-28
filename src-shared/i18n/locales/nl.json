@@ -120,6 +120,7 @@
     "showMorePhotos": "Meer foto's tonen",
     "fullScreen": "Schermvullende weergave",
     "exitFullScreen": "Schermvullende weergave sluiten",
+    "photoRoute": "Route",
     "photosInRegions": "Foto’s in de gebieden: {{count}}",
     "selectPhotos": "Selecteer foto’s",
     "setRegionByRectangle": "Stel een gebied in met een rechthoek",

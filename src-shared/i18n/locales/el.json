@@ -120,6 +120,7 @@
     "showMorePhotos": "Εμφάνιση περισσότερων φωτογραφιών",
     "fullScreen": "Πλήρης οθόνη",
     "exitFullScreen": "Έξοδος από πλήρη οθόνη",
+    "photoRoute": "Διαδρομή",
     "photosInRegions": "Φωτογραφίες στις περιοχές: {{count}}",
     "selectPhotos": "Επιλογή φωτογραφιών",
     "setRegionByRectangle": "Ορισμός περιοχής με ορθογώνιο",

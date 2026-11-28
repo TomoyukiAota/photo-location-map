@@ -120,6 +120,7 @@
     "showMorePhotos": "Mostra més fotos",
     "fullScreen": "Pantalla completa",
     "exitFullScreen": "Surt de la pantalla completa",
+    "photoRoute": "Ruta",
     "photosInRegions": "Fotos a les regions: {{count}}",
     "selectPhotos": "Selecciona les fotos",
     "setRegionByRectangle": "Defineix una regió amb un rectangle",

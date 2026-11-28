@@ -120,6 +120,7 @@
     "showMorePhotos": "แสดงรูปภาพเพิ่มเติม",
     "fullScreen": "เต็มหน้าจอ",
     "exitFullScreen": "ออกจากโหมดเต็มหน้าจอ",
+    "photoRoute": "เส้นทาง",
     "photosInRegions": "รูปภาพในพื้นที่: {{count}}",
     "selectPhotos": "เลือกรูปภาพ",
     "setRegionByRectangle": "กำหนดพื้นที่ด้วยสี่เหลี่ยมผืนผ้า",

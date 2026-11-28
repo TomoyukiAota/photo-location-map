@@ -120,6 +120,7 @@
     "showMorePhotos": "Показати більше фотографій",
     "fullScreen": "Повноекранний режим",
     "exitFullScreen": "Вийти з повноекранного режиму",
+    "photoRoute": "Маршрут",
     "photosInRegions": "Фотографій в областях: {{count}}",
     "selectPhotos": "Вибрати фотографії",
     "setRegionByRectangle": "Задати область прямокутником",

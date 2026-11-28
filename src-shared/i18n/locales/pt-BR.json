@@ -120,6 +120,7 @@
     "showMorePhotos": "Mostrar mais fotos",
     "fullScreen": "Tela cheia",
     "exitFullScreen": "Sair da tela cheia",
+    "photoRoute": "Rota",
     "photosInRegions": "Fotos nas áreas: {{count}}",
     "selectPhotos": "Selecionar fotos",
     "setRegionByRectangle": "Definir uma área com um retângulo",

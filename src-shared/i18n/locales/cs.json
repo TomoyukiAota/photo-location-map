@@ -120,6 +120,7 @@
     "showMorePhotos": "Zobrazit další fotografie",
     "fullScreen": "Celá obrazovka",
     "exitFullScreen": "Ukončit režim celé obrazovky",
+    "photoRoute": "Trasa",
     "photosInRegions": "Fotky v oblastech: {{count}}",
     "selectPhotos": "Vybrat fotky",
     "setRegionByRectangle": "Určit oblast obdélníkem",

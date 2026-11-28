@@ -120,6 +120,7 @@
     "showMorePhotos": "Rodyti daugiau nuotraukų",
     "fullScreen": "Visas ekranas",
     "exitFullScreen": "Išeiti iš viso ekrano režimo",
+    "photoRoute": "Maršrutas",
     "photosInRegions": "Nuotraukos srityse: {{count}}",
     "selectPhotos": "Pasirinkti nuotraukas",
     "setRegionByRectangle": "Nustatyti sritį stačiakampiu",

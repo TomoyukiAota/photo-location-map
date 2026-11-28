@@ -120,6 +120,7 @@
     "showMorePhotos": "عرض المزيد من الصور",
     "fullScreen": "ملء الشاشة",
     "exitFullScreen": "الخروج من ملء الشاشة",
+    "photoRoute": "المسار",
     "photosInRegions": "الصور في المناطق: {{count}}",
     "selectPhotos": "تحديد الصور",
     "setRegionByRectangle": "تعيين منطقة بمستطيل",

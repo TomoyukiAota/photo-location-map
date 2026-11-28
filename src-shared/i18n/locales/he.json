@@ -120,6 +120,7 @@
     "showMorePhotos": "הצגת תמונות נוספות",
     "fullScreen": "מסך מלא",
     "exitFullScreen": "יציאה ממסך מלא",
+    "photoRoute": "מסלול",
     "photosInRegions": "תמונות באזורים: {{count}}",
     "selectPhotos": "בחירת תמונות",
     "setRegionByRectangle": "הגדרת אזור באמצעות מלבן",
