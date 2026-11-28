@@ -1,5 +1,4 @@
 @use "../settings-styles" as *;
-@use "../../../styles/scrollbar" as *;
 
 .setting-title {
   font-size: $setting-title-font-size;
@@ -44,13 +43,11 @@
 // The heading over a row for each place, in a column as wide as the rows, or as the room where there is less. The rows
 // are a little apart, so that the name of a row on two lines is nearer its own slider than the sizes above it.
 .thumbnail-size {
-  --thumbnail-size-step-width: 39px;
   --thumbnail-size-track-inset: 3px;
   --thumbnail-size-label-room: 25px;
-  --thumbnail-size-track-width: calc(var(--thumbnail-size-intervals) * var(--thumbnail-size-step-width)
-    + 2 * var(--thumbnail-size-track-inset));
   display: grid;
-  grid-template-columns: fit-content(100%);
+  grid-template-columns: minmax(0, 1fr);
+  max-inline-size: 700px;
   row-gap: 8px;
   margin-inline-start: 44px;
   font-family: var(--mat-radio-label-text-font);
@@ -85,10 +82,6 @@
 .thumbnail-size-place-cell {
   display: grid;
   margin-top: 14px;
-  // The scrolling track can pass under the end of the place's name.
-  position: relative;
-  z-index: 1;
-  background: var(--mat-dialog-container-color);
 
   > * {
     grid-area: 1 / 1;
@@ -99,62 +92,95 @@
   visibility: hidden;
 }
 
-// The old 240px slider and the 24px after it still decide when the row wraps. Give the extension the remaining space
-// on that line and scroll only the scale when it does not fit.
+// The name and scale sit together when there is room for the 264px scale. Below that, the scale takes its own line,
+// with room past the slider for the last label.
 .thumbnail-size-scale {
-  flex: 1 1 264px;
-  min-inline-size: 0;
-  max-inline-size: calc(var(--thumbnail-size-track-width) + var(--thumbnail-size-label-room));
-  // The 48px control and 6px below the labels keep their positions. The scrollbar takes the 8px gap after the row.
-  block-size: 54px;
-}
-
-// Start the scrolling area before the slider to keep the first label centered under its mark. The padding on the
-// track also leaves room for either end's label and thumb.
-.thumbnail-size-scroll {
-  @include scrollbar-in-view(8px);
-  margin-inline-start: calc(-1 * var(--thumbnail-size-label-room));
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-}
-
-.thumbnail-size-track {
   position: relative;
-  inline-size: max-content;
-  padding-inline: var(--thumbnail-size-label-room);
+  flex: 1 1 264px;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: calc(580px + var(--thumbnail-size-label-room));
+  padding-inline-end: var(--thumbnail-size-label-room);
   padding-block-end: 6px;
+  container-type: inline-size;
 }
 
 .thumbnail-size-slider {
   display: block;
-  inline-size: var(--thumbnail-size-track-width);
+  inline-size: 100%;
+  min-inline-size: 0;
   margin: 0;
 }
 
-// TL;DR: The sizes under the marks, from the first mark to the last.
-// Details: Angular Material 22 puts the first and the last marks 3 pixels in from the ends of a slider without
-// margins, and the thumb reaches 10 pixels below the middle of the slider's 48.
+// Draw the marks over the track so their size and the labels below them change together. Angular Material puts its
+// marks 3px in from the ends, at the center of the 48px slider. The mark under the thumb is covered by it.
 .thumbnail-size-ticks {
   position: absolute;
-  inset-inline: calc(var(--thumbnail-size-label-room) + var(--thumbnail-size-track-inset));
-  top: 36px;
+  inset-inline: var(--thumbnail-size-track-inset) calc(var(--thumbnail-size-track-inset) + var(--thumbnail-size-label-room));
+  inset-block-start: 24px;
   font-size: 12px;
   line-height: 16px;
+  pointer-events: none;
 }
 
-// A size, centered under its mark in either direction: an element as wide as nothing, out of which its text stands as
-// far to each side.
-.thumbnail-size-tick {
+.thumbnail-size-mark {
+  --thumbnail-size-dot: var(--mat-slider-with-tick-marks-container-size, 2px);
+  --thumbnail-size-dot-color: var(--mat-slider-with-tick-marks-inactive-container-color);
+  --thumbnail-size-dot-opacity: var(--mat-slider-with-tick-marks-inactive-container-opacity);
   position: absolute;
-  top: 0;
-  width: 0;
   display: flex;
   justify-content: center;
+  inline-size: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: calc(var(--thumbnail-size-dot) / -2);
+    inline-size: var(--thumbnail-size-dot);
+    block-size: var(--thumbnail-size-dot);
+    border-radius: 50%;
+    background: var(--thumbnail-size-dot-color);
+    opacity: var(--thumbnail-size-dot-opacity);
+  }
+}
+
+.thumbnail-size-mark-labeled {
+  --thumbnail-size-dot: 5px;
+}
+
+.thumbnail-size-mark-active {
+  --thumbnail-size-dot-color: var(--mat-slider-with-tick-marks-active-container-color);
+  --thumbnail-size-dot-opacity: var(--mat-slider-with-tick-marks-active-container-opacity);
+}
+
+.thumbnail-size-mark-selected::before {
+  visibility: hidden;
+}
+
+.thumbnail-size-tick {
+  position: absolute;
+  inset-block-start: 12px;
   white-space: nowrap;
+}
+
+// Keep every step selectable and reduce the printed labels as their spacing gets smaller. The widest four-digit
+// label is about 54px, so nine labels need a little more than 8 × 54px across the track to leave a gap.
+@mixin hide-size-label {
+  --thumbnail-size-dot: var(--mat-slider-with-tick-marks-container-size, 2px);
+
+  .thumbnail-size-tick { display: none; }
+}
+
+@container (inline-size < 470px) {
+  .thumbnail-size-mark:nth-child(4n + 3) { @include hide-size-label; }
+}
+
+@container (inline-size < 270px) {
+  .thumbnail-size-mark:nth-child(8n + 5) { @include hide-size-label; }
+}
+
+@container (inline-size < 135px) {
+  .thumbnail-size-mark:nth-child(9) { @include hide-size-label; }
 }
 
 // While Fast is chosen, the texts are as faint as the slider, which Angular Material shows disabled. The button stays
@@ -164,6 +190,10 @@
   .thumbnail-size-place,
   .thumbnail-size-ticks {
     opacity: 0.38;
+  }
+
+  .thumbnail-size-mark {
+    --thumbnail-size-dot-color: var(--mat-slider-with-tick-marks-disabled-container-color);
   }
 }
 

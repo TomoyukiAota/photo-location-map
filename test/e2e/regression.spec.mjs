@@ -5508,26 +5508,50 @@ test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and 
     await expect(slider).toHaveAttribute('max', '2000');
     await expect(slider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
   }
-  // The sizes under each slider, each centered under its mark, from the first to the last. Angular Material draws the
-  // marks once it has measured the slider, a moment after the tab is shown.
-  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(34);
-  for (const place of ['sidebar', 'map']) {
-    const ticks = await tab.locator(`.thumbnail-size-scale[data-size-place="${place}"]`).evaluate(scale => {
-      const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
+  const settingsWindow = await app.browserWindow(page);
+  const contentSize = await settingsWindow.evaluate(window => window.getContentSize());
+  const resizeSettingsWindow = async (width, height) => {
+    await inTaskOfItsOwn(settingsWindow, (window, size) => window.setContentSize(...size), [width, height]);
+    await page.waitForFunction(size => innerWidth === size, width);
+  };
+  // The endpoints stay visible, and only printed sizes have a large mark. The thumb can move a moment after resizing.
+  async function expectScales(sizes) {
+    const expected = {
+      labels: sizes.map(size => `${size} px`),
+      markWidths: Array.from({ length: 17 }, (_, index) => sizes.includes(400 + index * 100) ? 5 : 2),
+      fits: true,
+      aligned: true,
+      thumbAligned: true,
+    };
+    await expect.poll(() => tab.locator('.thumbnail-size-scale').evaluateAll(scales => scales.map(scale => {
+      const panel = scale.closest('.settings-content');
+      const bounds = panel.getBoundingClientRect();
+      const marks = [...scale.querySelectorAll('.thumbnail-size-mark')];
+      const thumb = scale.querySelector('.mdc-slider__thumb-knob');
+      const selected = marks[(Number(scale.querySelector('input').value) - 400) / 100];
       const range = document.createRange();
-      const slider = scale.querySelector('mat-slider').getBoundingClientRect();
-      const marks = scale.querySelectorAll('.mdc-slider__tick-marks > *');
-      return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
+      const labels = [...scale.querySelectorAll('.thumbnail-size-tick')].filter(tick => getComputedStyle(tick).display !== 'none').map(tick => {
         range.selectNodeContents(tick);
-        const markCenter = center(marks[index * 2]);
-        return { text: tick.textContent, offset: Math.abs(center(range) - markCenter), position: Math.round(markCenter - slider.left) };
+        const { left, right } = range.getBoundingClientRect();
+        return { left, right, text: tick.textContent.trim() };
       });
-    });
-    expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px', '1200 px', '1400 px', '1600 px', '1800 px', '2000 px']);
-    expect(ticks.every(tick => tick.offset < 1)).toBe(true);
-    // The old 240 px slider's marks ran from 3 to 237. The extension keeps every one of those marks in place.
-    expect(ticks.slice(0, 4).map(tick => tick.position)).toEqual([3, 81, 159, 237]);
+      const center = ({ left, right }) => (left + right) / 2;
+      return {
+        labels: labels.map(label => label.text),
+        markWidths: marks.map(mark => parseFloat(getComputedStyle(mark, '::before').width)),
+        fits: panel.scrollWidth <= panel.clientWidth + 1 && labels.every(({ left, right }, index) =>
+          left >= bounds.left && right <= bounds.right && (!index || left >= labels[index - 1].right)),
+        aligned: labels.every(label => {
+          const mark = marks[(parseInt(label.text, 10) - 400) / 100];
+          return mark && Math.abs(center(label) - center(mark.getBoundingClientRect())) < 1;
+        }),
+        thumbAligned: !!selected && Math.abs(center(thumb.getBoundingClientRect()) - center(selected.getBoundingClientRect())) < 1,
+      };
+    }))).toEqual([expected, expected]);
   }
+  await resizeSettingsWindow(1200, 800);
+  await expectScales([400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000]);
+  await resizeSettingsWindow(...contentSize);
   // The sliders start together, past the longer of the places' names.
   const sliderStarts = await Promise.all([sidebarSlider, mapSlider].map(slider =>
     slider.evaluate(input => Math.round(input.closest('mat-slider').getBoundingClientRect().left))));
@@ -5599,25 +5623,12 @@ test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and 
   for (const slider of [sidebarSlider, mapSlider])
     await expect(slider).toHaveAttribute('aria-valuetext', '2000 pixels on the longer side');
 
-  // A narrow tab scrolls each scale to its new end and leaves the rest of the settings in place.
-  const settingsWindow = await app.browserWindow(page);
-  const contentSize = await settingsWindow.evaluate(window => window.getContentSize());
-  await inTaskOfItsOwn(settingsWindow, window => window.setContentSize(800, 600));
-  await page.waitForFunction(() => innerWidth === 800);
-  for (const scroll of await tab.locator('.thumbnail-size-scroll').all()) {
-    expect(await scroll.evaluate(element => {
-      element.scrollLeft = element.scrollWidth;
-      const panel = element.closest('.settings-content').getBoundingClientRect();
-      const viewport = element.getBoundingClientRect();
-      const range = document.createRange();
-      range.selectNodeContents(element.querySelector('.thumbnail-size-tick:last-child'));
-      const end = range.getBoundingClientRect();
-      return element.scrollLeft > 0 && viewport.left >= panel.left && viewport.right <= panel.right
-        && end.left >= viewport.left && end.right <= viewport.right;
-    })).toBe(true);
-  }
-  await inTaskOfItsOwn(settingsWindow, (window, [width, height]) => window.setContentSize(width, height), contentSize);
-  await page.waitForFunction(width => innerWidth === width, contentSize[0]);
+  // The same 100 px steps fit with fewer labels as the window narrows.
+  await resizeSettingsWindow(800, 600);
+  await expectScales([400, 800, 1200, 1600, 2000]);
+  await resizeSettingsWindow(600, 600);
+  await expectScales([400, 1200, 2000]);
+  await resizeSettingsWindow(...contentSize);
   await tab.getByRole('radio', { name: /^Prefer app performance/ }).check();
   await expect(sidebarSlider).toBeDisabled();
   await expect(mapSlider).toBeDisabled();
