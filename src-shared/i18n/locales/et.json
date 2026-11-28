@@ -118,6 +118,7 @@
     "layers": "Kihid",
     "fullScreen": "Täisekraan",
     "exitFullScreen": "Välju täisekraanist",
+    "photoRoute": "Marsruut",
     "photosInRegions": "Fotosid piirkondades: {{count}}",
     "selectPhotos": "Vali fotod",
     "setRegionByRectangle": "Määra piirkond ristkülikuga",

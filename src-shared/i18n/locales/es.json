@@ -118,6 +118,7 @@
     "layers": "Capas",
     "fullScreen": "Pantalla completa",
     "exitFullScreen": "Salir de pantalla completa",
+    "photoRoute": "Ruta",
     "photosInRegions": "Fotos en las áreas: {{count}}",
     "selectPhotos": "Seleccionar fotos",
     "setRegionByRectangle": "Definir un área con un rectángulo",

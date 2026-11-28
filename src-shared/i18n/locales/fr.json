@@ -118,6 +118,7 @@
     "layers": "Calques",
     "fullScreen": "Plein écran",
     "exitFullScreen": "Quitter le plein écran",
+    "photoRoute": "Itinéraire",
     "photosInRegions": "Photos dans les zones\u00a0: {{count}}",
     "selectPhotos": "Sélectionner les photos",
     "setRegionByRectangle": "Définir une zone par un rectangle",

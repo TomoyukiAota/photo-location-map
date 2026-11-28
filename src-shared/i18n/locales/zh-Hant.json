@@ -118,6 +118,7 @@
     "layers": "圖層",
     "fullScreen": "全螢幕",
     "exitFullScreen": "結束全螢幕",
+    "photoRoute": "路線",
     "photosInRegions": "區域內的照片：{{count}} 張",
     "selectPhotos": "選取照片",
     "setRegionByRectangle": "以矩形設定區域",

@@ -26,6 +26,7 @@ import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { MapControlLayout, observeMapControlLayout } from './map-control-layout';
 import { PhotosOfOpenPopup } from './photos-of-open-popup';
+import { PhotoRouteOverlay } from './photo-route-overlay';
 import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 import { RegionInfoComponent } from './region-info/region-info.component';
@@ -47,7 +48,7 @@ const photoOf = (marker: Marker): Photo => (marker.options as any).photo;
 
 /**
  * The map of the home view, with a marker for each photo pinned.
- * TL;DR: The map is made once, and stays as it is while other photos are pinned: its markers change, and its view
+ * TL;DR: The map is made once, and stays as it is while other photos are pinned: its markers and route change, and its view
  * moves to them (renderMap()).
  * Details: The map, its base layer and the tiles that it has loaded, the regions drawn on it and its controls stay. It
  * was made again for every change of the pinned photos until November 2026, which loaded its tiles again, and dropped
@@ -101,6 +102,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private regionInfo: Control;
   // The layers of a past date, and their control, for this map (dated-layers/dated-layers.ts).
   private datedLayers: DatedLayers | null = null;
+  private photoRoute: PhotoRouteOverlay | null = null;
   private regionInfoContent: ComponentRef<RegionInfoComponent>;
   // The viewer of each cluster whose popup has been opened on this map, which the cluster's popup shows again.
   private clusterViewers = new WeakMap<object, ComponentRef<PhotoClusterViewerComponent>>();
@@ -211,7 +213,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }, 300 /* ms */);
 
   /**
-   * Shows the photos in place of those that the map showed: only the markers change, and the view moves to them, as
+   * Shows the photos in place of those that the map showed: the markers and route change, and the view moves to them, as
    * it did when the map was made for them, without an animation, as Reveal in Map moves it.
    * - Several photos: the view fits them, at maxZoomToShowPhotos at the most.
    * - One photo: its popup opens in the middle of the map, at maxZoomToShowPhotos; or at the map's zoom when the map
@@ -233,6 +235,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       this.renderMarkerClusterGroupForMultiplePhotos(photos);
     this.updateRegionInfo();
     this.datedLayers.photosChanged();
+    this.photoRoute.setPhotos(photos);
   }
 
   /**
@@ -264,6 +267,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.controlLayoutObserver = null;
     this.datedLayers?.destroy();
     this.datedLayers = null;
+    this.photoRoute?.layer.remove();
+    this.photoRoute = null;
     if (this.map) {
       this.map.off();
       this.map.remove();
@@ -442,7 +447,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       ...rasterTileBaseLayers,
       ...datedLayers.baseLayers,
     };
-    const layersControl: Control.Layers = L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
+    this.photoRoute = new PhotoRouteOverlay(this.map);
+    const overlays = { [t('map.photoRoute')]: this.photoRoute.layer };
+    const layersControl: Control.Layers = L.control.layers(baseLayers, overlays, {position: 'topright'}).addTo(this.map);
     // Leaflet gives the control's button the tooltip "Layers", and no option to change it.
     layersControl.getContainer()?.querySelector('.leaflet-control-layers-toggle')?.setAttribute('title', t('map.layers'));
 

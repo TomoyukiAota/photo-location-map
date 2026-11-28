@@ -118,6 +118,7 @@
     "layers": "Vrstvy",
     "fullScreen": "Celá obrazovka",
     "exitFullScreen": "Ukončiť režim celej obrazovky",
+    "photoRoute": "Trasa",
     "photosInRegions": "Fotky v oblastiach: {{count}}",
     "selectPhotos": "Vybrať fotky",
     "setRegionByRectangle": "Určiť oblasť obdĺžnikom",

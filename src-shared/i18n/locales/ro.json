@@ -118,6 +118,7 @@
     "layers": "Straturi",
     "fullScreen": "Ecran complet",
     "exitFullScreen": "Ieși din ecranul complet",
+    "photoRoute": "Traseu",
     "photosInRegions": "Poze în zone: {{count}}",
     "selectPhotos": "Selectează pozele",
     "setRegionByRectangle": "Stabilește o zonă cu un dreptunghi",

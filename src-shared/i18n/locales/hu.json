@@ -118,6 +118,7 @@
     "layers": "Rétegek",
     "fullScreen": "Teljes képernyő",
     "exitFullScreen": "Kilépés a teljes képernyős módból",
+    "photoRoute": "Útvonal",
     "photosInRegions": "Fotók a területeken: {{count}}",
     "selectPhotos": "Fotók kijelölése",
     "setRegionByRectangle": "Terület megadása téglalappal",

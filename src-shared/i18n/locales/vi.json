@@ -118,6 +118,7 @@
     "layers": "Lớp",
     "fullScreen": "Toàn màn hình",
     "exitFullScreen": "Thoát toàn màn hình",
+    "photoRoute": "Lộ trình",
     "photosInRegions": "Ảnh trong các vùng: {{count}}",
     "selectPhotos": "Chọn ảnh",
     "setRegionByRectangle": "Đặt vùng bằng hình chữ nhật",

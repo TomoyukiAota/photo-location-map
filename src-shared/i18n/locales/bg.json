@@ -118,6 +118,7 @@
     "layers": "Слоеве",
     "fullScreen": "Цял екран",
     "exitFullScreen": "Изход от цял екран",
+    "photoRoute": "Маршрут",
     "photosInRegions": "Снимки в областите: {{count}}",
     "selectPhotos": "Избиране на снимките",
     "setRegionByRectangle": "Задаване на област с правоъгълник",

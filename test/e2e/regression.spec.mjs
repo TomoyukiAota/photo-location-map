@@ -1730,6 +1730,71 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   await expect.poll(async () => (await map()).zoom).toBeLessThan(5);
   expect((await map()).maps).toBe(1);
 });
+test('the photo route is optional and follows photos pinned by the chart', async () => {
+  const folder = path.join(profile, 'route photos');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  // The photos' names sort east to west, while their capture years place them west to east, through the northern photo.
+  await writeFile(path.join(folder, 'west.JPG'), jpegWithLocationAndDate(source, 34.6873, 135.520, '2013:05:01 10:00:00'));
+  await writeFile(path.join(folder, 'north.JPG'), jpegWithLocationAndDate(source, 34.7040, 135.545, '2016:05:01 10:00:00'));
+  await writeFile(path.join(folder, 'east.JPG'), jpegWithLocationAndDate(source, 34.6873, 135.570, '2019:05:01 10:00:00'));
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expectRepresentedPhotos(3);
+  await untilStillAtZoom(await mapZoom());
+
+  const layers = page.locator('.leaflet-control-layers');
+  const route = layers.getByRole('checkbox', { name: 'Route', exact: true });
+  const line = page.locator('path.plm-photo-route-line');
+  const arrows = page.locator('path.plm-photo-route-arrows');
+  const hasStroke = locator => locator.evaluateAll(paths => paths.some(path => path.getTotalLength() > 0));
+  const view = () => page.evaluate(() => {
+    const map = window.__plmLeafletMap;
+    return { center: map.getCenter(), zoom: map.getZoom() };
+  });
+  await layers.hover();
+  await expect(route).not.toBeChecked();
+  expect(await hasStroke(line)).toBe(false);
+  const initialView = await view();
+  await route.click();
+  await expect(route).toBeChecked();
+  await page.mouse.move(1, 1);
+  await expect.poll(() => hasStroke(arrows)).toBe(true);
+  await expect.poll(() => line.evaluateAll(paths => paths.some(path => {
+    const length = path.getTotalLength();
+    return length > 0 && path.getPointAtLength(0).x < path.getPointAtLength(length).x;
+  }))).toBe(true);
+  expect(await view()).toEqual(initialView);
+
+  // Zoom the chart to the final year without changing the checked photos in the tree.
+  await page.locator('app-date-time-taken-chart-config select').selectOption('Year');
+  const chart = page.locator('app-date-time-taken-chart .chart');
+  await expect(chart.locator('canvas')).toBeVisible();
+  const box = await chart.boundingBox();
+  const sliderY = box.y + box.height - 23;
+  await page.mouse.move(box.x + 94, sliderY);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 90 + (box.width - 180) * 0.92, sliderY, { steps: 12 });
+  await page.mouse.up();
+  await expectRepresentedPhotos(1);
+  await expect(treeCheckbox('west.JPG')).toBeChecked();
+  await expect(treeCheckbox('north.JPG')).toBeChecked();
+  await expect.poll(() => hasStroke(line)).toBe(false);
+  await expect.poll(() => hasStroke(arrows)).toBe(false);
+
+  // The Reset Zoom control in the chart returns all three pins and their route.
+  await page.mouse.click(box.x + box.width - 11, box.y + 14);
+  await expectRepresentedPhotos(3);
+  await expect.poll(() => hasStroke(line)).toBe(true);
+  await expect.poll(() => hasStroke(arrows)).toBe(true);
+  await layers.hover();
+  await expect(route).toBeChecked();
+  await route.click();
+  await expect(route).not.toBeChecked();
+  await expect.poll(() => hasStroke(line)).toBe(false);
+  await expect.poll(() => hasStroke(arrows)).toBe(false);
+});
 test('map regions preserve drawing, removal and real photo selection', async () => {
   await page.addInitScript(() => {
     let leaflet;

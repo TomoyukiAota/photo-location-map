@@ -118,6 +118,7 @@
     "layers": "Ebenen",
     "fullScreen": "Vollbild",
     "exitFullScreen": "Vollbild beenden",
+    "photoRoute": "Route",
     "photosInRegions": "Fotos in den Bereichen: {{count}}",
     "selectPhotos": "Fotos auswählen",
     "setRegionByRectangle": "Bereich als Rechteck festlegen",

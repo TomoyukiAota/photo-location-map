@@ -118,6 +118,7 @@
     "layers": "Slojevi",
     "fullScreen": "Ceo ekran",
     "exitFullScreen": "Izađi iz prikaza preko celog ekrana",
+    "photoRoute": "Ruta",
     "photosInRegions": "Fotografije u oblastima: {{count}}",
     "selectPhotos": "Izaberi fotografije",
     "setRegionByRectangle": "Zadaj oblast pravougaonikom",

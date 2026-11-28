@@ -118,6 +118,7 @@
     "layers": "Livelli",
     "fullScreen": "Schermo intero",
     "exitFullScreen": "Esci da schermo intero",
+    "photoRoute": "Percorso",
     "photosInRegions": "Foto nelle aree: {{count}}",
     "selectPhotos": "Seleziona foto",
     "setRegionByRectangle": "Definisci un’area con un rettangolo",

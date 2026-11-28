@@ -118,6 +118,7 @@
     "layers": "Layers",
     "fullScreen": "Full Screen",
     "exitFullScreen": "Exit Full Screen",
+    "photoRoute": "Route",
     "photosInRegions": "Photos in Regions: {{count}}",
     "selectPhotos": "Select Photos",
     "setRegionByRectangle": "Set Region by Rectangle",
