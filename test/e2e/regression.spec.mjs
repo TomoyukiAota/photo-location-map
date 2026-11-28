@@ -2920,6 +2920,134 @@ test('the popup of a photo stays open while the map zooms, by its buttons, the w
   await expect(label).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   expect(await takePopupEvents()).toEqual(['close IMG_4676.JPG']);
 });
+test('zooming in opens the popup of the only photo pin in the map view', async () => {
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  const folder = path.join(profile, 'a pin and a cluster');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  const center = [34.6873, 135.5262];
+  // The cluster is in view at 14 and off the right edge at 15, even though Leaflet.markercluster still draws it.
+  const clusterLongitude = await page.evaluate(center => {
+    const map = window.__plmLeafletMap;
+    return map.unproject(map.project(center, 14).add([map.getSize().x * 0.35, 0]), 14).lng;
+  }, center);
+  for (const [name, longitude] of [['single', center[1]], ['first in cluster', clusterLongitude],
+    ['second in cluster', clusterLongitude]]) {
+    await writeFile(path.join(folder, `${name}.JPG`),
+      jpegWithLocationAndDate(source, center[0], longitude, '2025:05:01 10:00:00'));
+  }
+  await openFolderWithPicker(folder);
+  await expectRepresentedPhotos(3);
+  const popup = page.locator('.leaflet-popup');
+  const shownName = popup.locator('.photo-info-viewer-name');
+  const zoomIn = page.getByRole('button', { name: 'Zoom in', exact: true });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out', exact: true });
+  const map = page.locator('#plm-leaflet-map');
+  const setView = (zoom, location = center) => page.evaluate(([location, zoom]) =>
+    window.__plmLeafletMap.setView(location, zoom, { animate: false }), [location, zoom]);
+  const visibleMarkers = () => map.evaluate(element => {
+    const view = element.getBoundingClientRect();
+    const count = selector => [...element.querySelectorAll(selector)].filter(icon => {
+      const box = icon.getBoundingClientRect();
+      return box.right > view.left && box.left < view.right && box.bottom > view.top && box.top < view.bottom;
+    }).length;
+    return [count('.plm-leaflet-map-div-icon-content'), count('.marker-cluster')];
+  });
+  async function expectNoPopup(zoom, markers) {
+    await untilStillAtZoom(zoom);
+    await expect.poll(visibleMarkers).toEqual(markers);
+    // Give the application its turn after Leaflet has settled before checking that no popup opened.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    expect(await takePopupEvents()).toEqual([]);
+  }
+  async function closePopup(name = 'single.JPG') {
+    await map.focus();
+    await page.keyboard.press('Escape');
+    await expect(popup).toHaveCount(0);
+    expect(await takePopupEvents()).toEqual([`close ${name}`]);
+  }
+  expect(await takePopupEvents()).toEqual([]);
+
+  // The same single pin can be visible after an application zoom, a zoom out, or a pan.
+  await setView(16);
+  await expectNoPopup(16, [1, 0]);
+  await zoomOut.click();
+  await expectNoPopup(15, [1, 0]);
+  await map.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expectNoPopup(15, [1, 0]);
+
+  await setView(13);
+  await zoomIn.click();
+  await expectNoPopup(14, [1, 1]);
+  await zoomIn.click();
+  await untilStillAtZoom(15);
+  await expect(shownName).toHaveText('single.JPG');
+  expect(await takePopupEvents()).toEqual(['open single.JPG']);
+
+  // Zooming again keeps the popup. Closing it suppresses another automatic opening while the same pin stays alone.
+  await setView(15);
+  await zoomIn.click();
+  await untilStillAtZoom(16);
+  await expect(shownName).toHaveText('single.JPG');
+  expect(await takePopupEvents()).toEqual([]);
+  await setView(16);
+  await closePopup();
+  await zoomIn.click();
+  await expectNoPopup(17, [1, 0]);
+
+  // Looking at another photo does not rearm the first popup while its pin stays in view.
+  await setView(14, [center[0], (center[1] + clusterLongitude) / 2]);
+  await expectNoPopup(14, [1, 1]);
+  await map.locator('.marker-cluster').click();
+  await expect(popup.locator('.photo-cluster-viewer-tile')).toHaveCount(2);
+  const chosenInCluster = (await shownName.textContent()).trim();
+  expect(await takePopupEvents()).toEqual([`open ${chosenInCluster}`]);
+  await expect.poll(visibleMarkers).toEqual([1, 1]);
+  await closePopup(chosenInCluster);
+  await setView(14);
+  await expectNoPopup(14, [1, 1]);
+  await zoomIn.click();
+  await expectNoPopup(15, [1, 0]);
+
+  // Zoom about an empty point to the left of the pin. The pin stays in view, and the cluster moves farther right.
+  const box = await map.boundingBox();
+  const x = box.x + box.width * 0.2;
+  const y = box.y + box.height * 0.5;
+  const wheel = async () => {
+    await page.mouse.move(x, y);
+    await page.mouse.wheel(0, -20);
+  };
+  const keyboard = async () => {
+    await map.focus();
+    await page.keyboard.press('Equal');
+  };
+  for (const [input, zoom, withControl] of [
+    ['the keyboard', keyboard],
+    ['the wheel', wheel],
+    ['the trackpad pinch', wheel, true],
+    ['a double-click', () => page.mouse.dblclick(x, y)],
+  ]) {
+    await test.step(`Zoom in with ${input}`, async () => {
+      // A pin that has left the view can open its popup again on the next zoom in that shows it alone.
+      await setView(14, [center[0], 2 * clusterLongitude - center[1]]);
+      await expectNoPopup(14, [0, 1]);
+      await setView(14);
+      await expectNoPopup(14, [1, 1]);
+      if (withControl) await page.keyboard.down('Control');
+      try {
+        await zoom();
+        await untilStillAtZoom(15);
+      } finally {
+        if (withControl) await page.keyboard.up('Control');
+      }
+      await expect(shownName).toHaveText('single.JPG');
+      expect(await takePopupEvents()).toEqual(['open single.JPG']);
+      await closePopup();
+    });
+  }
+});
 test('a popup keeps the photos that it shows under it at every zoom, out of the clusters, which take them back once it closes: a marker with its label colored, or the photos of a cluster as that cluster', async () => {
   // Three photos taken in Osaka: west and east 3 km apart, 191 pixels at zoom level 13 and 96 at 12, within the radius
   // of a cluster; north 10 km from them, 159 pixels at 11 and 80 at 10. A click on the cluster of west and east at 12
