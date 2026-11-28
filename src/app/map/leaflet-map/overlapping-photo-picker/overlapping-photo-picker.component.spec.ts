@@ -39,6 +39,6 @@ describe('OverlappingPhotoPickerComponent', () => {
 
     expect(element.querySelectorAll('li button')).toHaveLength(51);
     expect(element.querySelector('.more-photos')).toBeNull();
-    expect(document.activeElement.textContent).toContain('image-50.jpg');
+    expect(document.activeElement).toBe(element.querySelectorAll('li button')[50]);
   });
 });

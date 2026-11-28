@@ -9,6 +9,7 @@
 
 section {
   padding: 2px;
+  text-align: start;
   max-block-size: max(3rem, calc(100cqh - 64px));
   overflow: auto;
   overscroll-behavior: contain;
@@ -29,6 +30,7 @@ ul {
 button {
   box-sizing: border-box;
   display: grid;
+  justify-items: start;
   gap: 2px;
   inline-size: 100%;
   min-block-size: 24px;
