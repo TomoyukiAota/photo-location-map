@@ -35,12 +35,6 @@ const sizePlaceLabels: Record<ThumbnailSizePlace, TranslationKey> = {
 };
 
 /**
- * The sizes written under the slider, from the smallest to the largest: every other mark. The slider's marks are 39
- * pixels apart, about as wide as "1000 px" is: under every mark, the sizes would run into each other.
- */
-const sizeTickStep = 200;
-
-/**
  * Where the note on the sizes opens: under its button, ending where the button ends, or above it when there is no room
  * under it. The button ends the heading of the sizes, over the end of the sizes under the sliders, so that the note
  * stays over the dialog: from where the button started, it reached past the dialog's edge. From where the button starts
@@ -87,12 +81,12 @@ export class ThumbnailSettingsComponent {
   protected readonly minSize = minThumbnailSize;
   protected readonly maxSize = maxThumbnailSize;
   protected readonly sizeStep = thumbnailSizeStep;
-  protected readonly sizeIntervals = thumbnailSizes.length - 1;
-
-  /** The sizes written under the slider, each where its mark is: a percentage of the way from the first to the last. */
-  protected readonly sizeTicks = thumbnailSizes
-    .filter(size => (size - minThumbnailSize) % sizeTickStep === 0)
-    .map(size => ({ size, position: (size - minThumbnailSize) / (maxThumbnailSize - minThumbnailSize) * 100 }));
+  /** A mark for every step. Alternate marks have a label, which the scale can hide when it gets narrower. */
+  protected readonly sizeMarks = thumbnailSizes.map((size, index) => ({
+    size,
+    position: (size - minThumbnailSize) / (maxThumbnailSize - minThumbnailSize) * 100,
+    hasLabel: index % 2 === 0,
+  }));
 
   /** The size as it is read, which a screen reader says on the slider's thumb: the sizes under the marks show it. */
   protected readonly sizeText = (size: number): string => t('settings.thumbnails.sizeValue', { size });
