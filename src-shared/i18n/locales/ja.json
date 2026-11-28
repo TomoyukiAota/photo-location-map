@@ -118,6 +118,7 @@
     "layers": "レイヤー",
     "fullScreen": "フルスクリーン",
     "exitFullScreen": "フルスクリーンを終了",
+    "photoRoute": "ルート",
     "photosInRegions": "範囲内の写真: {{count}} 枚",
     "selectPhotos": "写真を選択",
     "setRegionByRectangle": "長方形で範囲を指定",

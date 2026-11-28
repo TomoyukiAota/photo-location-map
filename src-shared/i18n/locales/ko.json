@@ -118,6 +118,7 @@
     "layers": "레이어",
     "fullScreen": "전체 화면",
     "exitFullScreen": "전체 화면 종료",
+    "photoRoute": "경로",
     "photosInRegions": "영역 내 사진: {{count}}장",
     "selectPhotos": "사진 선택",
     "setRegionByRectangle": "사각형으로 영역 지정",

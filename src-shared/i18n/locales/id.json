@@ -118,6 +118,7 @@
     "layers": "Lapisan",
     "fullScreen": "Layar penuh",
     "exitFullScreen": "Keluar dari layar penuh",
+    "photoRoute": "Rute",
     "photosInRegions": "Foto di dalam area: {{count}}",
     "selectPhotos": "Pilih foto",
     "setRegionByRectangle": "Tetapkan area dengan persegi panjang",

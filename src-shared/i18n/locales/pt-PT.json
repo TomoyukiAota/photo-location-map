@@ -118,6 +118,7 @@
     "layers": "Camadas",
     "fullScreen": "Ecrã completo",
     "exitFullScreen": "Sair do ecrã completo",
+    "photoRoute": "Percurso",
     "photosInRegions": "Fotografias nas áreas: {{count}}",
     "selectPhotos": "Selecionar fotografias",
     "setRegionByRectangle": "Definir uma área com um retângulo",
