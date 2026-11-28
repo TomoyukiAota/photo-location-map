@@ -29,6 +29,7 @@ import { PhotosOfOpenPopup } from './photos-of-open-popup';
 import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 import { RegionInfoComponent } from './region-info/region-info.component';
+import { observeUserZoomIn } from './user-map-zoom';
 import { ClusteredMarker, viewToReveal } from './view-to-reveal';
 
 // "declare let L: any;" is defined here (in addition to global scope typing given by types/index.d.ts)
@@ -106,6 +107,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   // The popup that is open on the map, and the one that the clicks of a double-click closed, which the double-click
   // opens again (configurePopups()).
   private popupOpen: Popup | null = null;
+  private userZoom: ReturnType<typeof observeUserZoomIn> | null = null;
+  // Do not open a dismissed popup again while that same pin is still visible.
+  private readonly dismissedPhotoMarkers = new Set<Marker>();
   private readonly popupClosedByDoubleClick = new PopupClosedByDoubleClick<Popup>();
   // The markers that each popup shows, the viewer of each cluster's popup, and the markers of the popup open, which the
   // map keeps under it (configurePopups()).
@@ -236,7 +240,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
    * goes at once, as Leaflet's fade would show it for 200 ms without its component (_plm-leaflet-map.scss).
    */
   private removeMarkers(): void {
+    this.userZoom?.cancel();
     this.map?.closePopup();
+    this.dismissedPhotoMarkers.clear();
     this.popupClosedByDoubleClick.forget();
     this.photosOfOpenPopup?.forget();
     if (this.markerClusterGroup)
@@ -252,6 +258,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private removeMap(): void {
+    this.userZoom?.disconnect();
+    this.userZoom = null;
     this.controlLayoutObserver?.disconnect();
     this.controlLayoutObserver = null;
     this.datedLayers?.destroy();
@@ -282,6 +290,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.configureAttribution();
     this.configureScale();
     this.configureZoom();
+    this.configurePopupAfterZoomIn();
     addMapFullScreenControl(this.map, this.leafletContentService);
     this.configureBaseLayer();
     // After the base layer, up to whose last zoom level Leaflet.markercluster makes the clusters of its group.
@@ -320,9 +329,14 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       this.photosOfOpenPopup.take(this.markersOfPopup.get(event.popup) ?? [], this.markerClusterGroup);
     });
     this.map.on('popupclose', (event: PopupEvent) => {
-      if (event.popup === this.popupOpen)
+      if (event.popup === this.popupOpen) {
+        const markers = this.markersOfPopup.get(event.popup);
+        if (markers?.length === 1)
+          this.dismissedPhotoMarkers.add(markers[0]);
         this.popupOpen = null;
+      }
       this.photosOfOpenPopup.giveBack();
+      this.forgetDismissedMarkersOutsideView(this.map);
     });
     this.map.on('preclick', (event: LeafletMouseEvent) =>
       this.popupClosedByDoubleClick.clicked(this.popupOpen, event.originalEvent.detail));
@@ -358,6 +372,64 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private configureZoom() {
     L.control.zoom({position: 'bottomright', zoomInTitle: t('map.zoomIn'), zoomOutTitle: t('map.zoomOut')}).addTo(this.map);
+  }
+
+  /** Opens the only pin on screen after the user zooms in, using the same popup as a click. */
+  private configurePopupAfterZoomIn(): void {
+    const map = this.map;
+    let view = 0;
+    map.on('movestart', () => view++);
+    map.on('moveend resize', () => this.forgetDismissedMarkersOutsideView(map));
+    this.userZoom = observeUserZoomIn(map, () => {
+      const zoomedView = view;
+      const group = this.markerClusterGroup;
+      this.whenStill(map, group, () => {
+        if (view !== zoomedView || this.popupOpen || !group || !this.showsPinnedPhotos())
+          return;
+        const marker = this.onlyPhotoMarkerOnScreen(map);
+        if (marker && !this.dismissedPhotoMarkers.has(marker))
+          marker.openPopup();
+      });
+    });
+  }
+
+  private forgetDismissedMarkersOutsideView(map: LeafletMap): void {
+    if (!this.dismissedPhotoMarkers.size)
+      return;
+    this.whenStill(map, this.markerClusterGroup, () => {
+      const viewport = map.getContainer().getBoundingClientRect();
+      for (const marker of this.dismissedPhotoMarkers) {
+        if (!this.isMarkerOnScreen(marker, viewport))
+          this.dismissedPhotoMarkers.delete(marker);
+      }
+    });
+  }
+
+  /** Markercluster keeps some layers outside the viewport. A visible cluster rules out a single photo. */
+  private onlyPhotoMarkerOnScreen(map: LeafletMap): Marker | null {
+    const viewport = map.getContainer().getBoundingClientRect();
+    let photoMarker: Marker | null = null;
+    let severalPhotos = false;
+    map.eachLayer(layer => {
+      if (severalPhotos || !(layer instanceof (L.Marker as typeof Marker)) || !this.isMarkerOnScreen(layer, viewport))
+        return;
+      if (layer instanceof L.MarkerCluster) {
+        severalPhotos = true;
+      } else if (photoOf(layer)) {
+        severalPhotos = photoMarker !== null;
+        photoMarker = layer;
+      }
+    });
+    return severalPhotos ? null : photoMarker;
+  }
+
+  private isMarkerOnScreen(marker: Marker, viewport: DOMRect): boolean {
+    const icon = marker.getElement();
+    if (!icon?.isConnected)
+      return false;
+    // The clickable label is positioned above the photo's anchor. Part of it can be visible even beyond the edge.
+    const box = (icon.querySelector('.plm-leaflet-map-div-icon-content') ?? icon).getBoundingClientRect();
+    return box.right > viewport.left && box.left < viewport.right && box.bottom > viewport.top && box.top < viewport.bottom;
   }
 
   private configureBaseLayer() {
@@ -747,6 +819,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         return;
       }
       const view = viewToReveal(marker as unknown as ClusteredMarker, map.getMaxZoom());
+      this.userZoom?.cancel();
       map.setView(view.center, Math.max(map.getZoom(), view.zoom), { animate: false });
       this.whenStill(map, markerClusterGroup, () => {
         const shown = markerClusterGroup.getVisibleParent(marker);
