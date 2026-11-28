@@ -116,6 +116,8 @@
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arrière",
     "layers": "Calques",
+    "chooseOverlappingPhoto": "Choisir une photo",
+    "showMorePhotos": "Afficher plus de photos",
     "fullScreen": "Plein écran",
     "exitFullScreen": "Quitter le plein écran",
     "photosInRegions": "Photos dans les zones\u00a0: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zoom avant",
       "zoomOut": "Zoom arrière",
       "toggleFullScreen": "Activer/désactiver le plein écran",
-      "mapFullScreen": "Carte en plein écran"
+      "mapFullScreen": "Carte en plein écran",
+      "groupPhotoMarkers": "Regrouper les repères de photos"
     },
     "selection": {
       "title": "Sélection",

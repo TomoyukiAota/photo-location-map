@@ -116,6 +116,8 @@
     "zoomIn": "Acercar",
     "zoomOut": "Alejar",
     "layers": "Capas",
+    "chooseOverlappingPhoto": "Elige una foto",
+    "showMorePhotos": "Mostrar más fotos",
     "fullScreen": "Pantalla completa",
     "exitFullScreen": "Salir de pantalla completa",
     "photosInRegions": "Fotos en las áreas: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Acercar",
       "zoomOut": "Alejar",
       "toggleFullScreen": "Activar/desactivar pantalla completa",
-      "mapFullScreen": "Mapa en pantalla completa"
+      "mapFullScreen": "Mapa en pantalla completa",
+      "groupPhotoMarkers": "Agrupar marcadores de fotos"
     },
     "selection": {
       "title": "Selección",

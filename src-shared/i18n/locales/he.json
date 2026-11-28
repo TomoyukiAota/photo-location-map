@@ -116,6 +116,8 @@
     "zoomIn": "התקרבות",
     "zoomOut": "התרחקות",
     "layers": "שכבות",
+    "chooseOverlappingPhoto": "בחירת תמונה",
+    "showMorePhotos": "הצגת תמונות נוספות",
     "fullScreen": "מסך מלא",
     "exitFullScreen": "יציאה ממסך מלא",
     "photosInRegions": "תמונות באזורים: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "הגדלה",
       "zoomOut": "הקטנה",
       "toggleFullScreen": "מעבר למסך מלא ובחזרה",
-      "mapFullScreen": "מפה במסך מלא"
+      "mapFullScreen": "מפה במסך מלא",
+      "groupPhotoMarkers": "קיבוץ סמני תמונות"
     },
     "selection": {
       "title": "בחירה",

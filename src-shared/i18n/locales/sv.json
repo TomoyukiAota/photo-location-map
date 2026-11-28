@@ -116,6 +116,8 @@
     "zoomIn": "Zooma in",
     "zoomOut": "Zooma ut",
     "layers": "Lager",
+    "chooseOverlappingPhoto": "Välj ett foto",
+    "showMorePhotos": "Visa fler foton",
     "fullScreen": "Helskärm",
     "exitFullScreen": "Avsluta helskärm",
     "photosInRegions": "Bilder i områdena: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zooma in",
       "zoomOut": "Zooma ut",
       "toggleFullScreen": "Helskärmsläge av/på",
-      "mapFullScreen": "Karta i helskärm"
+      "mapFullScreen": "Karta i helskärm",
+      "groupPhotoMarkers": "Gruppera fotomarkörer"
     },
     "selection": {
       "title": "Markering",

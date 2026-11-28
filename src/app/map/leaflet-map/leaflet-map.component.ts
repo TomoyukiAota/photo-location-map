@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, Type, effect, untracked, viewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as turf from '@turf/turf';
-import { Control, LayersControlEvent, LeafletEvent, LeafletMouseEvent, Map as LeafletMap, Marker, Popup, PopupEvent } from 'leaflet';
+import { Control, LayersControlEvent, LeafletEvent, LeafletKeyboardEvent, LeafletMouseEvent, Map as LeafletMap, Marker, Popup, PopupEvent } from 'leaflet';
 import throttle from 'lodash-es/throttle.js';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { bridge } from '../../../../src-shared/bridge/plm-bridge';
 import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
 import { currentLanguage, t } from '../../../../src-shared/i18n/i18n';
 import { getLanguage } from '../../../../src-shared/i18n/languages';
@@ -14,7 +15,7 @@ import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/dir
 import { Photo } from '../../shared/model/photo.model';
 import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
-import { PhotoClusterViewerComponent } from '../../photo-cluster-viewer/photo-cluster-viewer.component';
+import { PhotoClusterViewerComponent, sortByShootingTime } from '../../photo-cluster-viewer/photo-cluster-viewer.component';
 import { PhotoInfoViewerComponent } from '../../photo-info-viewer/photo-info-viewer.component';
 import { addEachMarker } from './add-each-marker';
 import { DatedLayers } from './dated-layers/dated-layers';
@@ -25,6 +26,7 @@ import { addGeomanToggleControl } from './geoman/geoman-toggle-control';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { MapControlLayout, observeMapControlLayout } from './map-control-layout';
+import { OverlappingPhotoPickerComponent } from './overlapping-photo-picker/overlapping-photo-picker.component';
 import { PhotosOfOpenPopup } from './photos-of-open-popup';
 import { keepPopupThroughZoom, PopupClosedByDoubleClick } from './popup-through-zoom';
 import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
@@ -41,8 +43,10 @@ declare let L: any;
  * around it. A higher one that the user chose is kept while one photo follows another (renderMap()).
  */
 const maxZoomToShowPhotos = 13;
+const individualPinSize = 24;
+const ungroupedMarkersPerFrame = 400;
 
-/** The photo of a marker on the map (addMarkerToMarkerClusterGroup()). */
+/** The photo of a marker on the map (createPhotoMarker()). */
 const photoOf = (marker: Marker): Photo => (marker.options as any).photo;
 
 /**
@@ -96,6 +100,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   // The Leaflet.markercluster group of the photos on the map, and the marker of each of them by the photo's path.
   private markerClusterGroup: any = null;
   private readonly markers = new Map<string, Marker>();
+  private groupPhotoMarkers = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.GroupPhotoMarkers, 'true') !== 'false';
+  private unsubscribePhotoMarkerGrouping: (() => void) | undefined;
+  private ungroupedMarkerFrame: number | null = null;
+  private readonly ungroupedPhotoPopups = new WeakMap<Marker, Popup>();
+  private overlappingPhotoPickerPopup: Popup | null = null;
   // The components that the popups of the markers and of their clusters show, which go with the markers.
   private readonly markerContents = new Set<ComponentRef<unknown>>();
   private regionInfo: Control;
@@ -143,6 +152,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
+    this.unsubscribePhotoMarkerGrouping = bridge().photoMarkerGrouping.onChanged(grouped => this.setPhotoMarkerGrouping(grouped));
     this.watchSize();
     // Renders the photos whenever other photos are pinned, once the map is made. Created here because the map needs its
     // container.
@@ -157,6 +167,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   public ngOnDestroy(): void {
+    this.unsubscribePhotoMarkerGrouping?.();
     this.resizeObserver?.disconnect();
     // A render still waiting would draw into the removed view.
     clearTimeout(this.makeMapTimer);
@@ -227,12 +238,37 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     if (!this.map)
       this.initializeMap();
 
-    if (photos.length === 1)
-      this.renderMarkerClusterGroupForSinglePhoto(photos[0], showedOnePhoto);
-    else if (photos.length > 1)
-      this.renderMarkerClusterGroupForMultiplePhotos(photos);
+    this.renderPhotoMarkers(photos, false, showedOnePhoto);
     this.updateRegionInfo();
     this.datedLayers.photosChanged();
+  }
+
+  private setPhotoMarkerGrouping(grouped: boolean): void {
+    if (grouped === this.groupPhotoMarkers)
+      return;
+    this.groupPhotoMarkers = grouped;
+    if (!this.map)
+      return;
+    this.removeMarkers();
+    this.renderPhotoMarkers(this.photos, true);
+    this.revealPhotoToReveal();
+  }
+
+  private renderPhotoMarkers(photos: Photo[], keepView: boolean, keepSinglePhotoZoom = false): void {
+    if (photos.length === 1)
+      this.renderMarkerClusterGroupForSinglePhoto(photos[0], keepView, keepSinglePhotoZoom);
+    else if (photos.length > 1) {
+      if (this.groupPhotoMarkers)
+        this.renderMarkerClusterGroupForMultiplePhotos(photos, keepView);
+      else
+        this.renderUngroupedPhotos(photos, keepView);
+    }
+  }
+
+  private cancelUngroupedMarkerRender(): void {
+    if (this.ungroupedMarkerFrame !== null)
+      cancelAnimationFrame(this.ungroupedMarkerFrame);
+    this.ungroupedMarkerFrame = null;
   }
 
   /**
@@ -240,6 +276,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
    * goes at once, as Leaflet's fade would show it for 200 ms without its component (_plm-leaflet-map.scss).
    */
   private removeMarkers(): void {
+    this.cancelUngroupedMarkerRender();
     this.userZoom?.cancel();
     this.map?.closePopup();
     this.dismissedPhotoMarkers.clear();
@@ -258,6 +295,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private removeMap(): void {
+    this.cancelUngroupedMarkerRender();
     this.userZoom?.disconnect();
     this.userZoom = null;
     this.controlLayoutObserver?.disconnect();
@@ -338,8 +376,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       this.photosOfOpenPopup.giveBack();
       this.forgetDismissedMarkersOutsideView(this.map);
     });
-    this.map.on('preclick', (event: LeafletMouseEvent) =>
-      this.popupClosedByDoubleClick.clicked(this.popupOpen, event.originalEvent.detail));
+    this.map.on('preclick', (event: LeafletMouseEvent) => {
+      const photoPopup = this.popupOpen === this.overlappingPhotoPickerPopup ? null : this.popupOpen;
+      this.popupClosedByDoubleClick.clicked(photoPopup, event.originalEvent.detail);
+    });
     // A double-click that does not zoom the map, as when Leaflet-Geoman is set to finish a shape there, is two clicks.
     this.map.on('dblclick', () => {
       const popup = this.popupClosedByDoubleClick.doubleClicked();
@@ -388,7 +428,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
           return;
         const marker = this.onlyPhotoMarkerOnScreen(map);
         if (marker && !this.dismissedPhotoMarkers.has(marker))
-          marker.openPopup();
+          this.openPhotoPopup(marker);
       });
     });
   }
@@ -608,34 +648,74 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
    * The photo's marker, with its popup open in the middle of the map: at maxZoomToShowPhotos, or at the map's zoom when
    * `keepZoom`. The view is set before the group is added, which then adds the marker, in view.
    */
-  private renderMarkerClusterGroupForSinglePhoto(photo: Photo, keepZoom: boolean): void {
-    const markerClusterGroup = L.markerClusterGroup({ animate: false }); // Animation does not look good for single photo case.
-    const marker = this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
+  private renderMarkerClusterGroupForSinglePhoto(photo: Photo, keepView: boolean, keepZoom: boolean): void {
+    const markerClusterGroup = this.groupPhotoMarkers
+      ? L.markerClusterGroup({ animate: false })
+      : this.makeUngroupedMarkerGroup();
+    const marker = this.createPhotoMarker(photo);
+    markerClusterGroup.addLayer(marker);
     this.markerClusterGroup = markerClusterGroup;
-    this.map.setView(marker.getLatLng(), keepZoom ? this.map.getZoom() : maxZoomToShowPhotos, { animate: false });
+    if (!keepView)
+      this.map.setView(marker.getLatLng(), keepZoom ? this.map.getZoom() : maxZoomToShowPhotos, { animate: false });
     this.map.addLayer(markerClusterGroup);
-    marker.openPopup();
-    this.centerOnPopup(marker.getPopup());
+    if (!keepView)
+      this.centerOnPopup(this.openPhotoPopup(marker));
   }
 
-  private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
+  private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[], keepView: boolean): void {
     const markerClusterGroup = L.markerClusterGroup({
       animate: true,              // Animation looks good for multiple photo case.
       maxClusterRadius: 120,      // Increase cluster radius so that markers are either clustered or individually placed without overlaps.
       spiderfyOnMaxZoom: false,   // Disable spiderfy
       zoomToBoundsOnClick: false  // Disable Leaflet.MarkerCluster's zoom behavior. Instead, this app controls zoom using cluster.zoomToBounds() with clusterclick event.
     });
-    addEachMarker(photos,
-      photo => this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo),
-      (error, photo) => {
-        logger.errorNotRecorded(`Failed to add the marker of ${photo.path}`, error);
-        recordUnhandledError(error, 'Renderer'); // Without its path, as any error nothing else handled.
-      });
+    addEachMarker(photos, photo => markerClusterGroup.addLayer(this.createPhotoMarker(photo)), this.recordMarkerError);
     markerClusterGroup.on('clusterclick',  e => this.handleClusterClick(e));
     this.markerClusterGroup = markerClusterGroup;
     // Before the group is added, which then clusters the markers at the zoom of the view that shows them.
-    this.map.fitBounds(markerClusterGroup.getBounds(), { maxZoom: maxZoomToShowPhotos, animate: false });
+    const bounds = markerClusterGroup.getBounds();
+    if (!keepView && bounds.isValid())
+      this.map.fitBounds(bounds, { maxZoom: maxZoomToShowPhotos, animate: false });
     this.map.addLayer(markerClusterGroup);
+  }
+
+  private makeUngroupedMarkerGroup() {
+    return L.markerClusterGroup({ animate: false, disableClusteringAtZoom: this.map.getMinZoom() });
+  }
+
+  /**
+   * Markercluster still culls off-screen pins with clustering disabled. Add bounded batches to the live group so that
+   * a map showing thousands of individual pins can paint and accept input before the last batch is mounted.
+   */
+  private renderUngroupedPhotos(photos: Photo[], keepView: boolean): void {
+    const group = this.makeUngroupedMarkerGroup();
+    if (!keepView) {
+      const bounds = L.latLngBounds([]);
+      addEachMarker(photos, photo => bounds.extend(this.photoPosition(photo)), this.recordMarkerError);
+      if (bounds.isValid())
+        this.map.fitBounds(bounds, { maxZoom: maxZoomToShowPhotos, animate: false });
+    }
+    this.markerClusterGroup = group;
+    this.map.addLayer(group);
+
+    const addBatch = (offset: number) => {
+      const end = Math.min(offset + ungroupedMarkersPerFrame, photos.length);
+      const markers: Marker[] = [];
+      addEachMarker(photos.slice(offset, end), photo => markers.push(this.createPhotoMarker(photo)), this.recordMarkerError);
+      group.addLayers(markers);
+      if (end < photos.length) {
+        this.ungroupedMarkerFrame = requestAnimationFrame(() => addBatch(end));
+      } else if (this.ungroupedMarkerFrame !== null) {
+        this.ungroupedMarkerFrame = null;
+        this.revealPhotoToReveal();
+      }
+    };
+    addBatch(0);
+  }
+
+  private recordMarkerError(error: unknown, photo: Photo): void {
+    logger.errorNotRecorded(`Failed to add the marker of ${photo.path}`, error);
+    recordUnhandledError(error, 'Renderer'); // The logged path stays out of analytics.
   }
 
   // When a marker cluster is clicked, this function is called.
@@ -702,34 +782,133 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     viewer.changeDetectorRef.detectChanges();
   }
 
-  private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
-    const latLng: [number, number] = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
-    const marker: Marker = L.marker(latLng,
-      {
-        icon: L.divIcon({
-          popupAnchor: [0, -35],
-          className: 'plm-leaflet-map-div-icon', // Get rid of the default leaflet-div-icon class.
-          html: createDivIconHtml(photo),
-        })
-      }
-    );
-    // A function, which Leaflet calls when the popup opens, so that the content is made only for the photos shown.
-    // The popup shows the same component when it opens again. As wide as its content, as a cluster's popup is:
-    // Leaflet's maxWidth, of 300 pixels by default, left the larger thumbnails (ThumbnailSizeService) outside it. The
-    // content is no wider than the map leaves room for, and wraps the photo's name (photo-info-viewer.component.scss).
+  private photoPosition(photo: Photo): [number, number] {
+    const { latitude, longitude } = photo.exif.gpsInfo.latLng;
+    return [latitude, longitude];
+  }
+
+  private createPhotoMarker(photo: Photo): Marker {
+    const marker: Marker = L.marker(this.photoPosition(photo), this.groupPhotoMarkers ? {
+      icon: L.divIcon({
+        popupAnchor: [0, -35],
+        className: 'plm-leaflet-map-div-icon',
+        html: createDivIconHtml(photo),
+      }),
+    } : {
+      icon: L.divIcon({
+        iconSize: [individualPinSize, individualPinSize],
+        popupAnchor: [0, -individualPinSize / 2],
+        className: 'plm-leaflet-map-ungrouped-icon',
+      }),
+      title: photo.name,
+    });
+    (marker.options as any).photo = photo;
+    this.markers.set(photo.path, marker);
+
+    if (this.groupPhotoMarkers) {
+      marker.bindPopup(this.photoPopupContent(photo), { maxWidth: 100000 });
+      keepPopupThroughZoom(marker);
+      this.markersOfPopup.set(marker.getPopup(), [marker]);
+      marker.on('popupopen', event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)'));
+      marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
+    } else {
+      marker.on('add', () => marker.getElement()?.setAttribute('aria-label', photo.name));
+      marker.on('click', () => this.activateUngroupedMarker(marker));
+      marker.on('keypress', (event: LeafletKeyboardEvent) => {
+        if (event.originalEvent.key === 'Enter')
+          this.activateUngroupedMarker(marker);
+      });
+      marker.on('popupopen', () => marker.getElement()?.classList.add('plm-pin-popup-open'));
+      marker.on('popupclose', () => marker.getElement()?.classList.remove('plm-pin-popup-open'));
+    }
+    return marker;
+  }
+
+  /** Leaflet needs the component only when the popup opens. It reuses the same content on later opens. */
+  private photoPopupContent(photo: Photo): () => HTMLElement {
     let viewer: ComponentRef<PhotoInfoViewerComponent> | undefined;
-    marker.bindPopup(() => {
+    return () => {
       viewer ??= this.createMarkerContent(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
       return viewer.location.nativeElement as HTMLElement;
-    }, { maxWidth: 100000 });
-    keepPopupThroughZoom(marker);
-    this.markersOfPopup.set(marker.getPopup(), [marker]);
-    marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
-    marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
-    (marker.options as any).photo = photo;
-    markerClusterGroup.addLayer(marker);
-    this.markers.set(photo.path, marker);
-    return marker;
+    };
+  }
+
+  private openPhotoPopup(marker: Marker): Popup {
+    if (this.groupPhotoMarkers) {
+      marker.openPopup();
+      return marker.getPopup();
+    }
+
+    // Ungrouped pins handle activation themselves. Click and Enter can show the picker, while Reveal opens the
+    // requested photo directly. A standalone popup avoids Leaflet's automatic click/Enter handlers from bindPopup().
+    let popup = this.ungroupedPhotoPopups.get(marker);
+    if (!popup) {
+      popup = L.popup({ maxWidth: 100000 }, marker).setLatLng(marker.getLatLng()).setContent(this.photoPopupContent(photoOf(marker)));
+      this.ungroupedPhotoPopups.set(marker, popup);
+      this.markersOfPopup.set(popup, [marker]);
+    }
+    return popup.openOn(this.map);
+  }
+
+  private activateUngroupedMarker(marker: Marker): void {
+    if (this.popupOpen && this.popupOpen === this.ungroupedPhotoPopups.get(marker)) {
+      this.map.closePopup(this.popupOpen);
+      return;
+    }
+    const origin = this.map.latLngToLayerPoint(marker.getLatLng());
+    const overlapping: Photo[] = [];
+    for (const photo of this.photos) {
+      const candidate = this.markers.get(photo.path);
+      if (candidate ? !candidate.getElement()?.isConnected : this.ungroupedMarkerFrame === null)
+        continue;
+      // Include photos whose batch has not reached the live group yet, so the picker stays complete while pins appear.
+      const point = this.map.latLngToLayerPoint(candidate?.getLatLng() ?? this.photoPosition(photo));
+      if (Math.abs(point.x - origin.x) < individualPinSize && Math.abs(point.y - origin.y) < individualPinSize)
+        overlapping.push(photo);
+    }
+    if (overlapping.length < 2) {
+      this.openPhotoPopup(marker);
+      return;
+    }
+    overlapping.sort((a, b) => a.path.localeCompare(b.path));
+    this.showOverlappingPhotoPicker(marker, sortByShootingTime(overlapping));
+  }
+
+  private showOverlappingPhotoPicker(anchor: Marker, photos: readonly Photo[]): void {
+    const popup: Popup = L.popup({ autoPan: false, maxWidth: 100000 }, anchor).setLatLng(anchor.getLatLng());
+    const picker = this.leafletContentService.create(OverlappingPhotoPickerComponent, {
+      photos,
+      choosePhoto: (photo: Photo) => {
+        const marker = this.markers.get(photo.path);
+        if (marker) {
+          this.openPhotoPopup(marker);
+          marker.getElement()?.focus({ preventScroll: true });
+        } else {
+          this.map.closePopup(popup);
+          this.photoToReveal = photo;
+        }
+      },
+      dismiss: () => {
+        this.map.closePopup(popup);
+        queueMicrotask(() => anchor.getElement()?.focus({ preventScroll: true }));
+      },
+    });
+    // Keep just the clicked pin under the picker. Moving all candidates there would cluster them again.
+    this.markersOfPopup.set(popup, [anchor]);
+    this.overlappingPhotoPickerPopup = popup;
+    popup.once('remove', () => {
+      if (this.overlappingPhotoPickerPopup === popup)
+        this.overlappingPhotoPickerPopup = null;
+      picker.destroy();
+    });
+    const element: HTMLElement = picker.location.nativeElement;
+    popup.setContent(element).openOn(this.map);
+    // A large picker near an edge needs to fit before its first button takes focus.
+    const box = popup.getElement().getBoundingClientRect();
+    const viewport = this.map.getContainer().getBoundingClientRect();
+    if (box.left < viewport.left || box.right > viewport.right || box.top < viewport.top || box.bottom > viewport.bottom)
+      this.centerOnPopup(popup);
+    element.querySelector('button')?.focus({ preventScroll: true });
   }
 
   private updateDivIconBackgroundColor(event: PopupEvent, color: string) {
@@ -787,7 +966,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   /** Whether the map shows the photos that are pinned now, with no render to come. */
   private showsPinnedPhotos(): boolean {
-    return !this.isRenderPending && this.pinnedPhotosToRender === this.pinnedPhotoService.pinnedPhotos();
+    return !this.isRenderPending && this.ungroupedMarkerFrame === null
+      && this.pinnedPhotosToRender === this.pinnedPhotoService.pinnedPhotos();
   }
 
   /** Reveals the photo to reveal, once the map shows the photos pinned now: right away, or after it has rendered them. */
@@ -814,7 +994,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const map = this.map;
     const markerClusterGroup = this.markerClusterGroup;
     this.whenStill(map, markerClusterGroup, () => {
-      if (this.photosOfOpenPopup.shows(marker)) {
+      if (this.popupOpen !== this.overlappingPhotoPickerPopup && this.photosOfOpenPopup.shows(marker)) {
         this.revealInPopupOpen(photo);
         return;
       }
@@ -824,8 +1004,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       this.whenStill(map, markerClusterGroup, () => {
         const shown = markerClusterGroup.getVisibleParent(marker);
         if (shown === marker) {
-          marker.openPopup();
-          this.centerOnPopup(marker.getPopup());
+          this.centerOnPopup(this.openPhotoPopup(marker));
         } else if (shown) {
           this.centerOnPopup(this.showPopupForMarkerCluster(shown, photo));
         } else {

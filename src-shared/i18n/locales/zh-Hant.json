@@ -116,6 +116,8 @@
     "zoomIn": "放大",
     "zoomOut": "縮小",
     "layers": "圖層",
+    "chooseOverlappingPhoto": "選擇相片",
+    "showMorePhotos": "顯示更多相片",
     "fullScreen": "全螢幕",
     "exitFullScreen": "結束全螢幕",
     "photosInRegions": "區域內的照片：{{count}} 張",
@@ -321,7 +323,8 @@
       "zoomIn": "放大",
       "zoomOut": "縮小",
       "toggleFullScreen": "切換全螢幕",
-      "mapFullScreen": "地圖全螢幕"
+      "mapFullScreen": "地圖全螢幕",
+      "groupPhotoMarkers": "將相片標記分組"
     },
     "selection": {
       "title": "選取",

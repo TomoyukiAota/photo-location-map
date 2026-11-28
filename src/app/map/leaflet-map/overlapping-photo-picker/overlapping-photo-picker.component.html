@@ -1,0 +1,21 @@
+<section aria-labelledby="overlapping-photo-picker-heading">
+  <h2 id="overlapping-photo-picker-heading">{{ 'map.chooseOverlappingPhoto' | t }}</h2>
+  <ul>
+    @for (photo of shownPhotos(); track photo.path) {
+      <li>
+        <button #photoButton type="button" (click)="selectPhoto($event, photo)">
+          <bdi>{{ photo.name }}</bdi>
+          @if (repeatedNames().has(photo.name)) {
+            <bdi class="detail">{{ photo.path }}</bdi>
+          }
+          @if (photo.exif?.dateTimeOriginal; as date) {
+            <bdi class="detail">{{ date.toDateTimeString() }}</bdi>
+          }
+        </button>
+      </li>
+    }
+  </ul>
+  @if (hasMorePhotos()) {
+    <button class="more-photos" type="button" (click)="showMorePhotos()">{{ 'map.showMorePhotos' | t }}</button>
+  }
+</section>

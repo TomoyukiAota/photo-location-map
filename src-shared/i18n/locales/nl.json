@@ -116,6 +116,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom uit",
     "layers": "Lagen",
+    "chooseOverlappingPhoto": "Kies een foto",
+    "showMorePhotos": "Meer foto's tonen",
     "fullScreen": "Schermvullende weergave",
     "exitFullScreen": "Schermvullende weergave sluiten",
     "photosInRegions": "Foto’s in de gebieden: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom uit",
       "toggleFullScreen": "Schermvullende weergave aan/uit",
-      "mapFullScreen": "Kaart schermvullend"
+      "mapFullScreen": "Kaart schermvullend",
+      "groupPhotoMarkers": "Fotomarkeringen groeperen"
     },
     "selection": {
       "title": "Selectie",

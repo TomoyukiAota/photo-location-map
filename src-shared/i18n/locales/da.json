@@ -116,6 +116,8 @@
     "zoomIn": "Zoom ind",
     "zoomOut": "Zoom ud",
     "layers": "Lag",
+    "chooseOverlappingPhoto": "Vælg et foto",
+    "showMorePhotos": "Vis flere fotos",
     "fullScreen": "Fuld skærm",
     "exitFullScreen": "Afslut fuld skærm",
     "photosInRegions": "Billeder i områderne: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zoom ind",
       "zoomOut": "Zoom ud",
       "toggleFullScreen": "Fuld skærm til/fra",
-      "mapFullScreen": "Kort i fuld skærm"
+      "mapFullScreen": "Kort i fuld skærm",
+      "groupPhotoMarkers": "Gruppér fotomarkører"
     },
     "selection": {
       "title": "Valg",

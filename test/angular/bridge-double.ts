@@ -55,6 +55,7 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
     droppedItem: { openTarget: async () => ({ kind: 'none' }), choose: async () => ({ kind: 'none' }) },
     menus: { updateUndoRedo: async () => {}, updateSelectPreviousNext: async () => {}, updateNarrowDownToPhotosWithFaces: async () => {} },
     mapFullScreen: { set: async () => {} },
+    photoMarkerGrouping: { onChanged: listen },
     photoDataViewer: { open: async () => {} },
     explorerContextMenu: { add: async () => {}, remove: async () => {} },
     events: {

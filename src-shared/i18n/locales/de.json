@@ -116,6 +116,8 @@
     "zoomIn": "Vergrößern",
     "zoomOut": "Verkleinern",
     "layers": "Ebenen",
+    "chooseOverlappingPhoto": "Foto auswählen",
+    "showMorePhotos": "Weitere Fotos anzeigen",
     "fullScreen": "Vollbild",
     "exitFullScreen": "Vollbild beenden",
     "photosInRegions": "Fotos in den Bereichen: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
       "toggleFullScreen": "Vollbild ein/aus",
-      "mapFullScreen": "Karte im Vollbild"
+      "mapFullScreen": "Karte im Vollbild",
+      "groupPhotoMarkers": "Fotomarkierungen gruppieren"
     },
     "selection": {
       "title": "Auswahl",

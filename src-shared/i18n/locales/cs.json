@@ -116,6 +116,8 @@
     "zoomIn": "Přiblížit",
     "zoomOut": "Oddálit",
     "layers": "Vrstvy",
+    "chooseOverlappingPhoto": "Vyberte fotografii",
+    "showMorePhotos": "Zobrazit další fotografie",
     "fullScreen": "Celá obrazovka",
     "exitFullScreen": "Ukončit režim celé obrazovky",
     "photosInRegions": "Fotky v oblastech: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Přiblížit",
       "zoomOut": "Oddálit",
       "toggleFullScreen": "Zapnout/vypnout celou obrazovku",
-      "mapFullScreen": "Mapa na celou obrazovku"
+      "mapFullScreen": "Mapa na celou obrazovku",
+      "groupPhotoMarkers": "Seskupovat značky fotografií"
     },
     "selection": {
       "title": "Výběr",

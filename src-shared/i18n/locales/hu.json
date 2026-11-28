@@ -116,6 +116,8 @@
     "zoomIn": "Nagyítás",
     "zoomOut": "Kicsinyítés",
     "layers": "Rétegek",
+    "chooseOverlappingPhoto": "Válasszon egy fényképet",
+    "showMorePhotos": "További fényképek megjelenítése",
     "fullScreen": "Teljes képernyő",
     "exitFullScreen": "Kilépés a teljes képernyős módból",
     "photosInRegions": "Fotók a területeken: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Nagyítás",
       "zoomOut": "Kicsinyítés",
       "toggleFullScreen": "Teljes képernyő be/ki",
-      "mapFullScreen": "Térkép teljes képernyőn"
+      "mapFullScreen": "Térkép teljes képernyőn",
+      "groupPhotoMarkers": "Fényképjelölők csoportosítása"
     },
     "selection": {
       "title": "Kijelölés",

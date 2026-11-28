@@ -116,6 +116,8 @@
     "zoomIn": "Suurenda",
     "zoomOut": "Vähenda",
     "layers": "Kihid",
+    "chooseOverlappingPhoto": "Vali foto",
+    "showMorePhotos": "Kuva rohkem fotosid",
     "fullScreen": "Täisekraan",
     "exitFullScreen": "Välju täisekraanist",
     "photosInRegions": "Fotosid piirkondades: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Suurenda",
       "zoomOut": "Vähenda",
       "toggleFullScreen": "Lülita täisekraan sisse/välja",
-      "mapFullScreen": "Kaart täisekraanil"
+      "mapFullScreen": "Kaart täisekraanil",
+      "groupPhotoMarkers": "Rühmita fotomarkerid"
     },
     "selection": {
       "title": "Valik",

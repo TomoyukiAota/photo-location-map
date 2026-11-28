@@ -48,3 +48,25 @@
 .plm-leaflet-map-div-icon-content-name {
   padding: 2px; // For the underscore character (_) to be clearly displayed. e.g. IMG_0199.JPG
 }
+
+.plm-leaflet-map-ungrouped-icon {
+  display: grid;
+  place-items: center;
+
+  &::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #233c91;
+    box-shadow: 0 0 0 1px #233c91;
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  &.plm-pin-popup-open::after {
+    background: #b53623;
+    box-shadow: 0 0 0 2px #552416;
+  }
+}

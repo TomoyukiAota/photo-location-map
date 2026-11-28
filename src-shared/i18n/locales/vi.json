@@ -116,6 +116,8 @@
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ",
     "layers": "Lớp",
+    "chooseOverlappingPhoto": "Chọn ảnh",
+    "showMorePhotos": "Hiện thêm ảnh",
     "fullScreen": "Toàn màn hình",
     "exitFullScreen": "Thoát toàn màn hình",
     "photosInRegions": "Ảnh trong các vùng: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Phóng to",
       "zoomOut": "Thu nhỏ",
       "toggleFullScreen": "Bật/tắt toàn màn hình",
-      "mapFullScreen": "Bản đồ toàn màn hình"
+      "mapFullScreen": "Bản đồ toàn màn hình",
+      "groupPhotoMarkers": "Nhóm các điểm đánh dấu ảnh"
     },
     "selection": {
       "title": "Lựa chọn",

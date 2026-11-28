@@ -116,6 +116,8 @@
     "zoomIn": "Lähennä",
     "zoomOut": "Loitonna",
     "layers": "Tasot",
+    "chooseOverlappingPhoto": "Valitse kuva",
+    "showMorePhotos": "Näytä lisää kuvia",
     "fullScreen": "Koko näyttö",
     "exitFullScreen": "Poistu koko näytön tilasta",
     "photosInRegions": "Kuvia alueilla: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Lähennä",
       "zoomOut": "Loitonna",
       "toggleFullScreen": "Koko näyttö päälle/pois",
-      "mapFullScreen": "Kartta koko näytöllä"
+      "mapFullScreen": "Kartta koko näytöllä",
+      "groupPhotoMarkers": "Ryhmittele kuvamerkit"
     },
     "selection": {
       "title": "Valinta",

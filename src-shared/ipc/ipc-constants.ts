@@ -69,6 +69,11 @@ export namespace IpcConstants {
     export const WindowLeft = 'ipc-constants-map-full-screen-window-left';
   }
 
+  export namespace PhotoMarkerGrouping {
+    /** The View menu has changed whether photo markers are grouped. */
+    export const Changed = 'ipc-constants-photo-marker-grouping-changed';
+  }
+
   /** The faces that a photo's metadata marks, which the search for faces takes as found (src-main/face-search/). */
   export namespace FaceRegions {
     export const Have = 'ipc-constants-face-regions-have';

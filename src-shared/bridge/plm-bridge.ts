@@ -157,6 +157,8 @@ export interface PlmBridge {
    * with it, unless the window is already, gives the window back as it was without it, and checks the View menu's item.
    */
   readonly mapFullScreen: { set(on: boolean): Promise<void> };
+  /** Whether the View menu's Group Photo Markers item is checked after the user changes it. */
+  readonly photoMarkerGrouping: { onChanged(listener: (grouped: boolean) => void): Unsubscribe };
   readonly photoDataViewer: { open(params: PhotoDataViewerIpcParams): Promise<void> };
   readonly explorerContextMenu: { add(): Promise<void>; remove(): Promise<void> };
   readonly events: {

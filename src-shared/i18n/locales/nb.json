@@ -116,6 +116,8 @@
     "zoomIn": "Zoom inn",
     "zoomOut": "Zoom ut",
     "layers": "Lag",
+    "chooseOverlappingPhoto": "Velg et bilde",
+    "showMorePhotos": "Vis flere bilder",
     "fullScreen": "Fullskjerm",
     "exitFullScreen": "Avslutt fullskjerm",
     "photosInRegions": "Bilder i områdene: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zoom inn",
       "zoomOut": "Zoom ut",
       "toggleFullScreen": "Fullskjerm av/på",
-      "mapFullScreen": "Kart i fullskjerm"
+      "mapFullScreen": "Kart i fullskjerm",
+      "groupPhotoMarkers": "Grupper bildemarkører"
     },
     "selection": {
       "title": "Markering",

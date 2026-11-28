@@ -4,4 +4,6 @@
 
 #plm-leaflet-map {
   height: 100%;
+  // Leaflet pans a focused marker into view. Prevent the browser from also scrolling the map container.
+  overflow: clip;
 }

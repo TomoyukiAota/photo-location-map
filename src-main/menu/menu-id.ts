@@ -1,6 +1,7 @@
 export namespace MenuId {
   export namespace View {
     export const MapFullScreen = 'view-map-full-screen';
+    export const GroupPhotoMarkers = 'view-group-photo-markers';
   }
 
   export namespace Selection {

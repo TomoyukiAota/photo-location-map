@@ -116,6 +116,8 @@
     "zoomIn": "Povećaj",
     "zoomOut": "Smanji",
     "layers": "Slojevi",
+    "chooseOverlappingPhoto": "Odaberite fotografiju",
+    "showMorePhotos": "Prikaži više fotografija",
     "fullScreen": "Cijeli zaslon",
     "exitFullScreen": "Izađi iz prikaza preko cijelog zaslona",
     "photosInRegions": "Fotografije u područjima: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Povećaj",
       "zoomOut": "Smanji",
       "toggleFullScreen": "Uključi/isključi prikaz preko cijelog zaslona",
-      "mapFullScreen": "Karta preko cijelog zaslona"
+      "mapFullScreen": "Karta preko cijelog zaslona",
+      "groupPhotoMarkers": "Grupiraj oznake fotografija"
     },
     "selection": {
       "title": "Odabir",

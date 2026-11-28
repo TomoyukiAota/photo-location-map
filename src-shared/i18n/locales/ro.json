@@ -116,6 +116,8 @@
     "zoomIn": "Mărește",
     "zoomOut": "Micșorează",
     "layers": "Straturi",
+    "chooseOverlappingPhoto": "Alegeți o fotografie",
+    "showMorePhotos": "Afișează mai multe fotografii",
     "fullScreen": "Ecran complet",
     "exitFullScreen": "Ieși din ecranul complet",
     "photosInRegions": "Poze în zone: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Mărește",
       "zoomOut": "Micșorează",
       "toggleFullScreen": "Activează/dezactivează ecranul complet",
-      "mapFullScreen": "Harta pe ecran complet"
+      "mapFullScreen": "Harta pe ecran complet",
+      "groupPhotoMarkers": "Grupează marcatoarele fotografiilor"
     },
     "selection": {
       "title": "Selecție",

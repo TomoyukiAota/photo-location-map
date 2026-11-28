@@ -25,9 +25,10 @@ export const rendererWritableStoragePaths: ReadonlyArray<ReadonlyArray<string>> 
   UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut,
 ];
 
-/** What a renderer reads: what it writes, and the analytics user ID, which the main process makes. */
+/** What a renderer reads: what it writes, the native menu's grouping setting, and the analytics user ID. */
 export const rendererReadableStoragePaths: ReadonlyArray<ReadonlyArray<string>> = [
   ...rendererWritableStoragePaths,
+  UserDataStoragePath.LeafletMap.GroupPhotoMarkers,
   UserDataStoragePath.Analytics.UserId,
 ];
 

@@ -116,6 +116,8 @@
     "zoomIn": "ขยาย",
     "zoomOut": "ย่อ",
     "layers": "เลเยอร์",
+    "chooseOverlappingPhoto": "เลือกรูปภาพ",
+    "showMorePhotos": "แสดงรูปภาพเพิ่มเติม",
     "fullScreen": "เต็มหน้าจอ",
     "exitFullScreen": "ออกจากโหมดเต็มหน้าจอ",
     "photosInRegions": "รูปภาพในพื้นที่: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "ขยาย",
       "zoomOut": "ย่อ",
       "toggleFullScreen": "สลับโหมดเต็มหน้าจอ",
-      "mapFullScreen": "แผนที่เต็มหน้าจอ"
+      "mapFullScreen": "แผนที่เต็มหน้าจอ",
+      "groupPhotoMarkers": "จัดกลุ่มหมุดรูปภาพ"
     },
     "selection": {
       "title": "การเลือก",

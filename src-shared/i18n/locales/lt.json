@@ -116,6 +116,8 @@
     "zoomIn": "Artinti",
     "zoomOut": "Tolinti",
     "layers": "Sluoksniai",
+    "chooseOverlappingPhoto": "Pasirinkite nuotrauką",
+    "showMorePhotos": "Rodyti daugiau nuotraukų",
     "fullScreen": "Visas ekranas",
     "exitFullScreen": "Išeiti iš viso ekrano režimo",
     "photosInRegions": "Nuotraukos srityse: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Artinti",
       "zoomOut": "Tolinti",
       "toggleFullScreen": "Įjungti arba išjungti viso ekrano režimą",
-      "mapFullScreen": "Žemėlapis per visą ekraną"
+      "mapFullScreen": "Žemėlapis per visą ekraną",
+      "groupPhotoMarkers": "Grupuoti nuotraukų žymeklius"
     },
     "selection": {
       "title": "Pasirinkimas",

@@ -116,6 +116,8 @@
     "zoomIn": "Ampliar",
     "zoomOut": "Reduzir",
     "layers": "Camadas",
+    "chooseOverlappingPhoto": "Escolha uma foto",
+    "showMorePhotos": "Mostrar mais fotos",
     "fullScreen": "Tela cheia",
     "exitFullScreen": "Sair da tela cheia",
     "photosInRegions": "Fotos nas áreas: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Ampliar",
       "zoomOut": "Reduzir",
       "toggleFullScreen": "Ativar/desativar tela cheia",
-      "mapFullScreen": "Mapa em tela cheia"
+      "mapFullScreen": "Mapa em tela cheia",
+      "groupPhotoMarkers": "Agrupar marcadores de fotos"
     },
     "selection": {
       "title": "Seleção",
