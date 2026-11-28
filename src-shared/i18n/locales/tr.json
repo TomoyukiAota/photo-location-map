@@ -116,6 +116,8 @@
     "zoomIn": "Yakınlaştır",
     "zoomOut": "Uzaklaştır",
     "layers": "Katmanlar",
+    "chooseOverlappingPhoto": "Bir fotoğraf seçin",
+    "showMorePhotos": "Daha fazla fotoğraf göster",
     "fullScreen": "Tam ekran",
     "exitFullScreen": "Tam ekrandan çık",
     "photosInRegions": "Bölgelerdeki fotoğraflar: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Yakınlaştır",
       "zoomOut": "Uzaklaştır",
       "toggleFullScreen": "Tam ekranı aç/kapat",
-      "mapFullScreen": "Harita tam ekranda"
+      "mapFullScreen": "Harita tam ekranda",
+      "groupPhotoMarkers": "Fotoğraf işaretçilerini grupla"
     },
     "selection": {
       "title": "Seçim",

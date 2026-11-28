@@ -200,6 +200,16 @@ describe('The main window\'s preload', () => {
     }
   });
 
+  it('passes the grouping setting to the page without the IPC event', () => {
+    const { exposed, emit } = runPreload(true);
+    const received: unknown[][] = [];
+    const unsubscribe = exposed[0].api.photoMarkerGrouping.onChanged((...args: unknown[]) => received.push(args));
+    emit(IpcConstants.PhotoMarkerGrouping.Changed, false);
+    unsubscribe();
+    emit(IpcConstants.PhotoMarkerGrouping.Changed, true);
+    assert.deepStrictEqual(received, [[false]]);
+  });
+
   it('keeps what comes before the page listens for its first listener, given after subscribe returns', async () => {
     const { exposed, emit } = runPreload(true);
     emit(IpcConstants.RecordAtAppLaunch.Finished);
@@ -243,7 +253,7 @@ describe('The main window\'s preload', () => {
     const api = exposed[0].api;
     assert.deepStrictEqual(Object.keys(api), ['version', 'startup', 'storage', 'log', 'analytics', 'folderDialog', 'exif',
       'faceRegions', 'directoryTree', 'thumbnails', 'heif', 'jpegPngThumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine',
-      'droppedItem', 'menus', 'mapFullScreen', 'photoDataViewer', 'explorerContextMenu', 'events']);
+      'droppedItem', 'menus', 'mapFullScreen', 'photoMarkerGrouping', 'photoDataViewer', 'explorerContextMenu', 'events']);
     const memberNames = Object.values(api).flatMap(member => typeof member === 'object' && member !== null ? Object.keys(member) : []);
     for (const generic of ['send', 'sendSync', 'invoke', 'on', 'require', 'ipcRenderer', 'process', 'exec', 'spawn', 'readFile'])
       assert(!memberNames.includes(generic), generic);

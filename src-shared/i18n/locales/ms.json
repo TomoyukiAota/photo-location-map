@@ -116,6 +116,8 @@
     "zoomIn": "Zum masuk",
     "zoomOut": "Zum keluar",
     "layers": "Lapisan",
+    "chooseOverlappingPhoto": "Pilih foto",
+    "showMorePhotos": "Tunjukkan lebih banyak foto",
     "fullScreen": "Skrin penuh",
     "exitFullScreen": "Keluar dari skrin penuh",
     "photosInRegions": "Foto dalam kawasan: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zum masuk",
       "zoomOut": "Zum keluar",
       "toggleFullScreen": "Togol skrin penuh",
-      "mapFullScreen": "Peta dalam skrin penuh"
+      "mapFullScreen": "Peta dalam skrin penuh",
+      "groupPhotoMarkers": "Kumpulkan penanda foto"
     },
     "selection": {
       "title": "Pilihan",

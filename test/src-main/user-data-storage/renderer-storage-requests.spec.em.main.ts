@@ -24,11 +24,13 @@ describe('the renderer\'s requests for settings (in main process)', () => {
 
   it('gives the renderer its own settings and the user ID, and none of the main process\'s', async () => {
     await files.write(UserDataStoragePath.LeafletMap.SelectedBaseLayer, 'Esri World Topo Map');
+    await files.write(UserDataStoragePath.LeafletMap.GroupPhotoMarkers, 'false');
     await files.write(UserDataStoragePath.History.LaunchCount, '7');
     await files.write(UserDataStoragePath.PhotoDataViewer.WindowX, '40');
     await files.write(UserDataStoragePath.Analytics.UserId, 'user-id');
     assert.deepStrictEqual(rendererStorageSnapshot(files), {
       'LeafletMap/SelectedBaseLayer': 'Esri World Topo Map',
+      'LeafletMap/GroupPhotoMarkers': 'false',
       'Analytics/UserId': 'user-id',
     });
   });
@@ -50,7 +52,8 @@ describe('the renderer\'s requests for settings (in main process)', () => {
 
   it('refuses the main process\'s own settings, other paths and values that are not strings', () => {
     for (const storagePath of [UserDataStoragePath.Analytics.UserId, UserDataStoragePath.History.LaunchCount,
-      UserDataStoragePath.PhotoDataViewer.WindowWidth, ['..', 'UserSettings', 'DateFormat'], 'UserSettings/DateFormat',
+      UserDataStoragePath.PhotoDataViewer.WindowWidth, UserDataStoragePath.LeafletMap.GroupPhotoMarkers,
+      ['..', 'UserSettings', 'DateFormat'], 'UserSettings/DateFormat',
       // The same key as UserSettings/DateFormat, of other segments, which would be another file's key.
       ['UserSettings/DateFormat'], [1, 2]]) {
       assert.throws(() => writeFromRenderer(storagePath, 'x'), /cannot write/);

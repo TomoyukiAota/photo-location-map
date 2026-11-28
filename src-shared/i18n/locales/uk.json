@@ -116,6 +116,8 @@
     "zoomIn": "Збільшити",
     "zoomOut": "Зменшити",
     "layers": "Шари",
+    "chooseOverlappingPhoto": "Виберіть фотографію",
+    "showMorePhotos": "Показати більше фотографій",
     "fullScreen": "Повноекранний режим",
     "exitFullScreen": "Вийти з повноекранного режиму",
     "photosInRegions": "Фотографій в областях: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Збільшити",
       "zoomOut": "Зменшити",
       "toggleFullScreen": "Повноекранний режим",
-      "mapFullScreen": "Карта на весь екран"
+      "mapFullScreen": "Карта на весь екран",
+      "groupPhotoMarkers": "Групувати позначки фотографій"
     },
     "selection": {
       "title": "Вибір",

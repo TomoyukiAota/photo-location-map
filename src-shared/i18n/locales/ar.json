@@ -116,6 +116,8 @@
     "zoomIn": "تكبير",
     "zoomOut": "تصغير",
     "layers": "الطبقات",
+    "chooseOverlappingPhoto": "اختر صورة",
+    "showMorePhotos": "عرض المزيد من الصور",
     "fullScreen": "ملء الشاشة",
     "exitFullScreen": "الخروج من ملء الشاشة",
     "photosInRegions": "الصور في المناطق: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "تكبير",
       "zoomOut": "تصغير",
       "toggleFullScreen": "تبديل وضع ملء الشاشة",
-      "mapFullScreen": "الخريطة بملء الشاشة"
+      "mapFullScreen": "الخريطة بملء الشاشة",
+      "groupPhotoMarkers": "تجميع علامات الصور"
     },
     "selection": {
       "title": "التحديد",

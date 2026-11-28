@@ -116,6 +116,8 @@
     "zoomIn": "Handitu",
     "zoomOut": "Txikitu",
     "layers": "Geruzak",
+    "chooseOverlappingPhoto": "Aukeratu argazki bat",
+    "showMorePhotos": "Erakutsi argazki gehiago",
     "fullScreen": "Pantaila osoa",
     "exitFullScreen": "Irten pantaila osotik",
     "photosInRegions": "Eskualdeetako argazkiak: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Handitu",
       "zoomOut": "Txikitu",
       "toggleFullScreen": "Aktibatu/desaktibatu pantaila osoa",
-      "mapFullScreen": "Mapa pantaila osoan"
+      "mapFullScreen": "Mapa pantaila osoan",
+      "groupPhotoMarkers": "Taldekatu argazkien markatzaileak"
     },
     "selection": {
       "title": "Hautapena",

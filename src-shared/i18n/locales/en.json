@@ -116,6 +116,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "layers": "Layers",
+    "chooseOverlappingPhoto": "Choose a photo",
+    "showMorePhotos": "Show more photos",
     "fullScreen": "Full Screen",
     "exitFullScreen": "Exit Full Screen",
     "photosInRegions": "Photos in Regions: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out",
       "toggleFullScreen": "Toggle Full Screen",
-      "mapFullScreen": "Map in Full Screen"
+      "mapFullScreen": "Map in Full Screen",
+      "groupPhotoMarkers": "Group Photo Markers"
     },
     "selection": {
       "title": "Selection",

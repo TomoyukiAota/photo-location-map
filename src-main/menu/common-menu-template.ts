@@ -4,8 +4,11 @@ import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod.js';
 import { t } from '../../src-shared/i18n/i18n.js';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { Logger } from '../../src-shared/log/logger.js';
+import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage.js';
+import { UserDataStoragePath } from '../../src-shared/user-data-storage/user-data-stroage-path.js';
 import { mainWindow } from '../electron-main.js';
 import { mapFullScreenMenuItemTemplate } from './map-full-screen.js';
+import { MenuId } from './menu-id.js';
 import { selectionMenuTemplate } from './selection-menu.js';
 
 const handleOpenSettingsClicked = () => {
@@ -18,6 +21,28 @@ const handleOpenSettingsClicked = () => {
     return;
 
   mainWindow.webContents.send(IpcConstants.ManageSettings.Name);
+};
+
+const groupPhotoMarkersPath = UserDataStoragePath.LeafletMap.GroupPhotoMarkers;
+const readGroupPhotoMarkers = () => UserDataStorage.readOrDefault(groupPhotoMarkersPath, 'true') !== 'false';
+
+const groupPhotoMarkersItem: MenuItemConstructorOptions = {
+  label: t('menu.view.groupPhotoMarkers'),
+  id: MenuId.View.GroupPhotoMarkers,
+  type: 'checkbox',
+  checked: readGroupPhotoMarkers(),
+  async click(item) {
+    // Electron updates the check mark before it calls the handler.
+    const grouped = item.checked;
+    try {
+      await UserDataStorage.write(groupPhotoMarkersPath, String(grouped));
+    } catch (error) {
+      item.checked = readGroupPhotoMarkers();
+      Logger.error('[Main Window Menu] Failed to save photo marker grouping.', error);
+      return;
+    }
+    mainWindow?.webContents.send(IpcConstants.PhotoMarkerGrouping.Changed, grouped);
+  },
 };
 
 // An item with a role gets its label here too: Electron's own labels for roles are English in any language
@@ -42,6 +67,7 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
       { type: 'separator' },
       { role: 'togglefullscreen', label: t('menu.view.toggleFullScreen') },
       mapFullScreenMenuItemTemplate,
+      groupPhotoMarkersItem,
     ]
   },
   selectionMenuTemplate,

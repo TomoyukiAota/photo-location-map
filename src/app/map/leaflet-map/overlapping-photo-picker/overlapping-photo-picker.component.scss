@@ -1,0 +1,68 @@
+@use "../../../../styles/balanced-lines" as *;
+@use "../../../../styles/color" as *;
+
+:host {
+  display: block;
+  inline-size: max-content;
+  max-inline-size: min(22rem, max(0px, calc(100cqw - 64px)));
+}
+
+section {
+  padding: 2px;
+  text-align: start;
+  max-block-size: max(3rem, calc(100cqh - 64px));
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+h2 {
+  @include balanced-lines;
+  margin: 0 0 0.4em;
+  font-size: 1.2em;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  box-sizing: border-box;
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  inline-size: 100%;
+  min-block-size: 24px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    background: $white-background_hover;
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+}
+
+bdi {
+  overflow-wrap: anywhere;
+}
+
+.detail {
+  font-size: 0.9em;
+}
+
+.more-photos {
+  @include balanced-lines;
+  margin-block-start: 4px;
+  text-decoration: underline;
+}

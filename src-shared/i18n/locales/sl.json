@@ -116,6 +116,8 @@
     "zoomIn": "Povečaj",
     "zoomOut": "Pomanjšaj",
     "layers": "Plasti",
+    "chooseOverlappingPhoto": "Izberite fotografijo",
+    "showMorePhotos": "Prikaži več fotografij",
     "fullScreen": "Celozaslonski način",
     "exitFullScreen": "Izhod iz celozaslonskega načina",
     "photosInRegions": "Fotografije na območjih: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Povečaj",
       "zoomOut": "Pomanjšaj",
       "toggleFullScreen": "Vklopi/izklopi celozaslonski način",
-      "mapFullScreen": "Zemljevid v celozaslonskem načinu"
+      "mapFullScreen": "Zemljevid v celozaslonskem načinu",
+      "groupPhotoMarkers": "Združi oznake fotografij"
     },
     "selection": {
       "title": "Izbor",

@@ -116,6 +116,8 @@
     "zoomIn": "Tuvināt",
     "zoomOut": "Tālināt",
     "layers": "Slāņi",
+    "chooseOverlappingPhoto": "Izvēlieties fotoattēlu",
+    "showMorePhotos": "Rādīt vairāk fotoattēlu",
     "fullScreen": "Pilnekrāna režīms",
     "exitFullScreen": "Iziet no pilnekrāna režīma",
     "photosInRegions": "Fotoattēli apgabalos: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Tuvināt",
       "zoomOut": "Tālināt",
       "toggleFullScreen": "Pārslēgt pilnekrāna režīmu",
-      "mapFullScreen": "Karte pilnekrāna režīmā"
+      "mapFullScreen": "Karte pilnekrāna režīmā",
+      "groupPhotoMarkers": "Grupēt fotoattēlu marķierus"
     },
     "selection": {
       "title": "Atlase",

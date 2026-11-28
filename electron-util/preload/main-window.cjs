@@ -56,6 +56,7 @@ const channels = {
   narrowDownToPhotosWithFaces: 'ipc-constants-photo-selection-narrow-down-to-photos-with-faces',
   toggleMapFullScreen: 'ipc-constants-map-full-screen-toggle',
   windowLeftFullScreen: 'ipc-constants-map-full-screen-window-left',
+  photoMarkerGroupingChanged: 'ipc-constants-photo-marker-grouping-changed',
   recordAtAppLaunchFinished: 'ipc-constants-record-at-app-launch-finished',
 };
 
@@ -67,7 +68,7 @@ const channels = {
 const eventChannels = [channels.amplitude, channels.mixpanel, channels.aboutBox, channels.manageSettings,
   channels.welcomeDialog, channels.undo, channels.redo, channels.selectPrevious, channels.selectNext,
   channels.narrowDownToPhotosWithFaces, channels.toggleMapFullScreen, channels.windowLeftFullScreen,
-  channels.recordAtAppLaunchFinished];
+  channels.photoMarkerGroupingChanged, channels.recordAtAppLaunchFinished];
 const maxPending = 1000;
 const hubs = new Map();
 for (const channel of eventChannels) {
@@ -165,6 +166,7 @@ const plm = {
     updateNarrowDownToPhotosWithFaces: params => ipcRenderer.invoke(channels.updateNarrowDownToPhotosWithFacesMenu, params),
   },
   mapFullScreen: { set: on => ipcRenderer.invoke(channels.mapFullScreenSet, on) },
+  photoMarkerGrouping: { onChanged: listener => subscribe(channels.photoMarkerGroupingChanged, listener) },
   photoDataViewer: { open: params => ipcRenderer.invoke(channels.photoDataViewer, params) },
   explorerContextMenu: {
     add: () => ipcRenderer.invoke(channels.explorerContextMenuAdd),

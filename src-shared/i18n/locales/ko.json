@@ -116,6 +116,8 @@
     "zoomIn": "확대",
     "zoomOut": "축소",
     "layers": "레이어",
+    "chooseOverlappingPhoto": "사진 선택",
+    "showMorePhotos": "사진 더 보기",
     "fullScreen": "전체 화면",
     "exitFullScreen": "전체 화면 종료",
     "photosInRegions": "영역 내 사진: {{count}}장",
@@ -321,7 +323,8 @@
       "zoomIn": "확대",
       "zoomOut": "축소",
       "toggleFullScreen": "전체 화면 전환",
-      "mapFullScreen": "지도 전체 화면"
+      "mapFullScreen": "지도 전체 화면",
+      "groupPhotoMarkers": "사진 마커 그룹화"
     },
     "selection": {
       "title": "선택",

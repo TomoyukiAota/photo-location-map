@@ -116,6 +116,8 @@
     "zoomIn": "放大",
     "zoomOut": "缩小",
     "layers": "图层",
+    "chooseOverlappingPhoto": "选择照片",
+    "showMorePhotos": "显示更多照片",
     "fullScreen": "全屏",
     "exitFullScreen": "退出全屏",
     "photosInRegions": "区域内的照片：{{count}} 张",
@@ -321,7 +323,8 @@
       "zoomIn": "放大",
       "zoomOut": "缩小",
       "toggleFullScreen": "切换全屏",
-      "mapFullScreen": "地图全屏"
+      "mapFullScreen": "地图全屏",
+      "groupPhotoMarkers": "将照片标记分组"
     },
     "selection": {
       "title": "选择",

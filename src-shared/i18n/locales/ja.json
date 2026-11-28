@@ -116,6 +116,8 @@
     "zoomIn": "拡大",
     "zoomOut": "縮小",
     "layers": "レイヤー",
+    "chooseOverlappingPhoto": "写真を選択",
+    "showMorePhotos": "さらに写真を表示",
     "fullScreen": "フルスクリーン",
     "exitFullScreen": "フルスクリーンを終了",
     "photosInRegions": "範囲内の写真: {{count}} 枚",
@@ -321,7 +323,8 @@
       "zoomIn": "拡大",
       "zoomOut": "縮小",
       "toggleFullScreen": "フルスクリーンの切り替え",
-      "mapFullScreen": "マップをフルスクリーンで表示"
+      "mapFullScreen": "マップをフルスクリーンで表示",
+      "groupPhotoMarkers": "写真のマーカーをグループ化"
     },
     "selection": {
       "title": "選択",

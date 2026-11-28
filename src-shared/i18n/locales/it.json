@@ -116,6 +116,8 @@
     "zoomIn": "Ingrandisci",
     "zoomOut": "Riduci",
     "layers": "Livelli",
+    "chooseOverlappingPhoto": "Scegli una foto",
+    "showMorePhotos": "Mostra altre foto",
     "fullScreen": "Schermo intero",
     "exitFullScreen": "Esci da schermo intero",
     "photosInRegions": "Foto nelle aree: {{count}}",
@@ -321,7 +323,8 @@
       "zoomIn": "Ingrandisci",
       "zoomOut": "Riduci",
       "toggleFullScreen": "Attiva/disattiva schermo intero",
-      "mapFullScreen": "Mappa a schermo intero"
+      "mapFullScreen": "Mappa a schermo intero",
+      "groupPhotoMarkers": "Raggruppa i marcatori delle foto"
     },
     "selection": {
       "title": "Selezione",

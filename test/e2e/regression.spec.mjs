@@ -1011,7 +1011,8 @@ const menuInEnglish = [
     label: 'The name of the first menu item is the application name on macOS',
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
-  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen', 'Map in Full Screen'] },
+  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen', 'Map in Full Screen',
+    'Group Photo Markers'] },
   { label: 'Selection', items: ['Undo', 'Redo', 'Photo Taken Before', 'Photo Taken After', 'Narrow Down to Photos with Faces'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
@@ -1022,7 +1023,8 @@ const menuInJapanese = [
     label: 'The name of the first menu item is the application name on macOS',
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
-  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え', 'マップをフルスクリーンで表示'] },
+  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え', 'マップをフルスクリーンで表示',
+    '写真のマーカーをグループ化'] },
   { label: '選択', items: ['元に戻す', 'やり直す', '前に撮影された写真', '次に撮影された写真', '顔が写っている写真に絞り込む'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
@@ -1551,7 +1553,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
       label: 'The name of the first menu item is the application name on macOS',
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
-    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة', 'الخريطة بملء الشاشة'] },
+    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة', 'الخريطة بملء الشاشة',
+      'تجميع علامات الصور'] },
     { label: 'التحديد', items: ['تراجع', 'إعادة', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها', 'تضييق التحديد إلى الصور التي تظهر فيها وجوه'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
@@ -3415,6 +3418,79 @@ test('Reveal in Map opens the popup of a cluster of photos taken at one place wi
   await chooseFromMoreOptions(shownPhoto.getByRole('button', { name: 'More Options' }), 'Reveal in Sidebar');
   await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
   await expect(rowOf('Kobe 2.JPG')).not.toHaveAttribute('data-reveal-highlight', /./);
+});
+test('Group Photo Markers can be turned off, keeps coincident photos accessible, and persists across a restart', async () => {
+  const folder = path.join(profile, 'ungrouped photos taken at one place');
+  await mkdir(folder);
+  for (const name of ['Kobe 1.JPG', 'Kobe 2.JPG']) await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, name));
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+
+  const groupingChecked = () => app.evaluate(({ Menu }) =>
+    Menu.getApplicationMenu().getMenuItemById('view-group-photo-markers').checked);
+  const toggleGrouping = () => app.evaluate(({ Menu }) =>
+    Menu.getApplicationMenu().getMenuItemById('view-group-photo-markers').click());
+  const markers = () => page.locator('.plm-leaflet-map-ungrouped-icon');
+  const clusters = () => page.locator('.marker-cluster');
+  const rowOf = name => page.locator('mat-tree-node').filter({ hasText: name });
+  const revealInMap = name => chooseFromMoreOptions(rowOf(name).getByRole('button', { name: 'More Options' }), 'Reveal in Map');
+  const popup = page.locator('.leaflet-popup');
+  const picker = popup.locator('app-overlapping-photo-picker');
+  const displayedPhoto = popup.locator('.photo-info-viewer-name');
+  const mapView = () => page.evaluate(() => {
+    const map = window.__plmLeafletMap;
+    const { lat, lng } = map.getCenter();
+    return { lat, lng, zoom: map.getZoom() };
+  });
+
+  expect(await groupingChecked()).toBe(true);
+  await expect(clusters()).toHaveCount(1);
+  await revealInMap('Kobe 1.JPG');
+  await expect(displayedPhoto).toHaveText(['Kobe 1.JPG']);
+  const viewBefore = await mapView();
+  await toggleGrouping();
+  expect(await groupingChecked()).toBe(false);
+  await expect(clusters()).toHaveCount(0);
+  await expect(markers()).toHaveCount(2);
+  await expect(popup).toHaveCount(0);
+  expect(await mapView()).toEqual(viewBefore);
+
+  const firstMarker = markers().and(page.getByRole('button', { name: 'Kobe 1.JPG', exact: true }));
+  await firstMarker.press('Enter');
+  await expect(picker.getByRole('button', { name: /^Kobe 1\.JPG/ })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(picker).toHaveCount(0);
+  await expect(firstMarker).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(picker.getByRole('button', { name: /^Kobe 1\.JPG/ })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(picker.getByRole('button', { name: /^Kobe 2\.JPG/ })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(picker).toHaveCount(0);
+  await expect(displayedPhoto).toHaveText('Kobe 2.JPG');
+  await expect(markers().and(page.getByRole('button', { name: 'Kobe 2.JPG', exact: true }))).toBeFocused();
+  await page.getByRole('button', { name: 'Zoom out', exact: true }).click();
+  await untilStillAtZoom(viewBefore.zoom - 1);
+  await expect(displayedPhoto).toHaveText('Kobe 2.JPG');
+
+  await chooseFromMoreOptions(popup.getByRole('button', { name: 'More Options' }), 'Reveal in Sidebar');
+  await expect(rowOf('Kobe 2.JPG')).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
+  await revealInMap('Kobe 1.JPG');
+  await expect(displayedPhoto).toHaveText(['Kobe 1.JPG']);
+  await expect(picker).toHaveCount(0);
+
+  await app.close();
+  await launch();
+  expect(await groupingChecked()).toBe(false);
+  await openFolderWithPicker(folder);
+  await expect(markers()).toHaveCount(2);
+  await expect(clusters()).toHaveCount(0);
+  await toggleGrouping();
+  expect(await groupingChecked()).toBe(true);
+  await expect(clusters()).toHaveCount(1);
+  await expect(markers()).toHaveCount(0);
 });
 test('a photo\'s information, in the tree and in a popup of the map, opens the photo, its folder and its Live Photos movie, and keeps its thumbnail turned', async () => {
   // The same Angular component in both places, with what it keeps in services: a row of the tree and the content of a
